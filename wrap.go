@@ -134,7 +134,7 @@ func (w *wrapper) OnKeyDebugging(key string) interface{} {
 //   - `true` if `debug` is not nil and contains data.
 //   - `false` if `debug` is nil or empty.
 func (w *wrapper) IsDebuggingPresent() bool {
-	return len(w.debug) > 0
+	return w.Available() && w.debug != nil && len(w.debug) > 0
 }
 
 // IsDebuggingKeyPresent checks whether a specific key exists in the `debug` information.
@@ -478,4 +478,38 @@ func (m *meta) IsRequestedTimePresent() bool {
 //   - `false` if `meta` is unavailable, `customFields` is nil, or it is empty.
 func (m *meta) IsCustomFieldPresent() bool {
 	return m.Available() && m.customFields != nil && len(m.customFields) > 0
+}
+
+// IsCustomFieldKeyPresent checks whether a specific key is present in the custom fields of the `meta` instance.
+//
+// This function first verifies that the `customFields` field is available and contains data using
+// `IsCustomFieldPresent`. If so, it checks if the specified key exists within the `customFields` map.
+//
+// Parameters:
+//   - `key`: A string representing the key to search for in the `customFields` map.
+//
+// Returns:
+//   - `true` if the `customFields` map is available and contains the specified key.
+//   - `false` if `customFields` is nil, empty, or does not contain the specified key.
+func (m *meta) IsCustomFieldKeyPresent(key string) bool {
+	return m.IsCustomFieldPresent() && unify4g.MapContainsKey(m.customFields, key)
+}
+
+// OnKeyCustomField retrieves the value associated with a specific key in the custom fields of the `meta` instance.
+//
+// This function checks whether the `meta` instance is available and whether the specified key exists
+// in the `customFields` map. If both conditions are met, it returns the corresponding value for the key.
+// If the `meta` instance is unavailable or the key is not present, it returns `nil`.
+//
+// Parameters:
+//   - `key`: A string representing the key to search for in the `customFields` map.
+//
+// Returns:
+//   - The value associated with the specified key in the `customFields` map if the key is present.
+//   - `nil` if the `meta` instance is unavailable or the key does not exist in the `customFields` map.
+func (m *meta) OnKeyCustomField(key string) interface{} {
+	if !m.Available() || !m.IsCustomFieldKeyPresent(key) {
+		return nil
+	}
+	return m.customFields[key]
 }

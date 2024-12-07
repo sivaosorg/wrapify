@@ -101,6 +101,30 @@ func (p *pagination) JsonPretty() string {
 	return unify4g.JsonPrettyN(p.Respond())
 }
 
+// Json serializes the `meta` instance into a compact JSON string.
+//
+// This function uses the `unify4g.JsonN` utility to create a compact JSON representation
+// of the `meta` instance. The resulting string is formatted without additional whitespace,
+// suitable for efficient storage or transmission of metadata.
+//
+// Returns:
+//   - A compact JSON string representation of the `meta` instance.
+func (m *meta) Json() string {
+	return unify4g.JsonN(m.Respond())
+}
+
+// JsonPretty serializes the `meta` instance into a prettified JSON string.
+//
+// This function calls the `unify4g.JsonPrettyN` utility to produce a formatted, human-readable
+// JSON string representation of the `meta` instance. The output is useful for debugging
+// or inspecting metadata in a more structured format.
+//
+// Returns:
+//   - A prettified JSON string representation of the `meta` instance.
+func (m *meta) JsonPretty() string {
+	return unify4g.JsonPrettyN(m.Respond())
+}
+
 // WithPage sets the page number for the `pagination` instance.
 //
 // This function updates the `page` field of the `pagination` and
