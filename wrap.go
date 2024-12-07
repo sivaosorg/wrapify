@@ -149,6 +149,20 @@ func (w *wrapper) Meta() *meta {
 	return w.meta
 }
 
+// Header retrieves the `header` associated with the `wrapper` instance.
+//
+// This function returns the `header` field from the `wrapper` instance, which contains
+// information about the HTTP response or any other relevant metadata. If the `wrapper`
+// instance is correctly initialized, it will return the `header`; otherwise, it may
+// return `nil` if the `header` has not been set.
+//
+// Returns:
+//   - A pointer to the `header` instance associated with the `wrapper`.
+//   - `nil` if the `header` is not set or the `wrapper` is uninitialized.
+func (w *wrapper) Header() *header {
+	return w.header
+}
+
 // IsDebuggingPresent checks whether debugging information is present in the `wrapper` instance.
 //
 // This function verifies if the `debug` field of the `wrapper` is not nil and contains at least one entry.
@@ -537,4 +551,185 @@ func (m *meta) OnKeyCustomField(key string) interface{} {
 		return nil
 	}
 	return m.customFields[key]
+}
+
+// ApiVersion retrieves the API version from the `meta` instance.
+//
+// This function checks if the `meta` instance is available (non-nil) before attempting
+// to retrieve the `apiVersion`. If the `meta` instance is unavailable, it returns an empty string.
+//
+// Returns:
+//   - The API version as a string if available.
+//   - An empty string if the `meta` instance is unavailable.
+func (m *meta) ApiVersion() string {
+	if !m.Available() {
+		return ""
+	}
+	return m.apiVersion
+}
+
+// RequestID retrieves the request ID from the `meta` instance.
+//
+// This function checks if the `meta` instance is available (non-nil) before retrieving
+// the `requestID`. If the `meta` instance is unavailable, it returns an empty string.
+//
+// Returns:
+//   - The request ID as a string if available.
+//   - An empty string if the `meta` instance is unavailable.
+func (m *meta) RequestID() string {
+	if !m.Available() {
+		return ""
+	}
+	return m.requestID
+}
+
+// RequestedTime retrieves the requested time from the `meta` instance.
+//
+// This function checks if the `meta` instance is available (non-nil) before retrieving
+// the `requestedTime`. If the `meta` instance is unavailable, it returns the zero value
+// of `time.Time` (January 1, year 1, 00:00:00 UTC).
+//
+// Returns:
+//   - The requested time as a `time.Time` object if available.
+//   - The zero value of `time.Time` if the `meta` instance is unavailable.
+func (m *meta) RequestedTime() time.Time {
+	if !m.Available() {
+		return time.Time{}
+	}
+	return m.requestedTime
+}
+
+// CustomFields retrieves the custom fields from the `meta` instance.
+//
+// This function checks if the `meta` instance is available (non-nil) before retrieving
+// the `customFields`. If the `meta` instance is unavailable, it returns `nil`.
+//
+// Returns:
+//   - A map of custom fields if available.
+//   - `nil` if the `meta` instance is unavailable.
+func (m *meta) CustomFields() map[string]interface{} {
+	if !m.Available() {
+		return nil
+	}
+	return m.customFields
+}
+
+// Available checks if the `header` instance is non-nil.
+//
+// This function ensures that the `header` instance is not nil before performing any operations.
+// It returns `true` if the `header` is non-nil, and `false` if the `header` is nil.
+//
+// Returns:
+//   - `true` if the `header` instance is not nil.
+//   - `false` if the `header` instance is nil.
+func (h *header) Available() bool {
+	return h != nil
+}
+
+// IsCodePresent checks if the `code` field in the `header` instance is present and greater than zero.
+//
+// This function first checks if the `header` is available (non-nil), and then checks if the `code`
+// field is greater than zero, indicating that it is present and valid.
+//
+// Returns:
+//   - `true` if the `code` field is greater than zero.
+//   - `false` if the `code` field is either not present (nil) or zero.
+func (h *header) IsCodePresent() bool {
+	return h.Available() && h.code > 0
+}
+
+// IsTextPresent checks if the `text` field in the `header` instance is present and not empty.
+//
+// This function verifies if the `header` is available and if the `text` field is not empty, using
+// the `unify4g.IsNotEmpty` utility to ensure the presence of the `text` field.
+//
+// Returns:
+//   - `true` if the `text` field is non-empty.
+//   - `false` if the `text` field is either not present (nil) or empty.
+func (h *header) IsTextPresent() bool {
+	return h.Available() && unify4g.IsNotEmpty(h.text)
+}
+
+// IsTypePresent checks if the `Type` field in the `header` instance is present and not empty.
+//
+// This function checks if the `header` instance is available and if the `Type` field is not empty,
+// utilizing the `unify4g.IsNotEmpty` utility to determine whether the `Type` field contains a value.
+//
+// Returns:
+//   - `true` if the `Type` field is non-empty.
+//   - `false` if the `Type` field is either not present (nil) or empty.
+func (h *header) IsTypePresent() bool {
+	return h.Available() && unify4g.IsNotEmpty(h.Type)
+}
+
+// IsDescriptionPresent checks if the `description` field in the `header` instance is present and not empty.
+//
+// This function ensures that the `header` is available and that the `description` field is not empty,
+// using `unify4g.IsNotEmpty` to check for non-emptiness.
+//
+// Returns:
+//   - `true` if the `description` field is non-empty.
+//   - `false` if the `description` field is either not present (nil) or empty.
+func (h *header) IsDescriptionPresent() bool {
+	return h.Available() && unify4g.IsNotEmpty(h.description)
+}
+
+// Code retrieves the code value from the `header` instance.
+//
+// This function checks if the `header` instance is available (non-nil) before retrieving
+// the `code` field. If the `header` instance is unavailable, it returns 0.
+//
+// Returns:
+//   - The `code` as an integer if available.
+//   - 0 if the `header` instance is unavailable.
+func (h *header) Code() int {
+	if !h.Available() {
+		return 0
+	}
+	return h.code
+}
+
+// Text retrieves the text value from the `header` instance.
+//
+// This function checks if the `header` instance is available (non-nil) before retrieving
+// the `text` field. If the `header` instance is unavailable, it returns an empty string.
+//
+// Returns:
+//   - The `text` as a string if available.
+//   - An empty string if the `header` instance is unavailable.
+func (h *header) Text() string {
+	if !h.Available() {
+		return ""
+	}
+	return h.text
+}
+
+// TypeN retrieves the type value from the `header` instance.
+//
+// This function checks if the `header` instance is available (non-nil) before retrieving
+// the `Type` field. If the `header` instance is unavailable, it returns an empty string.
+//
+// Returns:
+//   - The `Type` as a string if available.
+//   - An empty string if the `header` instance is unavailable.
+func (h *header) TypeN() string {
+	if !h.Available() {
+		return ""
+	}
+	return h.Type
+}
+
+// Description retrieves the description value from the `header` instance.
+//
+// This function checks if the `header` instance is available (non-nil) before retrieving
+// the `description` field. If the `header` instance is unavailable, it returns an empty string.
+//
+// Returns:
+//   - The `description` as a string if available.
+//   - An empty string if the `header` instance is unavailable.
+func (h *header) Description() string {
+	if !h.Available() {
+		return ""
+	}
+	return h.description
 }

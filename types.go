@@ -22,10 +22,10 @@ type meta struct {
 
 // header represents a structured header for API responses.
 type header struct {
-	Code        int    `json:"code,omitempty"`        // Application-specific status code.
-	Text        string `json:"text,omitempty"`        // Human-readable status text.
-	Type        string `json:"type,omitempty"`        // Type or category of the status, e.g., "info", "error".
-	Description string `json:"description,omitempty"` // Detailed description of the status.
+	code        int    // Application-specific status code.
+	text        string // Human-readable status text.
+	Type        string // Type or category of the status, e.g., "info", "error".
+	description string // Detailed description of the status.
 }
 
 // wrapper is the main structure for wrapping API responses, including metadata, data, and debugging information.
