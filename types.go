@@ -4,11 +4,11 @@ import "time"
 
 // pagination represents pagination details for paginated API responses.
 type pagination struct {
-	Page       int  `json:"page,omitempty"`        // Current page number.
-	PerPage    int  `json:"per_page,omitempty"`    // Number of items per page.
-	TotalPages int  `json:"total_pages,omitempty"` // Total number of pages.
-	TotalItems int  `json:"total_items,omitempty"` // Total number of items available.
-	IsLast     bool `json:"is_last,omitempty"`     // Indicates whether this is the last page.
+	page       int  // Current page number.
+	perPage    int  // Number of items per page.
+	totalPages int  // Total number of pages.
+	totalItems int  // Total number of items available.
+	isLast     bool // Indicates whether this is the last page.
 }
 
 // meta represents metadata information about an API response.

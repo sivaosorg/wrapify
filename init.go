@@ -76,6 +76,106 @@ func (w *wrapper) JsonPretty() string {
 	return unify4g.JsonPrettyN(w.Respond())
 }
 
+// Json serializes the `pagination` instance into a compact JSON string.
+//
+// This function uses the `unify4g.JsonN` utility to generate a JSON representation
+// of the `pagination` instance. The output is a compact JSON string with no additional
+// whitespace or formatting, providing a minimalistic view of the pagination data.
+//
+// Returns:
+//   - A compact JSON string representation of the `pagination` instance.
+func (p *pagination) Json() string {
+	return unify4g.JsonN(p.Respond())
+}
+
+// JsonPretty serializes the `pagination` instance into a prettified JSON string.
+//
+// This function uses the `unify4g.JsonPrettyN` utility to generate a JSON representation
+// of the `pagination` instance. The output is a human-readable JSON string with
+// proper indentation and formatting for better readability, which is helpful for
+// inspecting pagination data during development or debugging.
+//
+// Returns:
+//   - A prettified JSON string representation of the `pagination` instance.
+func (p *pagination) JsonPretty() string {
+	return unify4g.JsonPrettyN(p.Respond())
+}
+
+// WithPage sets the page number for the `pagination` instance.
+//
+// This function updates the `page` field of the `pagination` and
+// returns the modified `pagination` instance to allow method chaining.
+//
+// Parameters:
+//   - `v`: An integer representing the page number to set.
+//
+// Returns:
+//   - A pointer to the modified `pagination` instance (enabling method chaining).
+func (p *pagination) WithPage(v int) *pagination {
+	p.page = v
+	return p
+}
+
+// WithPerPage sets the number of items per page for the `pagination` instance.
+//
+// This function updates the `perPage` field of the `pagination` and
+// returns the modified `pagination` instance to allow method chaining.
+//
+// Parameters:
+//   - `v`: An integer representing the number of items per page to set.
+//
+// Returns:
+//   - A pointer to the modified `pagination` instance (enabling method chaining).
+func (p *pagination) WithPerPage(v int) *pagination {
+	p.perPage = v
+	return p
+}
+
+// WithTotalPages sets the total number of pages for the `pagination` instance.
+//
+// This function updates the `totalPages` field of the `pagination` and
+// returns the modified `pagination` instance to allow method chaining.
+//
+// Parameters:
+//   - `v`: An integer representing the total number of pages to set.
+//
+// Returns:
+//   - A pointer to the modified `pagination` instance (enabling method chaining).
+func (p *pagination) WithTotalPages(v int) *pagination {
+	p.totalPages = v
+	return p
+}
+
+// WithTotalItems sets the total number of items for the `pagination` instance.
+//
+// This function updates the `totalItems` field of the `pagination` and
+// returns the modified `pagination` instance to allow method chaining.
+//
+// Parameters:
+//   - `v`: An integer representing the total number of items to set.
+//
+// Returns:
+//   - A pointer to the modified `pagination` instance (enabling method chaining).
+func (p *pagination) WithTotalItems(v int) *pagination {
+	p.totalItems = v
+	return p
+}
+
+// WithIsLast sets whether this is the last page in the `pagination` instance.
+//
+// This function updates the `isLast` field of the `pagination` and
+// returns the modified `pagination` instance to allow method chaining.
+//
+// Parameters:
+//   - `v`: A boolean value indicating whether this is the last page.
+//
+// Returns:
+//   - A pointer to the modified `pagination` instance (enabling method chaining).
+func (p *pagination) WithIsLast(v bool) *pagination {
+	p.isLast = v
+	return p
+}
+
 // WithStatusCode sets the HTTP status code for the `wrapper` instance.
 //
 // This function updates the `statusCode` field of the `wrapper` and
@@ -280,7 +380,7 @@ func (w *wrapper) Respond() map[string]interface{} {
 		m["meta"] = w.meta
 	}
 	if w.IsPagingPresent() {
-		m["pagination"] = w.pagination
+		m["pagination"] = w.pagination.Respond()
 	}
 	if w.IsDebuggingPresent() {
 		m["debug"] = w.debug
@@ -297,6 +397,34 @@ func (w *wrapper) Respond() map[string]interface{} {
 	if unify4g.IsNotEmpty(w.path) {
 		m["path"] = w.path
 	}
+	return m
+}
+
+// Respond generates a map representation of the `pagination` instance.
+//
+// This method collects various fields related to pagination (e.g., `page`, `per_page`, etc.)
+// and organizes them into a key-value map. It ensures that only valid pagination details
+// are included in the response.
+//
+// The following fields are included in the pagination response:
+//   - `page`: The current page number.
+//   - `per_page`: The number of items per page.
+//   - `total_pages`: The total number of pages available.
+//   - `total_items`: The total number of items available across all pages.
+//   - `is_last`: A boolean indicating if this is the last page.
+//
+// Returns:
+//   - A `map[string]interface{}` containing the structured pagination data.
+func (p *pagination) Respond() map[string]interface{} {
+	m := make(map[string]interface{})
+	if p == nil {
+		return m
+	}
+	m["page"] = p.page
+	m["per_page"] = p.perPage
+	m["total_pages"] = p.totalPages
+	m["total_items"] = p.totalItems
+	m["is_last"] = p.isLast
 	return m
 }
 
@@ -475,4 +603,31 @@ func (w *wrapper) IsClientError() bool {
 //   - `false` if the status code is outside of this range.
 func (w *wrapper) IsServerError() bool {
 	return (500 <= w.statusCode) && (w.statusCode <= 599)
+}
+
+// IsLast checks whether the current pagination represents the last page.
+//
+// This function checks the `isLast` field of the `pagination` instance to determine if the current page is the last one.
+// The `isLast` field is typically set to `true` when there are no more pages of data available.
+//
+// Returns:
+//   - A boolean value indicating whether the current page is the last:
+//   - `true` if `isLast` is `true`, indicating this is the last page of results.
+//   - `false` if `isLast` is `false`, indicating more pages are available.
+func (p *pagination) IsLast() bool {
+	return p.isLast
+}
+
+// IsLastPage checks whether the current page is the last page of results.
+//
+// This function verifies that pagination information is present and then checks if the current page is the last page.
+// It combines the checks of `IsPagingPresent()` and `IsLast()` to ensure that the pagination structure exists
+// and that it represents the last page.
+//
+// Returns:
+//   - A boolean value indicating whether the current page is the last page:
+//   - `true` if pagination is present and the current page is the last one.
+//   - `false` if pagination is not present or the current page is not the last.
+func (w *wrapper) IsLastPage() bool {
+	return w.IsPagingPresent() && w.pagination.IsLast()
 }
