@@ -137,6 +137,18 @@ func (w *wrapper) Pagination() *pagination {
 	return w.pagination
 }
 
+// Meta retrieves the `meta` information from the `wrapper` instance.
+//
+// This function returns the `meta` field, which contains metadata related to the response or data
+// in the `wrapper` instance. If no `meta` information is set, it returns `nil`.
+//
+// Returns:
+//   - A pointer to the `meta` instance associated with the `wrapper`.
+//   - `nil` if no `meta` information is available.
+func (w *wrapper) Meta() *meta {
+	return w.meta
+}
+
 // IsDebuggingPresent checks whether debugging information is present in the `wrapper` instance.
 //
 // This function verifies if the `debug` field of the `wrapper` is not nil and contains at least one entry.

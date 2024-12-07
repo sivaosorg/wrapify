@@ -1,6 +1,8 @@
 package wrapify
 
 import (
+	"time"
+
 	"github.com/sivaosorg/unify4g"
 )
 
@@ -200,6 +202,100 @@ func (p *pagination) WithIsLast(v bool) *pagination {
 	return p
 }
 
+// WithApiVersion sets the API version for the `meta` instance.
+//
+// This function updates the `apiVersion` field of the `meta` instance with the specified value
+// and returns the updated `meta` instance for method chaining.
+//
+// Parameters:
+//   - `v`: A string representing the API version to set.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithApiVersion(v string) *meta {
+	m.apiVersion = v
+	return m
+}
+
+// WithRequestID sets the request ID for the `meta` instance.
+//
+// This function updates the `requestID` field of the `meta` instance with the specified value
+// and returns the updated `meta` instance for method chaining.
+//
+// Parameters:
+//   - `v`: A string representing the request ID to set.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithRequestID(v string) *meta {
+	m.requestID = v
+	return m
+}
+
+// WithLocale sets the locale for the `meta` instance.
+//
+// This function updates the `locale` field of the `meta` instance with the specified value
+// and returns the updated `meta` instance for method chaining.
+//
+// Parameters:
+//   - `v`: A string representing the locale to set.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithLocale(v string) *meta {
+	m.locale = v
+	return m
+}
+
+// WithRequestedTime sets the requested time for the `meta` instance.
+//
+// This function updates the `requestedTime` field of the `meta` instance with the specified value
+// and returns the updated `meta` instance for method chaining.
+//
+// Parameters:
+//   - `v`: A `time.Time` object representing the requested time to set.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithRequestedTime(v time.Time) *meta {
+	m.requestedTime = v
+	return m
+}
+
+// WithCustomFields sets the custom fields for the `meta` instance.
+//
+// This function updates the `customFields` map of the `meta` instance with the provided values
+// and returns the updated `meta` instance for method chaining.
+//
+// Parameters:
+//   - `values`: A map of string keys to interface{} values representing custom fields.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithCustomFields(values map[string]interface{}) *meta {
+	m.customFields = values
+	return m
+}
+
+// WithCustomFieldKV sets a specific custom field key-value pair for the `meta` instance.
+//
+// This function adds or updates a custom field in the `customFields` map of the `meta` instance.
+// If the `customFields` map is empty, it is initialized first.
+//
+// Parameters:
+//   - `key`: A string representing the custom field key.
+//   - `value`: An interface{} representing the value to associate with the custom field key.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithCustomFieldKV(key string, value interface{}) *meta {
+	if !m.IsCustomFieldPresent() {
+		m.customFields = make(map[string]interface{})
+	}
+	m.customFields[key] = value
+	return m
+}
+
 // WithStatusCode sets the HTTP status code for the `wrapper` instance.
 //
 // This function updates the `statusCode` field of the `wrapper` and
@@ -364,7 +460,7 @@ func (w *wrapper) WithError(err error) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithDebuggingKV(key string, value interface{}) *wrapper {
 	if !w.IsDebuggingPresent() {
-		w.debug = map[string]interface{}{}
+		w.debug = make(map[string]interface{})
 	}
 	w.debug[key] = value
 	return w
