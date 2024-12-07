@@ -13,11 +13,11 @@ type pagination struct {
 
 // meta represents metadata information about an API response.
 type meta struct {
-	ApiVersion    string                 `json:"api_version,omitempty"`    // API version used for the request.
-	RequestId     string                 `json:"request_id,omitempty"`     // Unique identifier for the request, useful for debugging.
-	Locale        string                 `json:"locale,omitempty"`         // Locale used for the request, e.g., "en-US".
-	RequestedTime time.Time              `json:"requested_time,omitempty"` // Timestamp when the request was made.
-	CustomFields  map[string]interface{} `json:"custom_fields,omitempty"`  // Additional custom metadata fields.
+	apiVersion    string                 // API version used for the request.
+	requestID     string                 // Unique identifier for the request, useful for debugging.
+	locale        string                 // Locale used for the request, e.g., "en-US".
+	requestedTime time.Time              // Timestamp when the request was made.
+	customFields  map[string]interface{} // Additional custom metadata fields.
 }
 
 // header represents a structured header for API responses.

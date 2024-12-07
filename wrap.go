@@ -1,6 +1,10 @@
 package wrapify
 
-import "github.com/sivaosorg/unify4g"
+import (
+	"time"
+
+	"github.com/sivaosorg/unify4g"
+)
 
 // Available checks whether the `wrapper` instance is non-nil.
 //
@@ -96,9 +100,28 @@ func (w *wrapper) Body() interface{} {
 //   - An empty map if the `wrapper` instance is not available.
 func (w *wrapper) Debugging() map[string]interface{} {
 	if !w.Available() {
-		return map[string]interface{}{}
+		return nil
 	}
 	return w.debug
+}
+
+// OnKeyDebugging retrieves the value of a specific debugging key from the `wrapper` instance.
+//
+// This function checks if the `wrapper` is available (non-nil) and if the specified debugging key
+// is present in the `debug` map. If both conditions are met, it returns the value associated with
+// the specified key. Otherwise, it returns `nil` to indicate the key is not available.
+//
+// Parameters:
+//   - `key`: A string representing the debugging key to retrieve.
+//
+// Returns:
+//   - The value associated with the specified debugging key if it exists.
+//   - `nil` if the `wrapper` is unavailable or the key is not present in the `debug` map.
+func (w *wrapper) OnKeyDebugging(key string) interface{} {
+	if !w.Available() || !w.IsDebuggingKeyPresent(key) {
+		return nil
+	}
+	return w.debug[key]
 }
 
 // IsDebuggingPresent checks whether debugging information is present in the `wrapper` instance.
@@ -383,4 +406,76 @@ func (p *pagination) IsLast() bool {
 		return true
 	}
 	return p.isLast
+}
+
+// Available checks whether the `meta` instance is available (non-nil).
+//
+// This function ensures that the `meta` instance is valid and not nil
+// to safely access its fields and methods.
+//
+// Returns:
+//   - `true` if the `meta` instance is not nil.
+//   - `false` if the `meta` instance is nil.
+func (m *meta) Available() bool {
+	return m != nil
+}
+
+// IsApiVersionPresent checks whether the API version is present in the `meta` instance.
+//
+// This function verifies that the `meta` instance is available and that
+// the `apiVersion` field contains a non-empty value.
+//
+// Returns:
+//   - `true` if `apiVersion` is non-empty.
+//   - `false` if `meta` is unavailable or `apiVersion` is empty.
+func (m *meta) IsApiVersionPresent() bool {
+	return m.Available() && unify4g.IsNotEmpty(m.apiVersion)
+}
+
+// IsRequestIDPresent checks whether the request ID is present in the `meta` instance.
+//
+// This function verifies that the `meta` instance is available and that
+// the `requestID` field contains a non-empty value.
+//
+// Returns:
+//   - `true` if `requestID` is non-empty.
+//   - `false` if `meta` is unavailable or `requestID` is empty.
+func (m *meta) IsRequestIDPresent() bool {
+	return m.Available() && unify4g.IsNotEmpty(m.requestID)
+}
+
+// IsLocalePresent checks whether the locale information is present in the `meta` instance.
+//
+// This function verifies that the `meta` instance is available and that
+// the `locale` field contains a non-empty value.
+//
+// Returns:
+//   - `true` if `locale` is non-empty.
+//   - `false` if `meta` is unavailable or `locale` is empty.
+func (m *meta) IsLocalePresent() bool {
+	return m.Available() && unify4g.IsNotEmpty(m.locale)
+}
+
+// IsRequestedTimePresent checks whether the requested time is present in the `meta` instance.
+//
+// This function verifies that the `meta` instance is available and that
+// the `requestedTime` field is not the zero value of `time.Time`.
+//
+// Returns:
+//   - `true` if `requestedTime` is not the zero value of `time.Time`.
+//   - `false` if `meta` is unavailable or `requestedTime` is uninitialized.
+func (m *meta) IsRequestedTimePresent() bool {
+	return m.Available() && m.requestedTime != time.Time{}
+}
+
+// IsCustomFieldPresent checks whether custom fields are present in the `meta` instance.
+//
+// This function verifies that the `meta` instance is available and that
+// the `customFields` field is non-nil and contains at least one entry.
+//
+// Returns:
+//   - `true` if `customFields` is non-nil and has a non-zero length.
+//   - `false` if `meta` is unavailable, `customFields` is nil, or it is empty.
+func (m *meta) IsCustomFieldPresent() bool {
+	return m.Available() && m.customFields != nil && len(m.customFields) > 0
 }

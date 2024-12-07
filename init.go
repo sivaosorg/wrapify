@@ -24,7 +24,7 @@ func NewPagination() *pagination {
 //   - A pointer to a newly created `meta` instance with initialized fields.
 func NewMeta() *meta {
 	m := &meta{
-		CustomFields: map[string]interface{}{},
+		customFields: map[string]interface{}{},
 	}
 	return m
 }
@@ -377,7 +377,7 @@ func (w *wrapper) Respond() map[string]interface{} {
 		m["headers"] = w.header
 	}
 	if w.IsMetaPresent() {
-		m["meta"] = w.meta
+		m["meta"] = w.meta.Respond()
 	}
 	if w.IsPagingPresent() {
 		m["pagination"] = w.pagination.Respond()
@@ -417,7 +417,7 @@ func (w *wrapper) Respond() map[string]interface{} {
 //   - A `map[string]interface{}` containing the structured pagination data.
 func (p *pagination) Respond() map[string]interface{} {
 	m := make(map[string]interface{})
-	if p == nil {
+	if !p.Available() {
 		return m
 	}
 	m["page"] = p.page
@@ -426,4 +426,42 @@ func (p *pagination) Respond() map[string]interface{} {
 	m["total_items"] = p.totalItems
 	m["is_last"] = p.isLast
 	return m
+}
+
+// Respond generates a map representation of the `meta` instance.
+//
+// This method collects various fields of the `meta` instance (e.g., `apiVersion`, `requestID`, etc.)
+// and organizes them into a key-value map. Only fields that are available and valid
+// (e.g., non-empty or initialized) are included in the resulting map.
+//
+// Fields included in the response:
+//   - `api_version`: The API version, if present.
+//   - `request_id`: The unique request identifier, if present.
+//   - `locale`: The locale information, if present.
+//   - `requested_time`: The requested time, if it is initialized.
+//   - `custom_fields`: A map of custom fields, if present.
+//
+// Returns:
+//   - A `map[string]interface{}` containing the structured metadata.
+func (m *meta) Respond() map[string]interface{} {
+	mk := make(map[string]interface{})
+	if !m.Available() {
+		return mk
+	}
+	if m.IsApiVersionPresent() {
+		mk["api_version"] = m.apiVersion
+	}
+	if m.IsRequestIDPresent() {
+		mk["request_id"] = m.requestID
+	}
+	if m.IsLocalePresent() {
+		mk["locale"] = m.locale
+	}
+	if m.IsRequestedTimePresent() {
+		mk["requested_time"] = m.requestedTime
+	}
+	if m.IsCustomFieldPresent() {
+		mk["custom_fields"] = m.customFields
+	}
+	return mk
 }
