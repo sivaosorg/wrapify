@@ -2,8 +2,8 @@ package wrapify
 
 import "time"
 
-// Pagination represents pagination details for paginated API responses.
-type Pagination struct {
+// pagination represents pagination details for paginated API responses.
+type pagination struct {
 	Page       int  `json:"page,omitempty"`        // Current page number.
 	PerPage    int  `json:"per_page,omitempty"`    // Number of items per page.
 	TotalPages int  `json:"total_pages,omitempty"` // Total number of pages.
@@ -11,8 +11,8 @@ type Pagination struct {
 	IsLast     bool `json:"is_last,omitempty"`     // Indicates whether this is the last page.
 }
 
-// Meta represents metadata information about an API response.
-type Meta struct {
+// meta represents metadata information about an API response.
+type meta struct {
 	ApiVersion    string                 `json:"api_version,omitempty"`    // API version used for the request.
 	RequestId     string                 `json:"request_id,omitempty"`     // Unique identifier for the request, useful for debugging.
 	Locale        string                 `json:"locale,omitempty"`         // Locale used for the request, e.g., "en-US".
@@ -20,24 +20,24 @@ type Meta struct {
 	CustomFields  map[string]interface{} `json:"custom_fields,omitempty"`  // Additional custom metadata fields.
 }
 
-// Header represents a structured header for API responses.
-type Header struct {
+// header represents a structured header for API responses.
+type header struct {
 	Code        int    `json:"code,omitempty"`        // Application-specific status code.
 	Text        string `json:"text,omitempty"`        // Human-readable status text.
 	Type        string `json:"type,omitempty"`        // Type or category of the status, e.g., "info", "error".
 	Description string `json:"description,omitempty"` // Detailed description of the status.
 }
 
-// Wrapper is the main structure for wrapping API responses, including metadata, data, and debugging information.
-type Wrapper struct {
+// wrapper is the main structure for wrapping API responses, including metadata, data, and debugging information.
+type wrapper struct {
 	StatusCode int                     `json:"status_code" binding:"required"` // HTTP status code for the response.
 	Total      int                     `json:"total"`                          // Total number of items (used in non-paginated responses).
 	Message    string                  `json:"message"`                        // A message providing additional context about the response.
 	Data       interface{}             `json:"data,omitempty"`                 // The primary data payload of the response.
 	Path       string                  `json:"path,omitempty"`                 // Request path for which the response is generated.
-	Header     *Header                 `json:"headers,omitempty"`              // Structured header details for the response.
-	Meta       *Meta                   `json:"meta,omitempty"`                 // Metadata about the API response.
-	Pagination *Pagination             `json:"pagination,omitempty"`           // Pagination details, if applicable.
+	Header     *header                 `json:"headers,omitempty"`              // Structured header details for the response.
+	Meta       *meta                   `json:"meta,omitempty"`                 // Metadata about the API response.
+	Pagination *pagination             `json:"pagination,omitempty"`           // Pagination details, if applicable.
 	Debug      *map[string]interface{} `json:"debug,omitempty"`                // Debugging information (useful for development).
 	Errors     error                   `json:"-"`                              // Internal errors (not exposed in JSON responses).
 }
