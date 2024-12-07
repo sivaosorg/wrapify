@@ -466,6 +466,117 @@ func (w *wrapper) WithDebuggingKV(key string, value interface{}) *wrapper {
 	return w
 }
 
+// WithApiVersion sets the API version in the `meta` field of the `wrapper` instance.
+//
+// This function checks if the `meta` information is present in the `wrapper`. If it is not,
+// a new `meta` instance is created. Then, it calls the `WithApiVersion` method on the `meta`
+// instance to set the API version.
+//
+// Parameters:
+//   - `v`: A string representing the API version to set.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) WithApiVersion(v string) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithApiVersion(v)
+	return w
+}
+
+// WithRequestID sets the request ID in the `meta` field of the `wrapper` instance.
+//
+// This function ensures that if `meta` information is not already set in the `wrapper`, a new
+// `meta` instance is created. Then, it calls the `WithRequestID` method on the `meta` instance
+// to set the request ID.
+//
+// Parameters:
+//   - `v`: A string representing the request ID to set.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) WithRequestID(v string) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithRequestID(v)
+	return w
+}
+
+// WithLocale sets the locale in the `meta` field of the `wrapper` instance.
+//
+// This function ensures the `meta` field is present, creating a new instance if needed, and
+// sets the locale in the `meta` using the `WithLocale` method.
+//
+// Parameters:
+//   - `v`: A string representing the locale to set.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) WithLocale(v string) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithLocale(v)
+	return w
+}
+
+// WithRequestedTime sets the requested time in the `meta` field of the `wrapper` instance.
+//
+// This function ensures that the `meta` field exists, and if not, creates a new one. It then
+// sets the requested time in the `meta` using the `WithRequestedTime` method.
+//
+// Parameters:
+//   - `v`: A `time.Time` value representing the requested time.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) WithRequestedTime(v time.Time) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithRequestedTime(v)
+	return w
+}
+
+// WithCustomFields sets the custom fields in the `meta` field of the `wrapper` instance.
+//
+// This function checks if the `meta` field is present. If not, it creates a new `meta` instance
+// and sets the provided custom fields using the `WithCustomFields` method.
+//
+// Parameters:
+//   - `values`: A map representing the custom fields to set in the `meta`.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) WithCustomFields(values map[string]interface{}) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithCustomFields(values)
+	return w
+}
+
+// WithCustomFieldKV sets a specific custom field key-value pair in the `meta` field of the `wrapper` instance.
+//
+// This function ensures that if the `meta` field is not already set, a new `meta` instance is created.
+// It then adds the provided key-value pair to the custom fields of `meta` using the `WithCustomFieldKV` method.
+//
+// Parameters:
+//   - `key`: A string representing the custom field key to set.
+//   - `value`: The value associated with the custom field key.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) WithCustomFieldKV(key string, value interface{}) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithCustomFieldKV(key, value)
+	return w
+}
+
 // Respond generates a map representation of the `wrapper` instance.
 //
 // This method collects various fields of the `wrapper` (e.g., `data`, `header`, `meta`, etc.)
