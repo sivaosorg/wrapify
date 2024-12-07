@@ -30,14 +30,14 @@ type header struct {
 
 // wrapper is the main structure for wrapping API responses, including metadata, data, and debugging information.
 type wrapper struct {
-	StatusCode int                     `json:"status_code" binding:"required"` // HTTP status code for the response.
-	Total      int                     `json:"total"`                          // Total number of items (used in non-paginated responses).
-	Message    string                  `json:"message"`                        // A message providing additional context about the response.
-	Data       interface{}             `json:"data,omitempty"`                 // The primary data payload of the response.
-	Path       string                  `json:"path,omitempty"`                 // Request path for which the response is generated.
-	Header     *header                 `json:"headers,omitempty"`              // Structured header details for the response.
-	Meta       *meta                   `json:"meta,omitempty"`                 // Metadata about the API response.
-	Pagination *pagination             `json:"pagination,omitempty"`           // Pagination details, if applicable.
-	Debug      *map[string]interface{} `json:"debug,omitempty"`                // Debugging information (useful for development).
-	Errors     error                   `json:"-"`                              // Internal errors (not exposed in JSON responses).
+	statusCode int                    // HTTP status code for the response.
+	total      int                    // Total number of items (used in non-paginated responses).
+	message    string                 // A message providing additional context about the response.
+	data       interface{}            // The primary data payload of the response.
+	path       string                 // Request path for which the response is generated.
+	header     *header                // Structured header details for the response.
+	meta       *meta                  // Metadata about the API response.
+	pagination *pagination            // Pagination details, if applicable.
+	debug      map[string]interface{} // Debugging information (useful for development).
+	errors     error                  // Internal errors (not exposed in JSON responses).
 }
