@@ -124,6 +124,19 @@ func (w *wrapper) OnKeyDebugging(key string) interface{} {
 	return w.debug[key]
 }
 
+// Pagination retrieves the `pagination` instance associated with the `wrapper`.
+//
+// This function returns the `pagination` field of the `wrapper`, allowing access to
+// pagination details such as the current page, total pages, and total items. If no
+// pagination information is available, it returns `nil`.
+//
+// Returns:
+//   - A pointer to the `pagination` instance if available.
+//   - `nil` if the `pagination` field is not set.
+func (w *wrapper) Pagination() *pagination {
+	return w.pagination
+}
+
 // IsDebuggingPresent checks whether debugging information is present in the `wrapper` instance.
 //
 // This function verifies if the `debug` field of the `wrapper` is not nil and contains at least one entry.
@@ -162,7 +175,7 @@ func (w *wrapper) IsDebuggingKeyPresent(key string) bool {
 //   - `true` if `data` is not nil.
 //   - `false` if `data` is nil.
 func (w *wrapper) IsBodyPresent() bool {
-	return w.data != nil
+	return w.Available() && w.data != nil
 }
 
 // IsHeaderPresent checks whether header information is present in the `wrapper` instance.
@@ -174,7 +187,7 @@ func (w *wrapper) IsBodyPresent() bool {
 //   - `true` if `header` is not nil.
 //   - `false` if `header` is nil.
 func (w *wrapper) IsHeaderPresent() bool {
-	return w.header != nil
+	return w.Available() && w.header != nil
 }
 
 // IsMetaPresent checks whether metadata information is present in the `wrapper` instance.
@@ -186,7 +199,7 @@ func (w *wrapper) IsHeaderPresent() bool {
 //   - `true` if `meta` is not nil.
 //   - `false` if `meta` is nil.
 func (w *wrapper) IsMetaPresent() bool {
-	return w.meta != nil
+	return w.Available() && w.meta != nil
 }
 
 // IsPagingPresent checks whether pagination information is present in the `wrapper` instance.
@@ -198,7 +211,7 @@ func (w *wrapper) IsMetaPresent() bool {
 //   - `true` if `pagination` is not nil.
 //   - `false` if `pagination` is nil.
 func (w *wrapper) IsPagingPresent() bool {
-	return w.pagination != nil
+	return w.Available() && w.pagination != nil
 }
 
 // IsErrorPresent checks whether an error is present in the `wrapper` instance.
@@ -210,7 +223,7 @@ func (w *wrapper) IsPagingPresent() bool {
 //   - `true` if `errors` is not nil.
 //   - `false` if `errors` is nil.
 func (w *wrapper) IsErrorPresent() bool {
-	return w.errors != nil
+	return w.Available() && w.errors != nil
 }
 
 // IsTotalPresent checks whether the total number of items is present in the `wrapper` instance.
@@ -223,7 +236,7 @@ func (w *wrapper) IsErrorPresent() bool {
 //   - `true` if `total` is greater than or equal to 0.
 //   - `false` if `total` is negative (indicating no total value).
 func (w *wrapper) IsTotalPresent() bool {
-	return w.total >= 0
+	return w.Available() && w.total >= 0
 }
 
 // IsStatusCodePresent checks whether a valid status code is present in the `wrapper` instance.
@@ -236,7 +249,7 @@ func (w *wrapper) IsTotalPresent() bool {
 //   - `true` if `statusCode` is greater than 0.
 //   - `false` if `statusCode` is less than or equal to 0.
 func (w *wrapper) IsStatusCodePresent() bool {
-	return w.statusCode > 0
+	return w.Available() && w.statusCode > 0
 }
 
 // IsError checks whether there is an error present in the `wrapper` instance.
@@ -262,7 +275,7 @@ func (w *wrapper) IsError() bool {
 //   - `true` if the status code is between 200 and 299 (inclusive).
 //   - `false` if the status code is outside of this range.
 func (w *wrapper) IsSuccess() bool {
-	return (200 <= w.statusCode) && (w.statusCode <= 299)
+	return w.Available() && (200 <= w.statusCode) && (w.statusCode <= 299)
 }
 
 // IsRedirection checks whether the HTTP status code indicates a redirection response.
@@ -274,7 +287,7 @@ func (w *wrapper) IsSuccess() bool {
 //   - `true` if the status code is between 300 and 399 (inclusive).
 //   - `false` if the status code is outside of this range.
 func (w *wrapper) IsRedirection() bool {
-	return (300 <= w.statusCode) && (w.statusCode <= 399)
+	return w.Available() && (300 <= w.statusCode) && (w.statusCode <= 399)
 }
 
 // IsClientError checks whether the HTTP status code indicates a client error.
@@ -286,7 +299,7 @@ func (w *wrapper) IsRedirection() bool {
 //   - `true` if the status code is between 400 and 499 (inclusive).
 //   - `false` if the status code is outside of this range.
 func (w *wrapper) IsClientError() bool {
-	return (400 <= w.statusCode) && (w.statusCode <= 499)
+	return w.Available() && (400 <= w.statusCode) && (w.statusCode <= 499)
 }
 
 // IsServerError checks whether the HTTP status code indicates a server error.
@@ -298,7 +311,7 @@ func (w *wrapper) IsClientError() bool {
 //   - `true` if the status code is between 500 and 599 (inclusive).
 //   - `false` if the status code is outside of this range.
 func (w *wrapper) IsServerError() bool {
-	return (500 <= w.statusCode) && (w.statusCode <= 599)
+	return w.Available() && (500 <= w.statusCode) && (w.statusCode <= 599)
 }
 
 // IsLastPage checks whether the current page is the last page of results.
@@ -312,7 +325,7 @@ func (w *wrapper) IsServerError() bool {
 //   - `true` if pagination is present and the current page is the last one.
 //   - `false` if pagination is not present or the current page is not the last.
 func (w *wrapper) IsLastPage() bool {
-	return w.IsPagingPresent() && w.pagination.IsLast()
+	return w.Available() && w.IsPagingPresent() && w.pagination.IsLast()
 }
 
 // Available checks whether the `pagination` instance is non-nil.
