@@ -367,7 +367,7 @@ func (w *wrapper) WithDebuggingKV(key string, value interface{}) *wrapper {
 //   - A `map[string]interface{}` containing the structured response data.
 func (w *wrapper) Respond() map[string]interface{} {
 	m := make(map[string]interface{})
-	if w == nil {
+	if !w.Available() {
 		return m
 	}
 	if w.IsBodyPresent() {
@@ -426,6 +426,32 @@ func (p *pagination) Respond() map[string]interface{} {
 	m["total_items"] = p.totalItems
 	m["is_last"] = p.isLast
 	return m
+}
+
+// Available checks whether the `wrapper` instance is non-nil.
+//
+// This function ensures that the `wrapper` object exists and is not nil.
+// It serves as a safety check to avoid null pointer dereferences when accessing the instance's fields or methods.
+//
+// Returns:
+//   - A boolean value indicating whether the `wrapper` instance is non-nil:
+//   - `true` if the `wrapper` instance is non-nil.
+//   - `false` if the `wrapper` instance is nil.
+func (w *wrapper) Available() bool {
+	return w != nil
+}
+
+// Available checks whether the `pagination` instance is non-nil.
+//
+// This function ensures that the `pagination` object exists and is not nil.
+// It serves as a safety check to avoid null pointer dereferences when accessing the instance's fields or methods.
+//
+// Returns:
+//   - A boolean value indicating whether the `pagination` instance is non-nil:
+//   - `true` if the `pagination` instance is non-nil.
+//   - `false` if the `pagination` instance is nil.
+func (p *pagination) Available() bool {
+	return p != nil
 }
 
 // IsDebuggingPresent checks whether debugging information is present in the `wrapper` instance.
@@ -615,6 +641,9 @@ func (w *wrapper) IsServerError() bool {
 //   - `true` if `isLast` is `true`, indicating this is the last page of results.
 //   - `false` if `isLast` is `false`, indicating more pages are available.
 func (p *pagination) IsLast() bool {
+	if !p.Available() {
+		return true
+	}
 	return p.isLast
 }
 
