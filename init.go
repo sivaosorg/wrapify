@@ -76,17 +76,6 @@ func (w *wrapper) JsonPretty() string {
 	return unify4g.JsonPrettyN(w.Respond())
 }
 
-// Error retrieves the error associated with the `wrapper` instance.
-//
-// This function returns the `errors` field of the `wrapper`, which contains
-// any errors encountered during the operation of the `wrapper`.
-//
-// Returns:
-//   - An error object, or `nil` if no errors are present.
-func (w *wrapper) Error() error {
-	return w.errors
-}
-
 // WithStatusCode sets the HTTP status code for the `wrapper` instance.
 //
 // This function updates the `statusCode` field of the `wrapper` and
@@ -278,6 +267,9 @@ func (w *wrapper) WithDebuggingKV(key string, value interface{}) *wrapper {
 //   - A `map[string]interface{}` containing the structured response data.
 func (w *wrapper) Respond() map[string]interface{} {
 	m := make(map[string]interface{})
+	if w == nil {
+		return m
+	}
 	if w.IsBodyPresent() {
 		m["data"] = w.data
 	}
@@ -293,10 +285,10 @@ func (w *wrapper) Respond() map[string]interface{} {
 	if w.IsDebuggingPresent() {
 		m["debug"] = w.debug
 	}
-	if w.total >= 0 {
+	if w.IsTotalPresent() {
 		m["total"] = w.total
 	}
-	if w.statusCode > 0 {
+	if w.IsStatusCodePresent() {
 		m["status_code"] = w.statusCode
 	}
 	if unify4g.IsNotEmpty(w.message) {
@@ -395,6 +387,32 @@ func (w *wrapper) IsPagingPresent() bool {
 //   - `false` if `errors` is nil.
 func (w *wrapper) IsErrorPresent() bool {
 	return w.errors != nil
+}
+
+// IsTotalPresent checks whether the total number of items is present in the `wrapper` instance.
+//
+// This function checks if the `total` field of the `wrapper` is greater than or equal to 0,
+// indicating that a valid total number of items has been set.
+//
+// Returns:
+//   - A boolean value indicating whether the total is present:
+//   - `true` if `total` is greater than or equal to 0.
+//   - `false` if `total` is negative (indicating no total value).
+func (w *wrapper) IsTotalPresent() bool {
+	return w.total >= 0
+}
+
+// IsStatusCodePresent checks whether a valid status code is present in the `wrapper` instance.
+//
+// This function checks if the `statusCode` field of the `wrapper` is greater than 0,
+// indicating that a valid HTTP status code has been set.
+//
+// Returns:
+//   - A boolean value indicating whether the status code is present:
+//   - `true` if `statusCode` is greater than 0.
+//   - `false` if `statusCode` is less than or equal to 0.
+func (w *wrapper) IsStatusCodePresent() bool {
+	return w.statusCode > 0
 }
 
 // IsError checks whether there is an error present in the `wrapper` instance.
