@@ -662,6 +662,101 @@ func (w *wrapper) WithCustomFieldKV(key string, value interface{}) *wrapper {
 	return w
 }
 
+// WithPage sets the current page number in the wrapper's pagination.
+//
+// If the pagination object is not already initialized, it creates a new one
+// using the `NewPagination` function. The specified page number is then
+// applied to the pagination instance.
+//
+// Parameters:
+//   - v: The page number to set.
+//
+// Returns:
+//   - A pointer to the updated `wrapper` instance.
+func (w *wrapper) WithPage(v int) *wrapper {
+	if !w.IsPagingPresent() {
+		w.pagination = NewPagination()
+	}
+	w.pagination.WithPage(v)
+	return w
+}
+
+// WithPerPage sets the number of items per page in the wrapper's pagination.
+//
+// If the pagination object is not already initialized, it creates a new one
+// using the `NewPagination` function. The specified items-per-page value
+// is then applied to the pagination instance.
+//
+// Parameters:
+//   - v: The number of items per page to set.
+//
+// Returns:
+//   - A pointer to the updated `wrapper` instance.
+func (w *wrapper) WithPerPage(v int) *wrapper {
+	if !w.IsPagingPresent() {
+		w.pagination = NewPagination()
+	}
+	w.pagination.WithPerPage(v)
+	return w
+}
+
+// WithTotalPages sets the total number of pages in the wrapper's pagination.
+//
+// If the pagination object is not already initialized, it creates a new one
+// using the `NewPagination` function. The specified total pages value
+// is then applied to the pagination instance.
+//
+// Parameters:
+//   - v: The total number of pages to set.
+//
+// Returns:
+//   - A pointer to the updated `wrapper` instance.
+func (w *wrapper) WithTotalPages(v int) *wrapper {
+	if !w.IsPagingPresent() {
+		w.pagination = NewPagination()
+	}
+	w.pagination.WithTotalPages(v)
+	return w
+}
+
+// WithTotalItems sets the total number of items in the wrapper's pagination.
+//
+// If the pagination object is not already initialized, it creates a new one
+// using the `NewPagination` function. The specified total items value
+// is then applied to the pagination instance.
+//
+// Parameters:
+//   - v: The total number of items to set.
+//
+// Returns:
+//   - A pointer to the updated `wrapper` instance.
+func (w *wrapper) WithTotalItems(v int) *wrapper {
+	if !w.IsPagingPresent() {
+		w.pagination = NewPagination()
+	}
+	w.pagination.WithTotalItems(v)
+	return w
+}
+
+// WithIsLast sets whether the current page is the last one in the wrapper's pagination.
+//
+// If the pagination object is not already initialized, it creates a new one
+// using the `NewPagination` function. The specified boolean value is then
+// applied to indicate whether the current page is the last.
+//
+// Parameters:
+//   - v: A boolean indicating whether the current page is the last.
+//
+// Returns:
+//   - A pointer to the updated `wrapper` instance.
+func (w *wrapper) WithIsLast(v bool) *wrapper {
+	if !w.IsPagingPresent() {
+		w.pagination = NewPagination()
+	}
+	w.pagination.WithIsLast(v)
+	return w
+}
+
 // Respond generates a map representation of the `wrapper` instance.
 //
 // This method collects various fields of the `wrapper` (e.g., `data`, `header`, `meta`, etc.)
