@@ -584,6 +584,21 @@ func (m *meta) RequestID() string {
 	return m.requestID
 }
 
+// Locale retrieves the locale from the `meta` instance.
+//
+// This function checks if the `meta` instance is available (non-nil) before retrieving
+// the `locale`. If the `meta` instance is unavailable, it returns an empty string.
+//
+// Returns:
+//   - The locale as a string if available.
+//   - An empty string if the `meta` instance is unavailable.
+func (m *meta) Locale() string {
+	if !m.Available() {
+		return ""
+	}
+	return m.locale
+}
+
 // RequestedTime retrieves the requested time from the `meta` instance.
 //
 // This function checks if the `meta` instance is available (non-nil) before retrieving
