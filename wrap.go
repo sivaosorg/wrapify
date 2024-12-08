@@ -1,6 +1,7 @@
 package wrapify
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/sivaosorg/unify4g"
@@ -732,4 +733,175 @@ func (h *header) Description() string {
 		return ""
 	}
 	return h.description
+}
+
+// Ok creates a wrapper for a successful HTTP response (200 OK).
+//
+// This function sets the HTTP status code to 200 (OK) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func Ok(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusOK).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// Created creates a wrapper for a resource creation response (201 Created).
+//
+// This function sets the HTTP status code to 201 (Created) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func Created(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusCreated).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// BadRequest creates a wrapper for a client error response (400 Bad Request).
+//
+// This function sets the HTTP status code to 400 (Bad Request) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func BadRequest(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusBadRequest).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// NotFound creates a wrapper for a resource not found response (404 Not Found).
+//
+// This function sets the HTTP status code to 404 (Not Found) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func NotFound(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusNotFound).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// NotImplemented creates a wrapper for a response indicating unimplemented functionality (501 Not Implemented).
+//
+// This function sets the HTTP status code to 501 (Not Implemented) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func NotImplemented(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusNotImplemented).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// TooManyRequest creates a wrapper for a rate-limiting response (429 Too Many Requests).
+//
+// This function sets the HTTP status code to 429 (Too Many Requests) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func TooManyRequest(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusTooManyRequests).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// Locked creates a wrapper for a locked resource response (423 Locked).
+//
+// This function sets the HTTP status code to 423 (Locked) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func Locked(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusLocked).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// NoContent creates a wrapper for a successful response without a body (204 No Content).
+//
+// This function sets the HTTP status code to 204 (No Content) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func NoContent(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusNoContent).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// Processing creates a wrapper for a response indicating ongoing processing (102 Processing).
+//
+// This function sets the HTTP status code to 102 (Processing) and includes a message and data payload
+// in the response body.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func Processing(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusProcessing).
+		WithMessage(message).
+		WithBody(data)
+	return w
 }
