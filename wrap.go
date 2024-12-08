@@ -905,3 +905,253 @@ func Processing(message string, data interface{}) *wrapper {
 		WithBody(data)
 	return w
 }
+
+// UpgradeRequired creates a wrapper for a response indicating an upgrade is required (426 Upgrade Required).
+//
+// This function sets the HTTP status code to 426 (Upgrade Required) and includes a message and data payload
+// in the response body. It is typically used when the client must switch to a different protocol.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func UpgradeRequired(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusUpgradeRequired).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// ServiceUnavailable creates a wrapper for a response indicating the service is temporarily unavailable (503 Service Unavailable).
+//
+// This function sets the HTTP status code to 503 (Service Unavailable) and includes a message and data payload
+// in the response body. It is typically used when the server is unable to handle the request due to temporary overload
+// or maintenance.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func ServiceUnavailable(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusServiceUnavailable).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// InternalServerError creates a wrapper for a server error response (500 Internal Server Error).
+//
+// This function sets the HTTP status code to 500 (Internal Server Error) and includes a message and data payload
+// in the response body. It is typically used when the server encounters an unexpected condition that prevents it
+// from fulfilling the request.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func InternalServerError(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusInternalServerError).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// GatewayTimeout creates a wrapper for a response indicating a gateway timeout (504 Gateway Timeout).
+//
+// This function sets the HTTP status code to 504 (Gateway Timeout) and includes a message and data payload
+// in the response body. It is typically used when the server did not receive a timely response from an upstream server.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func GatewayTimeout(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusGatewayTimeout).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// MethodNotAllowed creates a wrapper for a response indicating the HTTP method is not allowed (405 Method Not Allowed).
+//
+// This function sets the HTTP status code to 405 (Method Not Allowed) and includes a message and data payload
+// in the response body. It is typically used when the server knows the method is not supported for the target resource.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func MethodNotAllowed(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusMethodNotAllowed).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// Unauthorized creates a wrapper for a response indicating authentication is required (401 Unauthorized).
+//
+// This function sets the HTTP status code to 401 (Unauthorized) and includes a message and data payload
+// in the response body. It is typically used when the request has not been applied because it lacks valid
+// authentication credentials.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func Unauthorized(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusUnauthorized).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// Forbidden creates a wrapper for a response indicating access to the resource is forbidden (403 Forbidden).
+//
+// This function sets the HTTP status code to 403 (Forbidden) and includes a message and data payload
+// in the response body. It is typically used when the server understands the request but refuses to authorize it.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func Forbidden(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusForbidden).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// Accepted creates a wrapper for a response indicating the request has been accepted for processing (202 Accepted).
+//
+// This function sets the HTTP status code to 202 (Accepted) and includes a message and data payload
+// in the response body. It is typically used when the request has been received but processing is not yet complete.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func Accepted(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusAccepted).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// RequestTimeout creates a wrapper for a response indicating the client request has timed out (408 Request Timeout).
+//
+// This function sets the HTTP status code to 408 (Request Timeout) and includes a message and data payload
+// in the response body. It is typically used when the server did not receive a complete request message within the time it was prepared to wait.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func RequestTimeout(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusRequestTimeout).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// RequestEntityTooLarge creates a wrapper for a response indicating the request entity is too large (413 Payload Too Large).
+//
+// This function sets the HTTP status code to 413 (Payload Too Large) and includes a message and data payload
+// in the response body. It is typically used when the server refuses to process a request because the request entity is larger than the server is willing or able to process.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func RequestEntityTooLarge(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusRequestEntityTooLarge).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// UnsupportedMediaType creates a wrapper for a response indicating the media type is not supported (415 Unsupported Media Type).
+//
+// This function sets the HTTP status code to 415 (Unsupported Media Type) and includes a message and data payload
+// in the response body. It is typically used when the server refuses to accept the request because the payload is in an unsupported format.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func UnsupportedMediaType(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusUnsupportedMediaType).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// HTTPVersionNotSupported creates a wrapper for a response indicating the HTTP version is not supported (505 HTTP Version Not Supported).
+//
+// This function sets the HTTP status code to 505 (HTTP Version Not Supported) and includes a message and data payload
+// in the response body. It is typically used when the server does not support the HTTP protocol version used in the request.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func HTTPVersionNotSupported(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusHTTPVersionNotSupported).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// PaymentRequired creates a wrapper for a response indicating payment is required (402 Payment Required).
+//
+// This function sets the HTTP status code to 402 (Payment Required) and includes a message and data payload
+// in the response body. It is typically used when access to the requested resource requires payment.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func PaymentRequired(message string, data interface{}) *wrapper {
+	w := NewWrap().
+		WithStatusCode(http.StatusPaymentRequired).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
