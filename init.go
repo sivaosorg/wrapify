@@ -50,7 +50,12 @@ func NewHeader() *header {
 // Returns:
 //   - A pointer to a newly created `wrapper` instance with initialized fields.
 func NewWrap() *wrapper {
-	w := &wrapper{}
+	w := &wrapper{
+		meta: NewMeta().
+			WithApiVersion("v0.0.1").
+			WithLocale("en_US"). // vi_VN, en_US
+			WithRequestID(unify4g.GenerateCryptoID()),
+	}
 	return w
 }
 
