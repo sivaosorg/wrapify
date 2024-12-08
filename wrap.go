@@ -34,14 +34,14 @@ func (w *wrapper) Error() string {
 	return w.errors.Error()
 }
 
-// StateCode retrieves the HTTP status code associated with the `wrapper` instance.
+// StatusCode retrieves the HTTP status code associated with the `wrapper` instance.
 //
 // This function returns the `statusCode` field of the `wrapper`, which represents
 // the HTTP status code for the response, indicating the outcome of the request.
 //
 // Returns:
 //   - An integer representing the HTTP status code.
-func (w *wrapper) StateCode() int {
+func (w *wrapper) StatusCode() int {
 	if !w.Available() {
 		return 0
 	}
