@@ -41,3 +41,20 @@ type wrapper struct {
 	debug      map[string]interface{} // Debugging information (useful for development).
 	errors     error                  // Internal errors (not exposed in JSON responses).
 }
+
+// Frame represents a program counter inside a stack frame.
+// For historical reasons if Frame is interpreted as a uintptr
+// its value represents the program counter + 1.
+type Frame uintptr
+
+// StackTrace is stack of Frames from innermost (newest) to outermost (oldest).
+type StackTrace []Frame
+
+// stack represents a stack of program counters.
+type stack []uintptr
+
+// fundamental is an error that has a message and a stack, but no caller.
+// type fundamental struct {
+// 	msg string
+// 	*stack
+// }

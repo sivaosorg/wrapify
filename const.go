@@ -113,3 +113,7 @@ const (
 	MediaTypeApplicationPPTX         = "application/vnd.openxmlformats-officedocument.presentationml.presentation" // Specifies that the content is a PowerPoint file in PPTX format.
 	MediaTypeApplicationGRPC         = "application/grpc"                                                          // Specifies that the content is in gRPC format (a high-performance RPC framework).
 )
+
+const (
+	UnknownXC string = "unknown"
+)
