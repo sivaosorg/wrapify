@@ -581,6 +581,9 @@ func (m *meta) RequestID() string {
 	if !m.Available() {
 		return ""
 	}
+	if unify4g.IsEmpty(m.requestID) || unify4g.IsBlank(m.requestID) {
+		m.WithRequestID(unify4g.GenerateCryptoID())
+	}
 	return m.requestID
 }
 
