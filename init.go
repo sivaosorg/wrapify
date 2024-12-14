@@ -53,8 +53,9 @@ func NewHeader() *header {
 func NewWrap() *wrapper {
 	w := &wrapper{
 		meta: NewMeta().
-			WithApiVersion("v0.0.1").
 			WithLocale("en_US"). // vi_VN, en_US
+			WithApiVersion("v0.0.1").
+			WithRequestedTime(time.Now()).
 			WithRequestID(unify4g.GenerateCryptoID()),
 	}
 	return w
