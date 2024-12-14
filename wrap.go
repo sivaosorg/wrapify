@@ -31,7 +31,37 @@ func (w *wrapper) Error() string {
 	if !w.Available() {
 		return ""
 	}
-	return w.errors.Error()
+	return w.Cause().Error()
+}
+
+// Cause traverses the error chain and returns the underlying cause of the error
+// associated with the `wrapper` instance.
+//
+// This function checks if the error stored in the `wrapper` is itself another
+// `wrapper` instance. If so, it recursively calls `Cause` on the inner error
+// to find the ultimate cause. Otherwise, it returns the current error.
+//
+// Returns:
+//   - The underlying cause of the error, which can be another error or the original error.
+func (w *wrapper) Cause() error {
+	// Traverse through wrapped errors.
+	// We will use Unwrap() method to unwrap errors instead of checking for *wrapper explicitly.
+	// This way, we can traverse to the innermost cause regardless of error type.
+	cause := w.errors
+	for cause != nil {
+		// If the error has a Cause method, we use it to find the underlying error.
+		if err, ok := cause.(interface{ Cause() error }); ok {
+			cause = err.Cause()
+		} else {
+			// No Cause() method, so return the error itself.
+			break
+		}
+	}
+	return cause
+	// if err, ok := w.errors.(*wrapper); ok {
+	// 	return err.Cause()
+	// }
+	// return w.errors
 }
 
 // StatusCode retrieves the HTTP status code associated with the `wrapper` instance.
