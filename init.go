@@ -327,6 +327,25 @@ func (m *meta) WithCustomFieldKV(key string, value interface{}) *meta {
 	return m
 }
 
+// WithCustomFieldKVf sets a specific custom field key-value pair for the `meta` instance
+// using a formatted value.
+//
+// This function creates a formatted string value using the provided `format` string and
+// `args`. It then calls `WithCustomFieldKV` to add or update the custom field with the
+// specified key and the formatted value. The modified `meta` instance is returned for
+// method chaining.
+//
+// Parameters:
+//   - key: A string representing the key for the custom field.
+//   - format: A format string to construct the value.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithCustomFieldKVf(key string, format string, args ...interface{}) *meta {
+	return m.WithCustomFieldKV(key, fmt.Sprintf(format, args...))
+}
+
 // WithCode sets the `code` field of the `header` instance.
 //
 // This function assigns the provided integer value to the `code` field of the `header`
