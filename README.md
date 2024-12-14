@@ -217,6 +217,59 @@ func (w *wrapper) WithTotalItems(v int) *wrapper
 func (w *wrapper) WithTotalPages(v int) *wrapper
 ```
 
+> Parse JSON string to wrapper-based standardized API response
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"time"
+
+	"github.com/sivaosorg/wrapify"
+)
+
+func main() {
+	jsonStr := `{
+		"data": "response body here",
+		"debug": {
+		  "___abc": "trace sessions_id: 4919e84fc26881e9fe790f5d07465db4",
+		  "refer": 1234
+		},
+		"message": "How do you do? I'm good",
+		"meta": {
+		  "api_version": "v0.0.1",
+		  "custom_fields": {
+			"fields": "userID: 103"
+		  },
+		  "locale": "en_US",
+		  "request_id": "80eafc6a1655ec5a06595d155f1e6951",
+		  "requested_time": "2024-12-14T20:24:23.983839+07:00"
+		},
+		"pagination": {
+		  "is_last": true,
+		  "page": 1000,
+		  "per_page": 2,
+		  "total_items": 120,
+		  "total_pages": 34
+		},
+		"path": "/api/v1/users",
+		"status_code": 200,
+		"total": 1
+	  }`
+	t := time.Now()
+	w, err := wrapify.Parse(jsonStr)
+	diff := time.Since(t)
+	if err != nil {
+		log.Fatalf("Error parsing JSON: %v", err)
+	}
+	fmt.Printf("Exe time: %+v\n", diff.String())
+	fmt.Printf("%+v\n", w.OnKeyDebugging("___abc"))
+	fmt.Printf("%+v\n", w.JsonPretty())
+}
+```
+
 ### Contributing
 
 To contribute to project, follow these steps:
