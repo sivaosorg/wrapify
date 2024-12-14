@@ -1,6 +1,7 @@
 package wrapify
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -76,6 +77,22 @@ func (w *wrapper) StatusCode() int {
 		return 0
 	}
 	return w.statusCode
+}
+
+// StatusText returns a human-readable string representation of the HTTP status.
+//
+// This function combines the status code with its associated status text, which
+// is retrieved using the `http.StatusText` function from the `net/http` package.
+// The returned string follows the format "statusCode (statusText)".
+//
+// For example, if the status code is 200, the function will return "200 (OK)".
+// If the status code is 404, it will return "404 (Not Found)".
+//
+// Returns:
+//   - A string formatted as "statusCode (statusText)", where `statusCode` is the
+//     numeric HTTP status code and `statusText` is the corresponding textual description.
+func (w *wrapper) StatusText() string {
+	return fmt.Sprintf("%d (%s)", w.StatusCode(), http.StatusText(w.StatusCode()))
 }
 
 // Message retrieves the message associated with the `wrapper` instance.
