@@ -679,7 +679,7 @@ func (w *wrapper) WithErrSck(err error) *wrapper {
 // Returns:
 //   - A pointer to the modified `wrapper` instance to support method chaining.
 func (w *wrapper) WithErrWrap(err error, message string) *wrapper {
-	w.errors = Wrap(err, message)
+	w.errors = WithErrWrap(err, message)
 	return w
 }
 
@@ -696,7 +696,7 @@ func (w *wrapper) WithErrWrap(err error, message string) *wrapper {
 // Returns:
 //   - A pointer to the modified `wrapper` instance to support method chaining.
 func (w *wrapper) WithErrWrapf(err error, format string, args ...interface{}) *wrapper {
-	w.errors = Wrapf(err, format, args...)
+	w.errors = WithErrWrapf(err, format, args...)
 	return w
 }
 
