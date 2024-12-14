@@ -33,6 +33,38 @@ import "github.com/sivaosorg/wrapify"
 
 #### Usage
 
+> An example of the wrapper-based standardized API response
+
+```json
+{
+  "data": "response body here", // The primary data payload of the response.
+  "debug": {
+    "___abc": "trace sessions_id: 4919e84fc26881e9fe790f5d07465db4",
+    "refer": 1234
+  }, // Debugging information (useful for development).
+  "message": "How are you? I'm good", // A message providing additional context about the response.
+  "meta": {
+    "api_version": "v0.0.1", // API version used for the request.
+    "custom_fields": {
+      "fields": "userID: 103"
+    }, // Additional custom metadata fields.
+    "locale": "en_US", // Locale used for the request, e.g., "en-US".
+    "request_id": "80eafc6a1655ec5a06595d155f1e6951", // Unique identifier for the request, useful for debugging.
+    "requested_time": "2024-12-14T20:24:23.983839+07:00" // Timestamp when the request was made.
+  }, // Metadata about the API response.
+  "pagination": {
+    "is_last": true, // Indicates whether this is the last page.
+    "page": 1000, // Current page number.
+    "per_page": 2, // Number of items per page.
+    "total_items": 120, // Total number of items available.
+    "total_pages": 34 // Total number of pages.
+  }, // Pagination details, if applicable.
+  "path": "/api/v1/users", // Request path for which the response is generated.
+  "status_code": 200, // HTTP status code for the response.
+  "total": 1 // Total number of items (used in non-paginated responses).
+}
+```
+
 > Structure of the wrapper-based standardized API response
 
 ```go
