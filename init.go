@@ -701,6 +701,23 @@ func (w *wrapper) WithDebuggingKV(key string, value interface{}) *wrapper {
 	return w
 }
 
+// WithDebuggingKVf adds a formatted key-value pair to the debugging information in the `wrapper` instance.
+//
+// This function creates a formatted string value using the provided `format` string and `args`,
+// then delegates to `WithCustomFieldKV` to add the resulting key-value pair to the `debug` map.
+// It returns the modified `wrapper` instance for method chaining.
+//
+// Parameters:
+//   - key: A string representing the key for the debugging information.
+//   - format: A format string for constructing the value.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance, enabling method chaining.
+func (w *wrapper) WithDebuggingKVf(key string, format string, args ...interface{}) *wrapper {
+	return w.WithCustomFieldKV(key, fmt.Sprintf(format, args...))
+}
+
 // WithApiVersion sets the API version in the `meta` field of the `wrapper` instance.
 //
 // This function checks if the `meta` information is present in the `wrapper`. If it is not,
