@@ -270,6 +270,53 @@ func main() {
 }
 ```
 
+> Example of creating a wrapper-based standardized API response
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/sivaosorg/unify4g"
+	"github.com/sivaosorg/wrapify"
+)
+
+func main() {
+	p := wrapify.NewPagination().
+		WithIsLast(true).
+		WithPage(1).
+		WithTotalItems(120).
+		WithPage(1000).
+		WithTotalPages(34).
+		WithPerPage(2)
+	w := wrapify.New().
+		WithStatusCode(200).
+		WithTotal(1).
+		WithMessagef("How are you? %v", "I'm good").
+		WithDebuggingKV("refer", 1234).
+		WithDebuggingKVf("___abc", "trace sessions_id: %v", unify4g.GenerateCryptoID()).
+		WithBody("response body here").
+		WithPath("/api/v1/users").
+		WithCustomFieldKVf("fields", "userID: %v", 103).
+		WithPagination(p)
+	if !w.Available() {
+		return
+	}
+	fmt.Println(w.Json())
+	fmt.Println(w.StatusCode())
+	fmt.Println(w.StatusText())
+	fmt.Println(w.Message())
+	fmt.Println(w.Body())
+	fmt.Println(w.IsSuccess())
+	fmt.Println(w.Respond())
+	fmt.Println(w.Meta().IsCustomFieldPresent())
+	fmt.Println(w.Meta().IsApiVersionPresent())
+	fmt.Println(w.Meta().IsRequestIDPresent())
+	fmt.Println(w.Meta().IsRequestedTimePresent())
+}
+```
+
 ### Contributing
 
 To contribute to project, follow these steps:
