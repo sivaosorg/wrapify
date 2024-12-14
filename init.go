@@ -1097,6 +1097,15 @@ func (w *wrapper) Respond() map[string]interface{} {
 	return m
 }
 
+// R represents a wrapper around the main `wrapper` struct. It is used as a high-level
+// abstraction to provide a simplified interface for handling API responses.
+// The `R` type allows for easier manipulation of the wrapped data, metadata, and other
+// response components, while maintaining the flexibility of the underlying `wrapper` structure.
+//
+// Example usage:
+//
+//	var response wrapify.R = wrapify.NewWrap().Reply()
+//	fmt.Println(response.Json())  // Prints the wrapped response details, including data, headers, and metadata.
 func (w *wrapper) Reply() R {
 	return R{wrapper: w}
 }
