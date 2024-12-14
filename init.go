@@ -248,6 +248,22 @@ func (m *meta) WithApiVersion(v string) *meta {
 	return m
 }
 
+// WithApiVersionf sets the API version for the `meta` instance using a formatted string.
+//
+// This function constructs a formatted string for the API version using the provided `format` string
+// and arguments (`args`). It then assigns the formatted value to the `apiVersion` field of the `meta` instance.
+// The method supports method chaining by returning a pointer to the modified `meta` instance.
+//
+// Parameters:
+//   - format: A format string to construct the API version.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithApiVersionf(format string, args ...interface{}) *meta {
+	return m.WithApiVersion(fmt.Sprintf(format, args...))
+}
+
 // WithRequestID sets the request ID for the `meta` instance.
 //
 // This function updates the `requestID` field of the `meta` instance with the specified value
@@ -261,6 +277,22 @@ func (m *meta) WithApiVersion(v string) *meta {
 func (m *meta) WithRequestID(v string) *meta {
 	m.requestID = v
 	return m
+}
+
+// WithRequestIDf sets the request ID for the `meta` instance using a formatted string.
+//
+// This function constructs a formatted string for the request ID using the provided `format` string
+// and arguments (`args`). It then assigns the formatted value to the `requestID` field of the `meta` instance.
+// The method supports method chaining by returning a pointer to the modified `meta` instance.
+//
+// Parameters:
+//   - format: A format string to construct the request ID.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) WithRequestIDf(format string, args ...interface{}) *meta {
+	return m.WithRequestID(fmt.Sprintf(format, args...))
 }
 
 // WithLocale sets the locale for the `meta` instance.
