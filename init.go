@@ -1209,3 +1209,116 @@ func (h *header) Respond() map[string]interface{} {
 	}
 	return m
 }
+
+// Parse takes a JSON string as input and maps it into a 'wrapper' struct, populating its fields
+// with data extracted from the JSON. The function handles different parts of the response such as
+// status code, message, pagination, headers, metadata, and debugging information. It uses
+// `unify4g.UnmarshalFromStringN` for unmarshaling the JSON string into a map, then assigns the
+// respective values from the map to the fields of the `wrapper` struct.
+//
+// The function extracts information from the provided JSON, handles nested
+// objects, and populates the `wrapper` struct with relevant values for:
+//   - statusCode: The HTTP status code of the response
+//   - total: The total number of items in the response
+//   - message: A message associated with the response
+//   - data: The primary data in the response (can be any type)
+//   - path: The request path of the API that generated the response
+//   - debug: Debugging information, if available
+//   - header: An optional header with various status-related fields
+//   - meta: Metadata about the API response such as version, locale, etc.
+//   - pagination: Pagination details, such as page number and total items
+//
+// Returns:
+//   - A pointer to a `wrapper` struct containing the parsed data
+//   - An error if the JSON string cannot be parsed or is invalid
+//
+// This function is responsible for taking raw JSON data and converting it into a
+// structured format, making it easier to work with in Go. It handles various
+// nested objects (like `header`, `meta`, and `pagination`), checking for the
+// presence of keys and converting them into their appropriate types.
+func Parse(json string) (w *wrapper, err error) {
+	var data map[string]interface{}
+	err = unify4g.UnmarshalFromStringN(json, &data)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) == 0 {
+		return nil, WithErrorf("the wrapper response is empty with JSON string: %v", json)
+	}
+	w = &wrapper{}
+	if value, exists := data["status_code"].(float64); exists {
+		w.statusCode = int(value)
+	}
+	if value, exists := data["total"].(float64); exists {
+		w.total = int(value)
+	}
+	if value, exists := data["message"].(string); exists {
+		w.message = value
+	}
+	if value, exists := data["data"]; exists {
+		w.data = value
+	}
+	if value, exists := data["path"].(string); exists {
+		w.path = value
+	}
+	if value, exists := data["debug"].(map[string]interface{}); exists {
+		w.debug = value
+	}
+	if values, exists := data["header"].(map[string]interface{}); exists {
+		header := &header{}
+		if value, exists := values["code"].(float64); exists {
+			header.code = int(value)
+		}
+		if value, exists := values["text"].(string); exists {
+			header.text = value
+		}
+		if value, exists := values["Type"].(string); exists {
+			header.Type = value
+		}
+		if value, exists := values["description"].(string); exists {
+			header.description = value
+		}
+		w.header = header
+	}
+	if values, exists := data["meta"].(map[string]interface{}); exists {
+		meta := &meta{}
+		if value, exists := values["api_version"].(string); exists {
+			meta.apiVersion = value
+		}
+		if value, exists := values["locale"].(string); exists {
+			meta.locale = value
+		}
+		if value, exists := values["request_id"].(string); exists {
+			meta.requestID = value
+		}
+		if customFields, exists := values["custom_fields"].(map[string]interface{}); exists {
+			meta.customFields = customFields
+		}
+		if value, exists := values["requested_time"].(string); exists {
+			if t, err := time.Parse(time.RFC3339, value); err == nil {
+				meta.requestedTime = t
+			}
+		}
+		w.meta = meta
+	}
+	if values, exists := data["pagination"].(map[string]interface{}); exists {
+		pagination := &pagination{}
+		if value, exists := values["page"].(float64); exists {
+			pagination.page = int(value)
+		}
+		if value, exists := values["per_page"].(float64); exists {
+			pagination.perPage = int(value)
+		}
+		if value, exists := values["total_pages"].(float64); exists {
+			pagination.totalPages = int(value)
+		}
+		if value, exists := values["total_items"].(float64); exists {
+			pagination.totalItems = int(value)
+		}
+		if value, exists := values["is_last"].(bool); exists {
+			pagination.isLast = value
+		}
+		w.pagination = pagination
+	}
+	return w, nil
+}
