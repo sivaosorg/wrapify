@@ -531,8 +531,120 @@ func (w *wrapper) WithDebugging(v map[string]interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
-func (w *wrapper) WithError(err error) *wrapper {
-	w.errors = err
+// func (w *wrapper) WithError(err error) *wrapper {
+// 	w.errors = err
+// 	return w
+// }
+
+// WithError sets an error for the `wrapper` instance using a plain error message.
+//
+// This function creates an error object from the provided message, assigns it to
+// the `errors` field of the `wrapper`, and returns the modified instance.
+//
+// Parameters:
+//   - message: A string containing the error message to be wrapped as an error object.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance to support method chaining.
+func (w *wrapper) WithError(message string) *wrapper {
+	w.errors = WithError(message)
+	return w
+}
+
+// WithErrorf sets a formatted error for the `wrapper` instance.
+//
+// This function uses a formatted string and arguments to construct an error object,
+// assigns it to the `errors` field of the `wrapper`, and returns the modified instance.
+//
+// Parameters:
+//   - format: A format string for constructing the error message.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance to support method chaining.
+func (w *wrapper) WithErrorf(format string, args ...interface{}) *wrapper {
+	w.errors = WithErrorf(format, args...)
+	return w
+}
+
+// WithErrSck sets an error with a stack trace for the `wrapper` instance.
+//
+// This function wraps the provided error with stack trace information, assigns it
+// to the `errors` field of the `wrapper`, and returns the modified instance.
+//
+// Parameters:
+//   - err: The error object to be wrapped with stack trace information.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance to support method chaining.
+func (w *wrapper) WithErrSck(err error) *wrapper {
+	w.errors = WithErrStack(err)
+	return w
+}
+
+// WithErrWrap wraps an existing error with an additional message and sets it for the `wrapper` instance.
+//
+// This function adds context to the provided error by wrapping it with an additional message.
+// The resulting error is assigned to the `errors` field of the `wrapper`.
+//
+// Parameters:
+//   - err: The original error to be wrapped.
+//   - message: A string message to add context to the error.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance to support method chaining.
+func (w *wrapper) WithErrWrap(err error, message string) *wrapper {
+	w.errors = Wrap(err, message)
+	return w
+}
+
+// WithErrWrapf wraps an existing error with a formatted message and sets it for the `wrapper` instance.
+//
+// This function adds context to the provided error by wrapping it with a formatted message.
+// The resulting error is assigned to the `errors` field of the `wrapper`.
+//
+// Parameters:
+//   - err: The original error to be wrapped.
+//   - format: A format string for constructing the contextual error message.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance to support method chaining.
+func (w *wrapper) WithErrWrapf(err error, format string, args ...interface{}) *wrapper {
+	w.errors = Wrapf(err, format, args...)
+	return w
+}
+
+// WithErrMessage adds a plain contextual message to an existing error and sets it for the `wrapper` instance.
+//
+// This function wraps the provided error with an additional plain message and assigns it
+// to the `errors` field of the `wrapper`.
+//
+// Parameters:
+//   - err: The original error to be wrapped.
+//   - message: A plain string message to add context to the error.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance to support method chaining.
+func (w *wrapper) WithErrMessage(err error, message string) *wrapper {
+	w.errors = WithMessage(err, message)
+	return w
+}
+
+// WithErrMessagef adds a formatted contextual message to an existing error and sets it for the `wrapper` instance.
+//
+// This function wraps the provided error with an additional formatted message and assigns it
+// to the `errors` field of the `wrapper`.
+//
+// Parameters:
+//   - err: The original error to be wrapped.
+//   - format: A format string for constructing the contextual error message.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance to support method chaining.
+func (w *wrapper) WithErrMessagef(err error, format string, args ...interface{}) *wrapper {
+	w.errors = WithMessagef(err, format, args...)
 	return w
 }
 
