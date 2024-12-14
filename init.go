@@ -1240,7 +1240,7 @@ func Parse(json string) (w *wrapper, err error) {
 	var data map[string]interface{}
 	err = unify4g.UnmarshalFromStringN(json, &data)
 	if err != nil {
-		return nil, err
+		return nil, WithErrStack(err)
 	}
 	if len(data) == 0 {
 		return nil, WithErrorf("the wrapper response is empty with JSON string: %v", json)
