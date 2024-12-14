@@ -848,6 +848,29 @@ func (w *wrapper) WithCustomFieldKV(key string, value interface{}) *wrapper {
 	return w
 }
 
+// WithCustomFieldKVf sets a specific custom field key-value pair in the `meta` field of the `wrapper` instance
+// using a formatted value.
+//
+// This function constructs a formatted string value using the provided `format` string and arguments (`args`).
+// It then calls the `WithCustomFieldKV` method to add or update the custom field with the specified key and
+// the formatted value. If the `meta` field of the `wrapper` instance is not initialized, it is created
+// before setting the custom field.
+//
+// Parameters:
+//   - key: A string representing the key for the custom field.
+//   - format: A format string to construct the value.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance, enabling method chaining.
+func (w *wrapper) WithCustomFieldKVf(key string, format string, args ...interface{}) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithCustomFieldKVf(key, format, args...)
+	return w
+}
+
 // WithPage sets the current page number in the wrapper's pagination.
 //
 // If the pagination object is not already initialized, it creates a new one
