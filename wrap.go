@@ -801,7 +801,7 @@ func (h *header) Description() string {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func Ok(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusOK).
 		WithMessage(message).
 		WithBody(data)
@@ -820,7 +820,7 @@ func Ok(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func Created(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusCreated).
 		WithMessage(message).
 		WithBody(data)
@@ -839,7 +839,7 @@ func Created(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func BadRequest(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusBadRequest).
 		WithMessage(message).
 		WithBody(data)
@@ -858,7 +858,7 @@ func BadRequest(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func NotFound(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusNotFound).
 		WithMessage(message).
 		WithBody(data)
@@ -877,7 +877,7 @@ func NotFound(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func NotImplemented(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusNotImplemented).
 		WithMessage(message).
 		WithBody(data)
@@ -896,7 +896,7 @@ func NotImplemented(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func TooManyRequest(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusTooManyRequests).
 		WithMessage(message).
 		WithBody(data)
@@ -915,7 +915,7 @@ func TooManyRequest(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func Locked(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusLocked).
 		WithMessage(message).
 		WithBody(data)
@@ -934,7 +934,7 @@ func Locked(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func NoContent(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusNoContent).
 		WithMessage(message).
 		WithBody(data)
@@ -953,7 +953,7 @@ func NoContent(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func Processing(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusProcessing).
 		WithMessage(message).
 		WithBody(data)
@@ -972,7 +972,7 @@ func Processing(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func UpgradeRequired(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusUpgradeRequired).
 		WithMessage(message).
 		WithBody(data)
@@ -992,7 +992,7 @@ func UpgradeRequired(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func ServiceUnavailable(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusServiceUnavailable).
 		WithMessage(message).
 		WithBody(data)
@@ -1012,7 +1012,7 @@ func ServiceUnavailable(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func InternalServerError(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusInternalServerError).
 		WithMessage(message).
 		WithBody(data)
@@ -1031,7 +1031,7 @@ func InternalServerError(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func GatewayTimeout(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusGatewayTimeout).
 		WithMessage(message).
 		WithBody(data)
@@ -1050,7 +1050,7 @@ func GatewayTimeout(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func MethodNotAllowed(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusMethodNotAllowed).
 		WithMessage(message).
 		WithBody(data)
@@ -1070,7 +1070,7 @@ func MethodNotAllowed(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func Unauthorized(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusUnauthorized).
 		WithMessage(message).
 		WithBody(data)
@@ -1089,7 +1089,7 @@ func Unauthorized(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func Forbidden(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusForbidden).
 		WithMessage(message).
 		WithBody(data)
@@ -1108,7 +1108,7 @@ func Forbidden(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func Accepted(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusAccepted).
 		WithMessage(message).
 		WithBody(data)
@@ -1127,7 +1127,7 @@ func Accepted(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func RequestTimeout(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusRequestTimeout).
 		WithMessage(message).
 		WithBody(data)
@@ -1146,7 +1146,7 @@ func RequestTimeout(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func RequestEntityTooLarge(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusRequestEntityTooLarge).
 		WithMessage(message).
 		WithBody(data)
@@ -1165,7 +1165,7 @@ func RequestEntityTooLarge(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func UnsupportedMediaType(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusUnsupportedMediaType).
 		WithMessage(message).
 		WithBody(data)
@@ -1184,7 +1184,7 @@ func UnsupportedMediaType(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func HTTPVersionNotSupported(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusHTTPVersionNotSupported).
 		WithMessage(message).
 		WithBody(data)
@@ -1203,7 +1203,7 @@ func HTTPVersionNotSupported(message string, data interface{}) *wrapper {
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
 func PaymentRequired(message string, data interface{}) *wrapper {
-	w := NewWrap().
+	w := New().
 		WithStatusCode(http.StatusPaymentRequired).
 		WithMessage(message).
 		WithBody(data)

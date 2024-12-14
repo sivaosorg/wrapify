@@ -43,14 +43,14 @@ func NewHeader() *header {
 	return h
 }
 
-// NewWrap creates a new instance of the `wrapper` struct.
+// New creates a new instance of the `wrapper` struct.
 //
 // This function initializes a `wrapper` struct with its default values,
 // including an empty map for the `Debug` field.
 //
 // Returns:
 //   - A pointer to a newly created `wrapper` instance with initialized fields.
-func NewWrap() *wrapper {
+func New() *wrapper {
 	w := &wrapper{
 		meta: NewMeta().
 			WithLocale("en_US"). // vi_VN, en_US
