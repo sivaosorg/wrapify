@@ -1322,3 +1322,52 @@ func Parse(json string) (w *wrapper, err error) {
 	}
 	return w, nil
 }
+
+// Deserialize converts a map containing API response data into a `wrapper` struct
+// by serializing the map into JSON format and then parsing it.
+//
+// The function is a helper that bridges between raw map data (e.g., deserialized JSON
+// or other dynamic input) and the strongly-typed `wrapper` struct used in the codebase.
+// It first converts the input map into a JSON string using `unify4g.JsonN`, then calls
+// the `Parse` function to handle the deserialization and field mapping to the `wrapper`.
+//
+// Parameters:
+//   - data: A map[string]interface{} containing the API response data.
+//     The map should include keys like "status_code", "message", "meta", etc.,
+//     that conform to the expected structure of a `wrapper`.
+//
+// Returns:
+//   - A pointer to a `wrapper` struct populated with data from the map.
+//   - An error if the map is empty or if the JSON serialization/parsing fails.
+//
+// Error Handling:
+//   - If the input map is empty or nil, the function returns an error
+//     indicating that the data is invalid.
+//   - If serialization or parsing fails, the error from `Parse` or `unify4g.JsonN`
+//     is propagated, providing context about the failure.
+//
+// Usage:
+// This function is particularly useful when working with raw data maps (e.g., from
+// dynamic inputs or unmarshaled data) that need to be converted into the `wrapper`
+// struct for further processing.
+//
+// Example:
+//
+//	rawData := map[string]interface{}{
+//	    "status_code": 200,
+//	    "message": "Success",
+//	    "data": "response body",
+//	}
+//	wrapper, err := wrapify.Deserialize(rawData)
+//	if err != nil {
+//	    log.Println("Error extracting wrapper:", err)
+//	} else {
+//	    log.Println("Wrapper:", wrapper)
+//	}
+func Deserialize(data map[string]interface{}) (w *wrapper, err error) {
+	if len(data) == 0 {
+		return nil, WithErrorf("data is nil/null")
+	}
+	json := unify4g.JsonN(data)
+	return Parse(json)
+}
