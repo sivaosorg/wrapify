@@ -788,6 +788,28 @@ func (w *wrapper) WithApiVersion(v string) *wrapper {
 	return w
 }
 
+// WithApiVersionf sets the API version in the `meta` field of the `wrapper` instance using a formatted string.
+//
+// This function ensures that the `meta` field in the `wrapper` is initialized. If the `meta`
+// field is not present, a new `meta` instance is created using the `NewMeta` function.
+// Once the `meta` instance is ready, it updates the API version using the `WithApiVersionf` method
+// on the `meta` instance. The API version is constructed by interpolating the provided `format`
+// string with the variadic arguments (`args`).
+//
+// Parameters:
+//   - format: A format string used to construct the API version.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance, enabling method chaining.
+func (w *wrapper) WithApiVersionf(format string, args ...interface{}) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithApiVersionf(format, args...)
+	return w
+}
+
 // WithRequestID sets the request ID in the `meta` field of the `wrapper` instance.
 //
 // This function ensures that if `meta` information is not already set in the `wrapper`, a new
@@ -804,6 +826,28 @@ func (w *wrapper) WithRequestID(v string) *wrapper {
 		w.meta = NewMeta()
 	}
 	w.meta.WithRequestID(v)
+	return w
+}
+
+// WithRequestIDf sets the request ID in the `meta` field of the `wrapper` instance using a formatted string.
+//
+// This function ensures that the `meta` field in the `wrapper` is initialized. If the `meta` field
+// is not already present, a new `meta` instance is created using the `NewMeta` function.
+// Once the `meta` instance is ready, it updates the request ID by calling the `WithRequestIDf`
+// method on the `meta` instance. The request ID is constructed using the provided `format` string
+// and the variadic `args`.
+//
+// Parameters:
+//   - format: A format string used to construct the request ID.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance, allowing for method chaining.
+func (w *wrapper) WithRequestIDf(format string, args ...interface{}) *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = NewMeta()
+	}
+	w.meta.WithRequestIDf(format, args...)
 	return w
 }
 
