@@ -1,6 +1,7 @@
 package wrapify
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/sivaosorg/unify4g"
@@ -431,6 +432,22 @@ func (w *wrapper) WithMessage(message string) *wrapper {
 	return w
 }
 
+// WithMessagef sets a formatted message for the `wrapper` instance.
+//
+// This function constructs a formatted string using the provided format string and arguments,
+// assigns it to the `message` field of the `wrapper`, and returns the modified instance.
+//
+// Parameters:
+//   - message: A format string for constructing the message.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance, enabling method chaining.
+func (w *wrapper) WithMessagef(message string, args ...interface{}) *wrapper {
+	w.message = fmt.Sprintf(message, args...)
+	return w
+}
+
 // WithBody sets the body data for the `wrapper` instance.
 //
 // This function updates the `data` field of the `wrapper` with the provided value
@@ -458,6 +475,22 @@ func (w *wrapper) WithBody(v interface{}) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithPath(v string) *wrapper {
 	w.path = v
+	return w
+}
+
+// WithPathf sets a formatted request path for the `wrapper` instance.
+//
+// This function constructs a formatted string using the provided format string `v` and arguments `args`,
+// assigns the resulting string to the `path` field of the `wrapper`, and returns the modified instance.
+//
+// Parameters:
+//   - v: A format string for constructing the request path.
+//   - args: A variadic list of arguments to be interpolated into the format string.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance, enabling method chaining.
+func (w *wrapper) WithPathf(v string, args ...interface{}) *wrapper {
+	w.path = fmt.Sprintf(v, args...)
 	return w
 }
 
