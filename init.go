@@ -1097,6 +1097,10 @@ func (w *wrapper) Respond() map[string]interface{} {
 	return m
 }
 
+func (w *wrapper) Reply() R {
+	return R{wrapper: w}
+}
+
 // Respond generates a map representation of the `pagination` instance.
 //
 // This method collects various fields related to pagination (e.g., `page`, `per_page`, etc.)

@@ -2,6 +2,10 @@ package wrapify
 
 import "time"
 
+type R struct {
+	*wrapper
+}
+
 // Frame represents a program counter inside a stack frame.
 // A `Frame` is essentially a single point in the stack trace,
 // representing a program counter (the location in code) at the

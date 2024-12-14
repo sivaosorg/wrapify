@@ -232,6 +232,12 @@ func (w *wrapper) IsDebuggingKeyPresent(key string) bool {
 //   - `true` if `data` is not nil.
 //   - `false` if `data` is nil.
 func (w *wrapper) IsBodyPresent() bool {
+	s, ok := w.data.(string)
+	if ok {
+		return w.Available() &&
+			unify4g.IsNotEmpty(s) &&
+			unify4g.IsNotBlank(s)
+	}
 	return w.Available() && w.data != nil
 }
 
