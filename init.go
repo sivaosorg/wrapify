@@ -420,7 +420,7 @@ func (h *header) WithText(v string) *header {
 // Returns:
 //   - The updated `header` instance with the `Type` field set to the provided value.
 func (h *header) WithType(v string) *header {
-	h.Type = v
+	h.typez = v
 	return h
 }
 
@@ -1202,7 +1202,7 @@ func (h *header) Respond() map[string]interface{} {
 		m["text"] = h.text
 	}
 	if h.IsTypePresent() {
-		m["type"] = h.Type
+		m["type"] = h.typez
 	}
 	if h.IsDescriptionPresent() {
 		m["description"] = h.description
@@ -1273,7 +1273,7 @@ func Parse(json string) (w *wrapper, err error) {
 			header.text = value
 		}
 		if value, exists := values["Type"].(string); exists {
-			header.Type = value
+			header.typez = value
 		}
 		if value, exists := values["description"].(string); exists {
 			header.description = value

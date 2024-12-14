@@ -73,7 +73,7 @@ type meta struct {
 type header struct {
 	code        int    // Application-specific status code.
 	text        string // Human-readable status text.
-	Type        string // Type or category of the status, e.g., "info", "error".
+	typez       string // Type or category of the status, e.g., "info", "error".
 	description string // Detailed description of the status.
 }
 

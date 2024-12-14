@@ -714,7 +714,7 @@ func (h *header) IsTextPresent() bool {
 //   - `true` if the `Type` field is non-empty.
 //   - `false` if the `Type` field is either not present (nil) or empty.
 func (h *header) IsTypePresent() bool {
-	return h.Available() && unify4g.IsNotEmpty(h.Type)
+	return h.Available() && unify4g.IsNotEmpty(h.typez)
 }
 
 // IsDescriptionPresent checks if the `description` field in the `header` instance is present and not empty.
@@ -771,7 +771,7 @@ func (h *header) TypeN() string {
 	if !h.Available() {
 		return ""
 	}
-	return h.Type
+	return h.typez
 }
 
 // Description retrieves the description value from the `header` instance.
