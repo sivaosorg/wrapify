@@ -1272,7 +1272,7 @@ func Parse(json string) (w *wrapper, err error) {
 		if value, exists := values["text"].(string); exists {
 			header.text = value
 		}
-		if value, exists := values["Type"].(string); exists {
+		if value, exists := values["type"].(string); exists {
 			header.typez = value
 		}
 		if value, exists := values["description"].(string); exists {
