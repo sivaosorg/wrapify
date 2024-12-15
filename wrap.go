@@ -776,7 +776,7 @@ func (h *header) Text() string {
 	return h.text
 }
 
-// TypeN retrieves the type value from the `header` instance.
+// Type retrieves the type value from the `header` instance.
 //
 // This function checks if the `header` instance is available (non-nil) before retrieving
 // the `Type` field. If the `header` instance is unavailable, it returns an empty string.
@@ -784,7 +784,7 @@ func (h *header) Text() string {
 // Returns:
 //   - The `Type` as a string if available.
 //   - An empty string if the `header` instance is unavailable.
-func (h *header) TypeN() string {
+func (h *header) Type() string {
 	if !h.Available() {
 		return ""
 	}
