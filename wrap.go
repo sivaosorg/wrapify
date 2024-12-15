@@ -806,7 +806,7 @@ func (h *header) Description() string {
 	return h.description
 }
 
-// Ok creates a wrapper for a successful HTTP response (200 OK).
+// WrapOk creates a wrapper for a successful HTTP response (200 OK).
 //
 // This function sets the HTTP status code to 200 (OK) and includes a message and data payload
 // in the response body.
@@ -817,7 +817,7 @@ func (h *header) Description() string {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func Ok(message string, data interface{}) *wrapper {
+func WrapOk(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusOK).
 		WithMessage(message).
@@ -825,9 +825,9 @@ func Ok(message string, data interface{}) *wrapper {
 	return w
 }
 
-// Created creates a wrapper for a resource creation response (201 Created).
+// WrapCreated creates a wrapper for a resource creation response (201 WrapCreated).
 //
-// This function sets the HTTP status code to 201 (Created) and includes a message and data payload
+// This function sets the HTTP status code to 201 (WrapCreated) and includes a message and data payload
 // in the response body.
 //
 // Parameters:
@@ -836,7 +836,7 @@ func Ok(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func Created(message string, data interface{}) *wrapper {
+func WrapCreated(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusCreated).
 		WithMessage(message).
@@ -844,7 +844,7 @@ func Created(message string, data interface{}) *wrapper {
 	return w
 }
 
-// BadRequest creates a wrapper for a client error response (400 Bad Request).
+// WrapBadRequest creates a wrapper for a client error response (400 Bad Request).
 //
 // This function sets the HTTP status code to 400 (Bad Request) and includes a message and data payload
 // in the response body.
@@ -855,7 +855,7 @@ func Created(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func BadRequest(message string, data interface{}) *wrapper {
+func WrapBadRequest(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusBadRequest).
 		WithMessage(message).
@@ -863,7 +863,7 @@ func BadRequest(message string, data interface{}) *wrapper {
 	return w
 }
 
-// NotFound creates a wrapper for a resource not found response (404 Not Found).
+// WrapNotFound creates a wrapper for a resource not found response (404 Not Found).
 //
 // This function sets the HTTP status code to 404 (Not Found) and includes a message and data payload
 // in the response body.
@@ -874,7 +874,7 @@ func BadRequest(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func NotFound(message string, data interface{}) *wrapper {
+func WrapNotFound(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusNotFound).
 		WithMessage(message).
@@ -882,7 +882,7 @@ func NotFound(message string, data interface{}) *wrapper {
 	return w
 }
 
-// NotImplemented creates a wrapper for a response indicating unimplemented functionality (501 Not Implemented).
+// WrapNotImplemented creates a wrapper for a response indicating unimplemented functionality (501 Not Implemented).
 //
 // This function sets the HTTP status code to 501 (Not Implemented) and includes a message and data payload
 // in the response body.
@@ -893,7 +893,7 @@ func NotFound(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func NotImplemented(message string, data interface{}) *wrapper {
+func WrapNotImplemented(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusNotImplemented).
 		WithMessage(message).
@@ -901,7 +901,7 @@ func NotImplemented(message string, data interface{}) *wrapper {
 	return w
 }
 
-// TooManyRequest creates a wrapper for a rate-limiting response (429 Too Many Requests).
+// WrapTooManyRequest creates a wrapper for a rate-limiting response (429 Too Many Requests).
 //
 // This function sets the HTTP status code to 429 (Too Many Requests) and includes a message and data payload
 // in the response body.
@@ -912,7 +912,7 @@ func NotImplemented(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func TooManyRequest(message string, data interface{}) *wrapper {
+func WrapTooManyRequest(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusTooManyRequests).
 		WithMessage(message).
@@ -920,9 +920,9 @@ func TooManyRequest(message string, data interface{}) *wrapper {
 	return w
 }
 
-// Locked creates a wrapper for a locked resource response (423 Locked).
+// WrapLocked creates a wrapper for a locked resource response (423 WrapLocked).
 //
-// This function sets the HTTP status code to 423 (Locked) and includes a message and data payload
+// This function sets the HTTP status code to 423 (WrapLocked) and includes a message and data payload
 // in the response body.
 //
 // Parameters:
@@ -931,7 +931,7 @@ func TooManyRequest(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func Locked(message string, data interface{}) *wrapper {
+func WrapLocked(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusLocked).
 		WithMessage(message).
@@ -939,7 +939,7 @@ func Locked(message string, data interface{}) *wrapper {
 	return w
 }
 
-// NoContent creates a wrapper for a successful response without a body (204 No Content).
+// WrapNoContent creates a wrapper for a successful response without a body (204 No Content).
 //
 // This function sets the HTTP status code to 204 (No Content) and includes a message and data payload
 // in the response body.
@@ -950,7 +950,7 @@ func Locked(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func NoContent(message string, data interface{}) *wrapper {
+func WrapNoContent(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusNoContent).
 		WithMessage(message).
@@ -958,9 +958,9 @@ func NoContent(message string, data interface{}) *wrapper {
 	return w
 }
 
-// Processing creates a wrapper for a response indicating ongoing processing (102 Processing).
+// WrapProcessing creates a wrapper for a response indicating ongoing processing (102 WrapProcessing).
 //
-// This function sets the HTTP status code to 102 (Processing) and includes a message and data payload
+// This function sets the HTTP status code to 102 (WrapProcessing) and includes a message and data payload
 // in the response body.
 //
 // Parameters:
@@ -969,7 +969,7 @@ func NoContent(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func Processing(message string, data interface{}) *wrapper {
+func WrapProcessing(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusProcessing).
 		WithMessage(message).
@@ -977,7 +977,7 @@ func Processing(message string, data interface{}) *wrapper {
 	return w
 }
 
-// UpgradeRequired creates a wrapper for a response indicating an upgrade is required (426 Upgrade Required).
+// WrapUpgradeRequired creates a wrapper for a response indicating an upgrade is required (426 Upgrade Required).
 //
 // This function sets the HTTP status code to 426 (Upgrade Required) and includes a message and data payload
 // in the response body. It is typically used when the client must switch to a different protocol.
@@ -988,7 +988,7 @@ func Processing(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func UpgradeRequired(message string, data interface{}) *wrapper {
+func WrapUpgradeRequired(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusUpgradeRequired).
 		WithMessage(message).
@@ -996,7 +996,7 @@ func UpgradeRequired(message string, data interface{}) *wrapper {
 	return w
 }
 
-// ServiceUnavailable creates a wrapper for a response indicating the service is temporarily unavailable (503 Service Unavailable).
+// WrapServiceUnavailable creates a wrapper for a response indicating the service is temporarily unavailable (503 Service Unavailable).
 //
 // This function sets the HTTP status code to 503 (Service Unavailable) and includes a message and data payload
 // in the response body. It is typically used when the server is unable to handle the request due to temporary overload
@@ -1008,7 +1008,7 @@ func UpgradeRequired(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func ServiceUnavailable(message string, data interface{}) *wrapper {
+func WrapServiceUnavailable(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusServiceUnavailable).
 		WithMessage(message).
@@ -1016,7 +1016,7 @@ func ServiceUnavailable(message string, data interface{}) *wrapper {
 	return w
 }
 
-// InternalServerError creates a wrapper for a server error response (500 Internal Server Error).
+// WrapInternalServerError creates a wrapper for a server error response (500 Internal Server Error).
 //
 // This function sets the HTTP status code to 500 (Internal Server Error) and includes a message and data payload
 // in the response body. It is typically used when the server encounters an unexpected condition that prevents it
@@ -1028,7 +1028,7 @@ func ServiceUnavailable(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func InternalServerError(message string, data interface{}) *wrapper {
+func WrapInternalServerError(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusInternalServerError).
 		WithMessage(message).
@@ -1036,7 +1036,7 @@ func InternalServerError(message string, data interface{}) *wrapper {
 	return w
 }
 
-// GatewayTimeout creates a wrapper for a response indicating a gateway timeout (504 Gateway Timeout).
+// WrapGatewayTimeout creates a wrapper for a response indicating a gateway timeout (504 Gateway Timeout).
 //
 // This function sets the HTTP status code to 504 (Gateway Timeout) and includes a message and data payload
 // in the response body. It is typically used when the server did not receive a timely response from an upstream server.
@@ -1047,7 +1047,7 @@ func InternalServerError(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func GatewayTimeout(message string, data interface{}) *wrapper {
+func WrapGatewayTimeout(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusGatewayTimeout).
 		WithMessage(message).
@@ -1055,7 +1055,7 @@ func GatewayTimeout(message string, data interface{}) *wrapper {
 	return w
 }
 
-// MethodNotAllowed creates a wrapper for a response indicating the HTTP method is not allowed (405 Method Not Allowed).
+// WrapMethodNotAllowed creates a wrapper for a response indicating the HTTP method is not allowed (405 Method Not Allowed).
 //
 // This function sets the HTTP status code to 405 (Method Not Allowed) and includes a message and data payload
 // in the response body. It is typically used when the server knows the method is not supported for the target resource.
@@ -1066,7 +1066,7 @@ func GatewayTimeout(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func MethodNotAllowed(message string, data interface{}) *wrapper {
+func WrapMethodNotAllowed(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusMethodNotAllowed).
 		WithMessage(message).
@@ -1074,9 +1074,9 @@ func MethodNotAllowed(message string, data interface{}) *wrapper {
 	return w
 }
 
-// Unauthorized creates a wrapper for a response indicating authentication is required (401 Unauthorized).
+// WrapUnauthorized creates a wrapper for a response indicating authentication is required (401 WrapUnauthorized).
 //
-// This function sets the HTTP status code to 401 (Unauthorized) and includes a message and data payload
+// This function sets the HTTP status code to 401 (WrapUnauthorized) and includes a message and data payload
 // in the response body. It is typically used when the request has not been applied because it lacks valid
 // authentication credentials.
 //
@@ -1086,7 +1086,7 @@ func MethodNotAllowed(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func Unauthorized(message string, data interface{}) *wrapper {
+func WrapUnauthorized(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusUnauthorized).
 		WithMessage(message).
@@ -1094,9 +1094,9 @@ func Unauthorized(message string, data interface{}) *wrapper {
 	return w
 }
 
-// Forbidden creates a wrapper for a response indicating access to the resource is forbidden (403 Forbidden).
+// WrapForbidden creates a wrapper for a response indicating access to the resource is forbidden (403 WrapForbidden).
 //
-// This function sets the HTTP status code to 403 (Forbidden) and includes a message and data payload
+// This function sets the HTTP status code to 403 (WrapForbidden) and includes a message and data payload
 // in the response body. It is typically used when the server understands the request but refuses to authorize it.
 //
 // Parameters:
@@ -1105,7 +1105,7 @@ func Unauthorized(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func Forbidden(message string, data interface{}) *wrapper {
+func WrapForbidden(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusForbidden).
 		WithMessage(message).
@@ -1113,9 +1113,9 @@ func Forbidden(message string, data interface{}) *wrapper {
 	return w
 }
 
-// Accepted creates a wrapper for a response indicating the request has been accepted for processing (202 Accepted).
+// WrapAccepted creates a wrapper for a response indicating the request has been accepted for processing (202 WrapAccepted).
 //
-// This function sets the HTTP status code to 202 (Accepted) and includes a message and data payload
+// This function sets the HTTP status code to 202 (WrapAccepted) and includes a message and data payload
 // in the response body. It is typically used when the request has been received but processing is not yet complete.
 //
 // Parameters:
@@ -1124,7 +1124,7 @@ func Forbidden(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func Accepted(message string, data interface{}) *wrapper {
+func WrapAccepted(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusAccepted).
 		WithMessage(message).
@@ -1132,7 +1132,7 @@ func Accepted(message string, data interface{}) *wrapper {
 	return w
 }
 
-// RequestTimeout creates a wrapper for a response indicating the client request has timed out (408 Request Timeout).
+// WrapRequestTimeout creates a wrapper for a response indicating the client request has timed out (408 Request Timeout).
 //
 // This function sets the HTTP status code to 408 (Request Timeout) and includes a message and data payload
 // in the response body. It is typically used when the server did not receive a complete request message within the time it was prepared to wait.
@@ -1143,7 +1143,7 @@ func Accepted(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func RequestTimeout(message string, data interface{}) *wrapper {
+func WrapRequestTimeout(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusRequestTimeout).
 		WithMessage(message).
@@ -1151,7 +1151,7 @@ func RequestTimeout(message string, data interface{}) *wrapper {
 	return w
 }
 
-// RequestEntityTooLarge creates a wrapper for a response indicating the request entity is too large (413 Payload Too Large).
+// WrapRequestEntityTooLarge creates a wrapper for a response indicating the request entity is too large (413 Payload Too Large).
 //
 // This function sets the HTTP status code to 413 (Payload Too Large) and includes a message and data payload
 // in the response body. It is typically used when the server refuses to process a request because the request entity is larger than the server is willing or able to process.
@@ -1162,7 +1162,7 @@ func RequestTimeout(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func RequestEntityTooLarge(message string, data interface{}) *wrapper {
+func WrapRequestEntityTooLarge(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusRequestEntityTooLarge).
 		WithMessage(message).
@@ -1170,7 +1170,7 @@ func RequestEntityTooLarge(message string, data interface{}) *wrapper {
 	return w
 }
 
-// UnsupportedMediaType creates a wrapper for a response indicating the media type is not supported (415 Unsupported Media Type).
+// WrapUnsupportedMediaType creates a wrapper for a response indicating the media type is not supported (415 Unsupported Media Type).
 //
 // This function sets the HTTP status code to 415 (Unsupported Media Type) and includes a message and data payload
 // in the response body. It is typically used when the server refuses to accept the request because the payload is in an unsupported format.
@@ -1181,7 +1181,7 @@ func RequestEntityTooLarge(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func UnsupportedMediaType(message string, data interface{}) *wrapper {
+func WrapUnsupportedMediaType(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusUnsupportedMediaType).
 		WithMessage(message).
@@ -1189,7 +1189,7 @@ func UnsupportedMediaType(message string, data interface{}) *wrapper {
 	return w
 }
 
-// HTTPVersionNotSupported creates a wrapper for a response indicating the HTTP version is not supported (505 HTTP Version Not Supported).
+// WrapHTTPVersionNotSupported creates a wrapper for a response indicating the HTTP version is not supported (505 HTTP Version Not Supported).
 //
 // This function sets the HTTP status code to 505 (HTTP Version Not Supported) and includes a message and data payload
 // in the response body. It is typically used when the server does not support the HTTP protocol version used in the request.
@@ -1200,7 +1200,7 @@ func UnsupportedMediaType(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func HTTPVersionNotSupported(message string, data interface{}) *wrapper {
+func WrapHTTPVersionNotSupported(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusHTTPVersionNotSupported).
 		WithMessage(message).
@@ -1208,7 +1208,7 @@ func HTTPVersionNotSupported(message string, data interface{}) *wrapper {
 	return w
 }
 
-// PaymentRequired creates a wrapper for a response indicating payment is required (402 Payment Required).
+// WrapPaymentRequired creates a wrapper for a response indicating payment is required (402 Payment Required).
 //
 // This function sets the HTTP status code to 402 (Payment Required) and includes a message and data payload
 // in the response body. It is typically used when access to the requested resource requires payment.
@@ -1219,7 +1219,7 @@ func HTTPVersionNotSupported(message string, data interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to a `wrapper` instance representing the response.
-func PaymentRequired(message string, data interface{}) *wrapper {
+func WrapPaymentRequired(message string, data interface{}) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusPaymentRequired).
 		WithMessage(message).
