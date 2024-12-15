@@ -558,6 +558,7 @@ func (w *wrapper) WithPathf(v string, args ...interface{}) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithHeader(v *header) *wrapper {
 	w.header = v
+	w.WithStatusCode(w.Header().Code())
 	return w
 }
 
