@@ -1081,35 +1081,6 @@ func (w *wrapper) Respond() map[string]interface{} {
 	if !w.Available() {
 		return nil
 	}
-	// m := make(map[string]interface{})
-	// if w.IsBodyPresent() {
-	// 	m["data"] = w.data
-	// }
-	// if w.IsHeaderPresent() {
-	// 	m["headers"] = w.header.Respond()
-	// }
-	// if w.IsMetaPresent() {
-	// 	m["meta"] = w.meta.Respond()
-	// }
-	// if w.IsPagingPresent() {
-	// 	m["pagination"] = w.pagination.Respond()
-	// }
-	// if w.IsDebuggingPresent() {
-	// 	m["debug"] = w.debug
-	// }
-	// if w.IsTotalPresent() {
-	// 	m["total"] = w.total
-	// }
-	// if w.IsStatusCodePresent() {
-	// 	m["status_code"] = w.statusCode
-	// }
-	// if unify4g.IsNotEmpty(w.message) {
-	// 	m["message"] = w.message
-	// }
-	// if unify4g.IsNotEmpty(w.path) {
-	// 	m["path"] = w.path
-	// }
-	// return m
 	w.cacheMutex.RLock()
 	hash := w.Hash()
 	if w.cacheHash == hash && w.cachedWrap != nil {
