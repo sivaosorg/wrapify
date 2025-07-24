@@ -1044,6 +1044,20 @@ func (w *wrapper) WithIsLast(v bool) *wrapper {
 	return w
 }
 
+// Hash generates a hash string for the `wrapper` instance.
+//
+// This method concatenates the values of the `statusCode`, `message`, `data`, and `meta` fields
+// into a single string and then computes a hash of that string using the `unify4g.Hash` function.
+// The resulting hash string can be used for various purposes, such as caching or integrity checks.
+func (w *wrapper) Hash() string {
+	if !w.Available() {
+		return ""
+	}
+	data := fmt.Sprintf("%v%v%v%v",
+		w.statusCode, w.message, w.data, w.meta)
+	return unify4g.Hash(data)
+}
+
 // Respond generates a map representation of the `wrapper` instance.
 //
 // This method collects various fields of the `wrapper` (e.g., `data`, `header`, `meta`, etc.)
@@ -1064,10 +1078,10 @@ func (w *wrapper) WithIsLast(v bool) *wrapper {
 // Returns:
 //   - A `map[string]interface{}` containing the structured response data.
 func (w *wrapper) Respond() map[string]interface{} {
-	m := make(map[string]interface{})
 	if !w.Available() {
-		return m
+		return nil
 	}
+	m := make(map[string]interface{})
 	if w.IsBodyPresent() {
 		m["data"] = w.data
 	}
@@ -1207,6 +1221,55 @@ func (h *header) Respond() map[string]interface{} {
 	}
 	if h.IsDescriptionPresent() {
 		m["description"] = h.description
+	}
+	return m
+}
+
+// build generates a map representation of the `wrapper` instance.
+// This method collects various fields of the `wrapper` (e.g., `data`, `header`, `meta`, etc.)
+// and organizes them into a key-value map. It ensures that only non-empty or meaningful fields
+// are included in the resulting map, providing a clean and structured response.
+// The following fields are included in the response:
+//   - `data`: The primary data payload, if present.
+//   - `headers`: The structured header details, if present.
+//   - `meta`: Metadata about the response, if present.
+//   - `pagination`: Pagination details, if applicable.
+//   - `debug`: Debugging information, if provided.
+//   - `total`: Total number of items, if set to a valid non-negative value.
+//   - `status_code`: The HTTP status code, if greater than 0.
+//   - `message`: A descriptive message, if not empty.
+//   - `path`: The request path, if not empty.
+//
+// Returns:
+//   - A `map[string]interface{}` containing the structured response data.
+func (w *wrapper) build() map[string]any {
+	m := make(map[string]any)
+	if w.IsBodyPresent() {
+		m["data"] = w.data
+	}
+	if w.IsHeaderPresent() {
+		m["headers"] = w.header.Respond()
+	}
+	if w.IsMetaPresent() {
+		m["meta"] = w.meta.Respond()
+	}
+	if w.IsPagingPresent() {
+		m["pagination"] = w.pagination.Respond()
+	}
+	if w.IsDebuggingPresent() {
+		m["debug"] = w.debug
+	}
+	if w.IsTotalPresent() {
+		m["total"] = w.total
+	}
+	if w.IsStatusCodePresent() {
+		m["status_code"] = w.statusCode
+	}
+	if unify4g.IsNotEmpty(w.message) {
+		m["message"] = w.message
+	}
+	if unify4g.IsNotEmpty(w.path) {
+		m["path"] = w.path
 	}
 	return m
 }
