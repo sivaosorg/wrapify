@@ -59,10 +59,6 @@ func (w *wrapper) Cause() error {
 		}
 	}
 	return cause
-	// if err, ok := w.errors.(*wrapper); ok {
-	// 	return err.Cause()
-	// }
-	// return w.errors
 }
 
 // StatusCode retrieves the HTTP status code associated with the `wrapper` instance.
