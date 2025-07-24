@@ -28,12 +28,3 @@ func (s *SecurityMiddleware) Process(w *wrapper) *wrapper {
 		HeaderXXSSProtection:   "1; mode=block",
 	})
 }
-
-// WithSecurity adds security headers to the response wrapper.
-func (w *wrapper) WithMiddleware(middlewares ...WrapMiddleware) *wrapper {
-	result := w
-	for _, middleware := range middlewares {
-		result = middleware.Process(result)
-	}
-	return result
-}
