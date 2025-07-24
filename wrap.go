@@ -173,7 +173,21 @@ func (w *wrapper) OptimizeSafe(threshold int) *wrapper {
 	if threshold <= 0 {
 		threshold = 1024 // 1KB threshold for compression
 	}
-	// Compress large data payloads
+	// Check if the body data is present and exceeds the threshold
+	// If the body is a string, we will check its length.
+	if s, ok := w.data.(string); ok {
+		if len(s) > threshold {
+			compressed := Compress(s)
+			w.
+				WithBody(compressed).
+				WithDebuggingKV("compression", "gzip").
+				WithDebuggingKV("original_size", len(s)).
+				WithDebuggingKV("compressed_size", len(compressed))
+			return w
+		}
+	}
+	// If the body is not a string, we will check its size using CalculateSize.
+	// Calculate the size of the body data.
 	if data := w.Body(); data != nil {
 		if size := CalculateSize(data); size > threshold {
 			compressed := Compress(data)
@@ -183,10 +197,6 @@ func (w *wrapper) OptimizeSafe(threshold int) *wrapper {
 				WithDebuggingKV("original_size", size).
 				WithDebuggingKV("compressed_size", CalculateSize(compressed))
 		}
-	}
-	// Remove empty debug fields
-	if debug := w.Debugging(); len(debug) >= 0 {
-		w.debug = nil
 	}
 	return w
 }
