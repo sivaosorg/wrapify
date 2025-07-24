@@ -1,6 +1,9 @@
 package wrapify
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 // R represents a wrapper around the main `wrapper` struct. It is used as a high-level
 // abstraction to provide a simplified interface for handling API responses.
@@ -79,16 +82,19 @@ type header struct {
 
 // wrapper is the main structure for wrapping API responses, including metadata, data, and debugging information.
 type wrapper struct {
-	statusCode int                    // HTTP status code for the response.
-	total      int                    // Total number of items (used in non-paginated responses).
-	message    string                 // A message providing additional context about the response.
-	data       interface{}            // The primary data payload of the response.
-	path       string                 // Request path for which the response is generated.
-	header     *header                // Structured header details for the response.
-	meta       *meta                  // Metadata about the API response.
-	pagination *pagination            // Pagination details, if applicable.
-	debug      map[string]interface{} // Debugging information (useful for development).
-	errors     error                  // Internal errors (not exposed in JSON responses).
+	statusCode int            // HTTP status code for the response.
+	total      int            // Total number of items (used in non-paginated responses).
+	message    string         // A message providing additional context about the response.
+	data       any            // The primary data payload of the response.
+	path       string         // Request path for which the response is generated.
+	header     *header        // Structured header details for the response.
+	meta       *meta          // Metadata about the API response.
+	pagination *pagination    // Pagination details, if applicable.
+	debug      map[string]any // Debugging information (useful for development).
+	errors     error          // Internal errors (not exposed in JSON responses).
+	cachedWrap map[string]any // Cached response data for performance optimization.
+	cacheHash  string         // Hash of the cached response, used for cache validation.
+	cacheMutex sync.RWMutex   // Mutex for synchronizing access to the cached response data.
 }
 
 // stack represents a stack of program counters. It is a slice of `uintptr`
