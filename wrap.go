@@ -142,11 +142,53 @@ func (w *wrapper) Total() int {
 //
 // Returns:
 //   - The body data (of any type), or `nil` if no body data is present.
-func (w *wrapper) Body() interface{} {
+func (w *wrapper) Body() any {
 	if !w.Available() {
 		return nil
 	}
 	return w.data
+}
+
+// OptimizeSafe compresses the body data if it exceeds a specified threshold.
+//
+// This function checks if the `wrapper` instance is available and if the body data
+// exceeds the specified threshold for compression. If the body data is larger than
+// the threshold, it compresses the data using gzip and updates the body with the
+// compressed data. It also adds debugging information about the compression process,
+// including the original and compressed sizes.
+// If the threshold is not specified or is less than or equal to zero, it defaults to 1024 bytes (1KB).
+// It also removes any empty debugging fields to clean up the response.
+// Parameters:
+//   - `threshold`: An integer representing the size threshold for compression.
+//     If the body data size exceeds this threshold, it will be compressed.
+//
+// Returns:
+//   - A pointer to the `wrapper` instance, allowing for method chaining.
+//
+// If the `wrapper` is not available, it returns the original instance without modifications.
+func (w *wrapper) OptimizeSafe(threshold int) *wrapper {
+	if !w.Available() {
+		return w
+	}
+	if threshold <= 0 {
+		threshold = 1024 // 1KB threshold for compression
+	}
+	// Compress large data payloads
+	if data := w.Body(); data != nil {
+		if size := CalculateSize(data); size > threshold {
+			compressed := Compress(data)
+			w.
+				WithBody(compressed).
+				WithDebuggingKV("compression", "gzip").
+				WithDebuggingKV("original_size", size).
+				WithDebuggingKV("compressed_size", CalculateSize(compressed))
+		}
+	}
+	// Remove empty debug fields
+	if debug := w.Debugging(); len(debug) >= 0 {
+		w.debug = nil
+	}
+	return w
 }
 
 // Debugging retrieves the debugging information from the `wrapper` instance.
