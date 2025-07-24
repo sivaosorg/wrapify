@@ -45,16 +45,32 @@ func (w *wrapper) Error() string {
 // Returns:
 //   - The underlying cause of the error, which can be another error or the original error.
 func (w *wrapper) Cause() error {
+	// cause := w.errors
+	// for cause != nil {
+	// 	if err, ok := cause.(interface{ Cause() error }); ok {
+	// 		cause = err.Cause()
+	// 	} else {
+	// 		break
+	// 	}
+	// }
+	// return cause
+	if !w.Available() || w.errors == nil {
+		return nil
+	}
 	// Traverse through wrapped errors.
 	// We will use Unwrap() method to unwrap errors instead of checking for *wrapper explicitly.
 	// This way, we can traverse to the innermost cause regardless of error type.
+	visited := make(map[error]bool)
 	cause := w.errors
-	for cause != nil {
-		// If the error has a Cause method, we use it to find the underlying error.
+	for cause != nil && !visited[cause] {
+		visited[cause] = true
 		if err, ok := cause.(interface{ Cause() error }); ok {
-			cause = err.Cause()
+			next := err.Cause()
+			if next == cause { // Prevent self-reference
+				break
+			}
+			cause = next
 		} else {
-			// No Cause() method, so return the error itself.
 			break
 		}
 	}
