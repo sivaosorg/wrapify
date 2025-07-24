@@ -201,6 +201,42 @@ func (w *wrapper) OptimizeSafe(threshold int) *wrapper {
 	return w
 }
 
+// Stream retrieves a channel that streams the body data of the `wrapper` instance.
+//
+// This function checks if the body data is present and, if so, streams the data
+// in chunks. It creates a buffered channel to hold the streamed data, allowing
+// for asynchronous processing of the response body.
+// If the body is not present, it returns an empty channel.
+// The streaming is done in a separate goroutine to avoid blocking the main execution flow.
+// The body data is chunked into smaller parts using the `Chunk` function, which
+// splits the response data into manageable segments for efficient streaming.
+//
+// Returns:
+//   - A channel of byte slices that streams the body data.
+//   - An empty channel if the body data is not present.
+//
+// This is useful for handling large responses in a memory-efficient manner,
+// allowing the consumer to process each chunk as it becomes available.
+// Note: The channel is closed automatically when the streaming is complete.
+// If the body is not present, it returns an empty channel.
+func (w *wrapper) Stream() <-chan []byte {
+	ch := make(chan []byte, 1)
+	if !w.IsBodyPresent() {
+		return ch
+	}
+	go func() {
+		defer close(ch)
+		// Chunk the response data into smaller parts.
+		// This is useful for streaming large responses in smaller segments.
+		// We will use the Chunk function to split the response data into manageable chunks.
+		chunks := Chunk(w.Respond())
+		for _, chunk := range chunks {
+			ch <- chunk
+		}
+	}()
+	return ch
+}
+
 // Debugging retrieves the debugging information from the `wrapper` instance.
 //
 // This function checks if the `wrapper` instance is available (non-nil) before returning
