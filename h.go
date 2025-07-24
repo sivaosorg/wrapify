@@ -40,3 +40,28 @@ func Compress(data any) string {
 	}
 	return base64.StdEncoding.EncodeToString(buf.Bytes())
 }
+
+// Chunk takes a response represented as a map and returns a slice of byte slices,
+// where each byte slice is a chunk of the JSON representation of the response.
+// This is useful for streaming large responses in smaller segments.
+// If the JSON encoding fails, it returns nil.
+func Chunk(data map[string]any) [][]byte {
+	_bytes, err := unify4g.MarshalN(data)
+	if err != nil {
+		return nil
+	}
+	var chunks [][]byte
+	for i := 0; i < len(_bytes); i += DefaultChunkSize {
+		end := i + DefaultChunkSize
+		if end > len(_bytes) {
+			end = len(_bytes)
+		}
+		// Create a copy of the chunk to avoid referencing the underlying array.
+		// This is important to ensure that each chunk is independent and can be
+		// processed separately without affecting the others.
+		chunk := make([]byte, end-i)
+		copy(chunk, _bytes[i:end])
+		chunks = append(chunks, chunk)
+	}
+	return chunks
+}

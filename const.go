@@ -114,10 +114,6 @@ const (
 	MediaTypeApplicationGRPC         = "application/grpc"                                                          // Specifies that the content is in gRPC format (a high-performance RPC framework).
 )
 
-const (
-	UnknownXC string = "unknown"
-)
-
 var (
 	// 1xx Informational responses
 	// Continue indicates that the initial part of the request has been received and has not yet been rejected by the server.
@@ -266,4 +262,14 @@ var (
 	NetworkReadTimeoutError = NewHeader().WithCode(598).WithText("Network Read Timeout Error").WithType("Server Error")
 	// NetworkConnectTimeoutError is a non-standard code indicating a network connection timeout error.
 	NetworkConnectTimeoutError = NewHeader().WithCode(599).WithText("Network Connect Timeout Error").WithType("Server Error")
+)
+
+const (
+	// UnknownXC is a constant string used to represent an unknown or unspecified value in the context of XC (cross-cutting) concerns.
+	// It is typically used as a placeholder when the actual value is not available or not applicable.
+	UnknownXC string = "unknown"
+
+	// DefaultChunkSize defines the maximum number of bytes in each chunk.
+	// DefaultChunkSize is used to limit the size of data chunks when processing large responses or requests.
+	DefaultChunkSize = 1024
 )
