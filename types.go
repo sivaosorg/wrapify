@@ -196,6 +196,8 @@ type StreamConfig struct {
 	WriteTimeout time.Duration `json:"write_timeout,omitempty"`
 
 	// ThrottleRate in bytes/second (0 = unlimited)
+	// to limit bandwidth usage during streaming
+	// useful for avoiding network congestion
 	ThrottleRate int64 `json:"throttle_rate"`
 }
 
