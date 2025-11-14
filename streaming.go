@@ -699,7 +699,7 @@ func (sw *StreamingWrapper) WithCallback(callback StreamingCallback) *wrapper {
 	return sw.wrapper
 }
 
-// WithCallbackR sets the callback function for streaming progress updates with read context.
+// WithHook sets the callback function for streaming progress updates with read context.
 //
 // This function registers a callback that will be invoked during the streaming operation
 // to provide real-time progress information and error notifications. The callback is called
@@ -713,11 +713,11 @@ func (sw *StreamingWrapper) WithCallback(callback StreamingCallback) *wrapper {
 //     The callback signature is: func(progress *StreamProgress, w *R)
 //   - progress: Contains current progress metrics (bytes transferred, percentage, ETA, etc.)
 //   - w: A pointer to the R struct containing read context for the current chunk.
-func (sw *StreamingWrapper) WithCallbackR(callback StreamingCallbackR) *wrapper {
+func (sw *StreamingWrapper) WithHook(callback StreamingHook) *wrapper {
 	if sw == nil {
 		return respondStreamBadRequestDefault()
 	}
-	sw.callbackR = callback
+	sw.hook = callback
 	return sw.wrapper
 }
 
@@ -9590,6 +9590,7 @@ func (sw *StreamingWrapper) updateProgress(chunk *StreamChunk) {
 	sw.stats.AverageBandwidth = sw.progress.TransferRate
 
 	sw.fireCallback(nil)
+	sw.fireHook(sw.wrapper.ReplyPtr())
 }
 
 // fireCallback triggers the user-provided callback function with current progress and error information.
@@ -9978,6 +9979,23 @@ func (sw *StreamingWrapper) updateProgress(chunk *StreamChunk) {
 func (sw *StreamingWrapper) fireCallback(err error) {
 	if sw.callback != nil {
 		sw.callback(sw.progress, err)
+	}
+}
+
+// fireHook trigger the user-provided R-type callback function with current progress and R object.
+//
+// This function invokes the R-type callback handler if one was configured via WithCallbackR(), passing the current
+// streaming progress snapshot and the R object associated with the streaming operation. The callback provides
+// immediate, per-chunk notifications enabling real-time feedback and progress monitoring during active streaming.
+// fireHook is called at strategic points in the streaming lifecycle: after each chunk is processed successfully,
+// allowing the callback to react to individual chunk completion events. The callback executes synchronously in the
+// streaming goroutine; long-running callback implementations may slow streaming. fireHook is safe to call
+// from any goroutine in the streaming context but must not be called recursively. If no R-type callback was configured,
+// fireHook is a no-op with negligible overhead. This is a low-level internal method for triggering R-type
+// callbacks; applications configure R-type callbacks via the high-level WithCallbackR() API.
+func (sw *StreamingWrapper) fireHook(w *R) {
+	if sw.hook != nil {
+		sw.hook(sw.progress, w)
 	}
 }
 

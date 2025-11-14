@@ -1259,6 +1259,23 @@ func (w *wrapper) Reply() R {
 	return R{wrapper: w}
 }
 
+// ReplyPtr returns a pointer to a new R instance that wraps the current `wrapper`.
+//
+// This method creates a new `R` struct, initializing it with the current `wrapper` instance,
+// and returns a pointer to this new `R` instance. This allows for easier manipulation
+// of the wrapped data and metadata through the `R` abstraction.
+//
+// Returns:
+//   - A pointer to an `R` struct that wraps the current `wrapper` instance.
+//
+// Example usage:
+//
+//	var responsePtr *wrapify.R = wrapify.NewWrap().ReplyPtr()
+//	fmt.Println(responsePtr.Json())  // Prints the wrapped response details, including data, headers, and metadata.
+func (w *wrapper) ReplyPtr() *R {
+	return &R{wrapper: w}
+}
+
 // Respond generates a map representation of the `pagination` instance.
 //
 // This method collects various fields related to pagination (e.g., `page`, `per_page`, etc.)
