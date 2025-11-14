@@ -172,6 +172,11 @@ type StreamConfig struct {
 	// ChunkSize defines size of each chunk in bytes (default: 64KB)
 	ChunkSize int64 `json:"chunk_size"`
 
+	// IsReceiving indicates if streaming is for receiving data
+	// true if receiving data (decompress incoming), false if sending (compress outgoing)
+	// it's used to determine direction of data flow
+	IsReceiving bool `json:"is_receiving"`
+
 	// Strategy for streaming (direct, buffered, chunked)
 	Strategy StreamingStrategy `json:"strategy"`
 

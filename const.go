@@ -296,4 +296,5 @@ const (
 	COMP_NONE    CompressionType = "none"    // No compression applied
 	COMP_GZIP    CompressionType = "gzip"    // GZIP compression algorithm
 	COMP_DEFLATE CompressionType = "deflate" // Deflate compression algorithm
+	COMP_FLATE   CompressionType = "flate"   // Flate compression algorithm
 )
