@@ -585,7 +585,6 @@ func (sw *StreamingWrapper) Start(ctx context.Context) *wrapper {
 		WithDebuggingKV("total_chunks", sw.stats.TotalChunks).
 		WithDebuggingKV("total_bytes", sw.stats.TotalBytes).
 		WithDebuggingKV("compressed_bytes", sw.stats.CompressedBytes).
-		WithDebuggingKV("compression_ratio", fmt.Sprintf("%.2f", sw.stats.CompressionRatio)).
 		WithDebuggingKV("duration_ms", sw.stats.EndTime.Sub(sw.stats.StartTime).Milliseconds())
 
 	return sw.wrapper
