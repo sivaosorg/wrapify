@@ -1,6 +1,8 @@
 package wrapify
 
 import (
+	"context"
+	"io"
 	"sync"
 	"time"
 )
@@ -154,4 +156,203 @@ type underlyingStack struct {
 type underlyingMessage struct {
 	cause error  // The original error being wrapped or annotated
 	msg   string // The message describing the additional context for the error
+}
+
+// StreamingStrategy defines how streaming is performed
+// for large datasets or long-running operations.
+type StreamingStrategy string
+
+// CompressionType defines compression algorithm
+// used for data transmission.
+type CompressionType string
+
+// StreamConfig contains streaming configuration
+// options for handling large data transfers.
+type StreamConfig struct {
+	// ChunkSize defines size of each chunk in bytes (default: 64KB)
+	ChunkSize int64 `json:"chunk_size"`
+
+	// Strategy for streaming (direct, buffered, chunked)
+	Strategy StreamingStrategy `json:"strategy"`
+
+	// Compression algorithm to use during streaming
+	Compression CompressionType `json:"compression"`
+
+	// UseBufferPool enables buffer pooling for efficiency
+	UseBufferPool bool `json:"use_buffer_pool"`
+
+	// MaxConcurrentChunks for parallel processing
+	MaxConcurrentChunks int `json:"max_concurrent_chunks"`
+
+	// ReadTimeout for read operations
+	ReadTimeout time.Duration `json:"read_timeout,omitempty"`
+
+	// WriteTimeout for write operations
+	WriteTimeout time.Duration `json:"write_timeout,omitempty"`
+
+	// ThrottleRate in bytes/second (0 = unlimited)
+	ThrottleRate int64 `json:"throttle_rate"`
+}
+
+// StreamProgress tracks streaming progress
+// and statistics.
+type StreamProgress struct {
+	// TotalBytes total data to be streamed
+	TotalBytes int64 `json:"total_bytes"`
+
+	// TransferredBytes bytes transferred so far
+	TransferredBytes int64 `json:"transferred_bytes"`
+
+	// Percentage completion (0-100)
+	Percentage int `json:"percentage"`
+
+	// CurrentChunk chunk number being processed
+	CurrentChunk int64 `json:"current_chunk"`
+
+	// TotalChunks total number of chunks
+	TotalChunks int64 `json:"total_chunks"`
+
+	// ElapsedTime time since streaming started
+	ElapsedTime time.Duration `json:"elapsed_time,omitempty"`
+
+	// EstimatedTimeRemaining estimated time until completion
+	EstimatedTimeRemaining time.Duration `json:"estimated_time_remaining,omitempty"`
+
+	// TransferRate bytes per second
+	TransferRate int64 `json:"transfer_rate"`
+
+	// LastUpdate time of last progress update
+	LastUpdate time.Time `json:"last_update,omitempty"`
+}
+
+// StreamingStats contains streaming statistics
+// and performance metrics.
+type StreamingStats struct {
+	// Time when streaming started
+	StartTime time.Time `json:"start_time,omitempty"`
+
+	// Time when streaming ended
+	EndTime time.Time `json:"end_time,omitempty"`
+
+	// Total bytes processed
+	TotalBytes int64 `json:"total_bytes"`
+
+	// Bytes after compression
+	CompressedBytes int64 `json:"compressed_bytes"`
+
+	// Compression ratio achieved
+	CompressionRatio float64 `json:"compression_ratio"`
+
+	// Average size of each chunk
+	AverageChunkSize int64 `json:"average_chunk_size"`
+
+	// Total number of chunks processed
+	TotalChunks int64 `json:"total_chunks"`
+
+	// Number of chunks that failed
+	FailedChunks int64 `json:"failed_chunks"`
+
+	// Number of chunks that were retried
+	RetriedChunks int64 `json:"retried_chunks"`
+
+	// Average latency per chunk
+	AverageLatency time.Duration `json:"average_latency,omitempty"`
+
+	// Peak bandwidth observed
+	PeakBandwidth int64 `json:"peak_bandwidth"`
+
+	// Average bandwidth during streaming
+	AverageBandwidth int64 `json:"average_bandwidth"`
+
+	// List of errors encountered during streaming
+	Errors []error `json:"-"`
+}
+
+// StreamingCallback function type for async notifications
+// Streamer interface for streaming data with progress tracking
+type StreamingCallback func(progress *StreamProgress, err error)
+
+// BufferPool for efficient buffer reuse
+type BufferPool struct {
+	buffers chan []byte
+	size    int64
+}
+
+// StreamingWrapper wraps response with streaming capabilities
+// BufferPool represents a pool of reusable byte buffers to optimize memory usage during streaming.
+type StreamingWrapper struct {
+	*wrapper
+	config         *StreamConfig      // Streaming configuration
+	reader         io.Reader          // Source of data to be streamed
+	writer         io.Writer          // Destination for streamed data
+	progress       *StreamProgress    // Progress tracking information
+	stats          *StreamingStats    // Streaming statistics and metrics
+	callback       StreamingCallback  // Callback for progress updates
+	ctx            context.Context    // Context for managing streaming lifecycle
+	cancel         context.CancelFunc // Function to cancel streaming
+	currentChunk   int64              // Current chunk being processed
+	errors         []error            // Errors encountered during streaming
+	mu             sync.RWMutex       // Mutex for synchronizing access to shared fields
+	isStreaming    bool               // Indicates if streaming is in progress
+	compressionBuf []byte             // Compression buffer for data compression
+	bufferPool     *BufferPool        // Pool of reusable buffers for efficient memory usage
+}
+
+// StreamChunk represents a single chunk of data
+// in a streaming operation.
+type StreamChunk struct {
+	// SequenceNumber incremental chunk number
+	SequenceNumber int64 `json:"sequence_number"`
+
+	// Data chunk content
+	Data []byte `json:"-"`
+
+	// Size of chunk
+	Size int64 `json:"size"`
+
+	// Checksum for integrity verification
+	Checksum uint32 `json:"checksum"`
+
+	// Timestamp when chunk was created
+	Timestamp time.Time `json:"timestamp,omitempty"`
+
+	// Compressed indicates if chunk is compressed
+	Compressed bool `json:"compressed"`
+
+	// CompressionType used for this chunk
+	CompressionType CompressionType `json:"compression_type"`
+
+	// Error if any occurred during chunk processing
+	Error error `json:"-"`
+}
+
+// StreamingMetadata extends wrapper metadata for streaming context
+// Streamer defines methods for streaming data with progress tracking
+type StreamingMetadata struct {
+	// Streaming strategy used
+	Strategy StreamingStrategy `json:"strategy"`
+
+	// Compression algorithm used
+	CompressionType CompressionType `json:"compression_type"`
+
+	// Size of each chunk in bytes
+	ChunkSize int64 `json:"chunk_size"`
+
+	// Total number of chunks
+	TotalChunks int64 `json:"total_chunks"`
+
+	// Estimated total size of data
+	EstimatedTotalSize int64 `json:"estimated_total_size"`
+
+	// Timestamp when streaming started
+	StartedAt time.Time `json:"started_at"`
+
+	// Timestamp when streaming completed
+	CompletedAt time.Time `json:"completed_at"`
+
+	// Indicates if streaming can be paused
+	IsPausable bool `json:"is_pausable"`
+
+	// Indicates if streaming can be resumed
+	IsResumable bool `json:"is_resumable"`
 }

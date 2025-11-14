@@ -2,6 +2,7 @@ package wrapify
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/sivaosorg/unify4g"
@@ -27,7 +28,7 @@ func NewPagination() *pagination {
 //   - A pointer to a newly created `meta` instance with initialized fields.
 func NewMeta() *meta {
 	m := &meta{
-		customFields: map[string]interface{}{},
+		customFields: map[string]any{},
 	}
 	return m
 }
@@ -734,6 +735,21 @@ func (w *wrapper) WithErrMessagef(err error, format string, args ...interface{})
 	return w
 }
 
+// BindCause sets the error for the `wrapper` instance using its current message.
+//
+// This function creates an error object from the `message` field of the `wrapper`,
+// assigns it to the `errors` field, and returns the modified instance.
+// It allows for method chaining.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) BindCause() *wrapper {
+	if unify4g.IsNotEmpty(w.message) {
+		w.errors = WithError(w.message)
+	}
+	return w
+}
+
 // WithDebuggingKV adds a key-value pair to the debugging information in the `wrapper` instance.
 //
 // This function checks if debugging information is already present. If it is not, it initializes
@@ -1058,6 +1074,137 @@ func (w *wrapper) Hash() string {
 	return unify4g.Hash(data)
 }
 
+// WithStreaming enables streaming mode for the wrapper and returns a streaming wrapper for enhanced data transfer capabilities.
+//
+// This function is the primary entry point for activating streaming functionality on an existing wrapper instance.
+// It creates a new StreamingWrapper that preserves the metadata and context of the original wrapper while adding
+// streaming-specific features such as chunk-based transfer, compression, progress tracking, and bandwidth throttling.
+// The returned StreamingWrapper allows for method chaining to configure streaming parameters before initiating transfer.
+//
+// Parameters:
+//   - reader: An io.Reader implementation providing the source data stream (e.g., *os.File, *http.Response.Body, *bytes.Buffer).
+//     Cannot be nil; streaming will fail if no valid reader is provided.
+//   - config: A *StreamConfig containing streaming configuration options (chunk size, compression, strategy, concurrency).
+//     If nil, a default configuration is automatically created with sensible defaults:
+//   - ChunkSize: 65536 bytes (64KB)
+//   - Strategy: STRATEGY_BUFFERED (balanced throughput and memory)
+//   - Compression: COMP_NONE
+//   - MaxConcurrentChunks: 4
+//
+// Returns:
+//   - A pointer to a new StreamingWrapper instance that wraps the original wrapper.
+//   - The StreamingWrapper preserves all metadata from the original wrapper.
+//   - If the receiver wrapper is nil, creates a new default wrapper before enabling streaming.
+//   - The returned StreamingWrapper can be chained with configuration methods before calling Start().
+//
+// Example:
+//
+//	file, _ := os.Open("large_file.bin")
+//	defer file.Close()
+//
+//	// Simple streaming with defaults
+//	result := wrapify.New().
+//	    WithStatusCode(200).
+//	    WithPath("/api/download/file").
+//	    WithStreaming(file, nil).
+//	    WithChunkSize(1024 * 1024).
+//	    WithCompressionType(COMP_GZIP).
+//	    WithCallback(func(p *StreamProgress, err error) {
+//	        if err == nil {
+//	            fmt.Printf("Transferred: %.2f MB / %.2f MB\n",
+//	                float64(p.TransferredBytes) / 1024 / 1024,
+//	                float64(p.TotalBytes) / 1024 / 1024)
+//	        }
+//	    }).
+//	    Start(context.Background()).
+//	    WithMessage("File transfer completed")
+//
+// See Also:
+//   - AsStreamingResponse: Simplified version with default configuration
+//   - Start: Initiates the streaming operation
+//   - WithChunkSize: Configures chunk size
+//   - WithCompressionType: Enables data compression
+func (w *wrapper) WithStreaming(reader io.Reader, config *StreamConfig) *StreamingWrapper {
+	if w == nil {
+		return NewStreaming(reader, config)
+	}
+	if config == nil {
+		config = NewStreamConfig()
+	}
+
+	sw := NewStreaming(reader, config)
+	// Copy existing wrapper metadata
+	sw.wrapper = w
+	sw.wrapper.WithMessage("Streaming mode enabled")
+
+	return sw
+}
+
+// AsStreaming converts a regular wrapper instance into a streaming-enabled response with default configuration.
+//
+// This function provides a simplified, one-line alternative to WithStreaming for common streaming scenarios.
+// It automatically creates a new wrapper if the receiver is nil and applies default streaming configuration,
+// eliminating the need for manual configuration object creation. This is ideal for quick implementations where
+// standard settings (64KB chunks, buffered strategy, no compression) are acceptable.
+//
+// Parameters:
+//   - reader: An io.Reader implementation providing the source data stream (e.g., *os.File, *http.Response.Body, *bytes.Buffer).
+//     Cannot be nil; streaming will fail if no valid reader is provided.
+//
+// Returns:
+//   - A pointer to a new StreamingWrapper instance configured with default settings:
+//   - ChunkSize: 65536 bytes (64KB)
+//   - Strategy: STRATEGY_BUFFERED
+//   - Compression: COMP_NONE
+//   - MaxConcurrentChunks: 4
+//   - UseBufferPool: true
+//   - ReadTimeout: 30 seconds
+//   - WriteTimeout: 30 seconds
+//   - If the receiver wrapper is nil, automatically creates a new wrapper before enabling streaming.
+//   - Returns a StreamingWrapper ready for optional configuration before calling Start().
+//
+// Example:
+//
+//	// Minimal streaming setup with defaults - best for simple file downloads
+//	file, _ := os.Open("document.pdf")
+//	defer file.Close()
+//
+//	result := wrapify.New().
+//	    WithStatusCode(200).
+//	    WithPath("/api/download/document").
+//	    AsStreaming(file).
+//	    WithTotalBytes(fileSize).
+//	    Start(context.Background())
+//
+//	// Or without creating a new wrapper first
+//	result := (*wrapper)(nil).
+//	    AsStreaming(file).
+//	    Start(context.Background())
+//
+// Comparison:
+//
+//	// Using AsStreaming (simple, defaults only)
+//	streaming := response.AsStreaming(reader)
+//
+//	// Using WithStreaming (more control)
+//	streaming := response.WithStreaming(reader, &StreamConfig{
+//	    ChunkSize:           512 * 1024,
+//	    Compression:         COMP_GZIP,
+//	    MaxConcurrentChunks: 8,
+//	})
+//
+// See Also:
+//   - WithStreaming: For custom streaming configuration
+//   - NewStreamConfig: To create custom configuration objects
+//   - Start: Initiates the streaming operation
+//   - WithCallback: Adds progress tracking after AsStreaming
+func (w *wrapper) AsStreaming(reader io.Reader) *StreamingWrapper {
+	if w == nil {
+		w = New()
+	}
+	return w.WithStreaming(reader, NewStreamConfig())
+}
+
 // Respond generates a map representation of the `wrapper` instance.
 //
 // This method collects various fields of the `wrapper` (e.g., `data`, `header`, `meta`, etc.)
@@ -1077,7 +1224,7 @@ func (w *wrapper) Hash() string {
 //
 // Returns:
 //   - A `map[string]interface{}` containing the structured response data.
-func (w *wrapper) Respond() map[string]interface{} {
+func (w *wrapper) Respond() map[string]any {
 	if !w.Available() {
 		return nil
 	}
@@ -1127,8 +1274,8 @@ func (w *wrapper) Reply() R {
 //
 // Returns:
 //   - A `map[string]interface{}` containing the structured pagination data.
-func (p *pagination) Respond() map[string]interface{} {
-	m := make(map[string]interface{})
+func (p *pagination) Respond() map[string]any {
+	m := make(map[string]any)
 	if !p.Available() {
 		return m
 	}
@@ -1155,8 +1302,8 @@ func (p *pagination) Respond() map[string]interface{} {
 //
 // Returns:
 //   - A `map[string]interface{}` containing the structured metadata.
-func (m *meta) Respond() map[string]interface{} {
-	mk := make(map[string]interface{})
+func (m *meta) Respond() map[string]any {
+	mk := make(map[string]any)
 	if !m.Available() {
 		return mk
 	}
@@ -1192,8 +1339,8 @@ func (m *meta) Respond() map[string]interface{} {
 //
 // Returns:
 //   - A `map[string]interface{}` containing the fields of the `header` instance that are present.
-func (h *header) Respond() map[string]interface{} {
-	m := make(map[string]interface{})
+func (h *header) Respond() map[string]any {
+	m := make(map[string]any)
 	if !h.Available() {
 		return m
 	}
@@ -1288,7 +1435,7 @@ func (w *wrapper) build() map[string]any {
 // nested objects (like `header`, `meta`, and `pagination`), checking for the
 // presence of keys and converting them into their appropriate types.
 func Parse(json string) (w *wrapper, err error) {
-	var data map[string]interface{}
+	var data map[string]any
 	err = unify4g.UnmarshalFromStringN(json, &data)
 	if err != nil {
 		return nil, WithErrStack(err)
@@ -1312,10 +1459,10 @@ func Parse(json string) (w *wrapper, err error) {
 	if value, exists := data["path"].(string); exists {
 		w.path = value
 	}
-	if value, exists := data["debug"].(map[string]interface{}); exists {
+	if value, exists := data["debug"].(map[string]any); exists {
 		w.debug = value
 	}
-	if values, exists := data["header"].(map[string]interface{}); exists {
+	if values, exists := data["header"].(map[string]any); exists {
 		header := &header{}
 		if value, exists := values["code"].(float64); exists {
 			header.code = int(value)
@@ -1331,7 +1478,7 @@ func Parse(json string) (w *wrapper, err error) {
 		}
 		w.header = header
 	}
-	if values, exists := data["meta"].(map[string]interface{}); exists {
+	if values, exists := data["meta"].(map[string]any); exists {
 		meta := &meta{}
 		if value, exists := values["api_version"].(string); exists {
 			meta.apiVersion = value
@@ -1342,7 +1489,7 @@ func Parse(json string) (w *wrapper, err error) {
 		if value, exists := values["request_id"].(string); exists {
 			meta.requestID = value
 		}
-		if customFields, exists := values["custom_fields"].(map[string]interface{}); exists {
+		if customFields, exists := values["custom_fields"].(map[string]any); exists {
 			meta.customFields = customFields
 		}
 		if value, exists := values["requested_time"].(string); exists {
@@ -1352,7 +1499,7 @@ func Parse(json string) (w *wrapper, err error) {
 		}
 		w.meta = meta
 	}
-	if values, exists := data["pagination"].(map[string]interface{}); exists {
+	if values, exists := data["pagination"].(map[string]any); exists {
 		pagination := &pagination{}
 		if value, exists := values["page"].(float64); exists {
 			pagination.page = int(value)
@@ -1415,7 +1562,7 @@ func Parse(json string) (w *wrapper, err error) {
 //	} else {
 //	    log.Println("Wrapper:", wrapper)
 //	}
-func Deserialize(data map[string]interface{}) (w *wrapper, err error) {
+func Deserialize(data map[string]any) (w *wrapper, err error) {
 	if len(data) == 0 {
 		return nil, WithErrorf("data is nil/null")
 	}

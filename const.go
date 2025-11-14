@@ -273,3 +273,27 @@ const (
 	// DefaultChunkSize is used to limit the size of data chunks when processing large responses or requests.
 	DefaultChunkSize = 1024
 )
+
+// StreamingStrategy defines the strategy used for streaming data.
+// It determines how data is sent or received in a streaming manner.
+const (
+	// Direct streaming without buffering
+	// Each piece of data is sent immediately as it becomes available.
+	STRATEGY_DIRECT StreamingStrategy = "direct"
+
+	// Buffered streaming with internal buffer
+	// Data is collected in a buffer and sent in larger chunks to optimize performance.
+	STRATEGY_BUFFERED StreamingStrategy = "buffered"
+
+	// Chunked streaming with explicit chunk handling
+	// Data is divided into chunks of a specified size and sent sequentially.
+	STRATEGY_CHUNKED StreamingStrategy = "chunked"
+)
+
+// CompressionType defines the type of compression applied to data.
+// It specifies the algorithm used to compress or decompress data.
+const (
+	COMP_NONE    CompressionType = "none"    // No compression applied
+	COMP_GZIP    CompressionType = "gzip"    // GZIP compression algorithm
+	COMP_DEFLATE CompressionType = "deflate" // Deflate compression algorithm
+)
