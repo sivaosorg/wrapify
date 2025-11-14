@@ -521,7 +521,7 @@ func (sw *StreamingWrapper) Start(ctx context.Context) *wrapper {
 	// Update status
 	sw.wrapper.
 		WithMessage("Streaming started").
-		WithDebuggingKV("started_at", time.Now())
+		WithDebuggingKV("started_at", time.Now().Unix())
 
 	// Use provided context or wrapper's context
 	if ctx == nil {
@@ -575,13 +575,15 @@ func (sw *StreamingWrapper) Start(ctx context.Context) *wrapper {
 	}
 
 	// Success response
-	sw.stats.EndTime = time.Now()
+	if sw.stats.EndTime.IsZero() {
+		sw.stats.EndTime = time.Now()
+	}
 	sw.progress.Percentage = 100
 
 	sw.wrapper.
 		WithStatusCode(http.StatusOK).
 		WithMessage("Streaming completed successfully").
-		WithDebuggingKV("completed_at", sw.stats.EndTime).
+		WithDebuggingKV("completed_at", sw.stats.EndTime.Unix()).
 		WithDebuggingKV("total_chunks", sw.stats.TotalChunks).
 		WithDebuggingKV("total_bytes", sw.stats.TotalBytes).
 		WithDebuggingKV("compressed_bytes", sw.stats.CompressedBytes).
