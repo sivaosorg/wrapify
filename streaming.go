@@ -699,6 +699,28 @@ func (sw *StreamingWrapper) WithCallback(callback StreamingCallback) *wrapper {
 	return sw.wrapper
 }
 
+// WithCallbackR sets the callback function for streaming progress updates with read context.
+//
+// This function registers a callback that will be invoked during the streaming operation
+// to provide real-time progress information and error notifications. The callback is called
+// for each chunk processed, allowing consumers to track transfer progress, bandwidth usage,
+// and estimated time remaining. The callback also receives the read context for advanced
+// scenarios where access to the read buffer is needed.
+//
+// Parameters:
+//
+//   - callback: A StreamingCallbackR function that receives progress updates, read context, and potential errors.
+//     The callback signature is: func(progress *StreamProgress, w *R)
+//   - progress: Contains current progress metrics (bytes transferred, percentage, ETA, etc.)
+//   - w: A pointer to the R struct containing read context for the current chunk.
+func (sw *StreamingWrapper) WithCallbackR(callback StreamingCallbackR) *wrapper {
+	if sw == nil {
+		return respondStreamBadRequestDefault()
+	}
+	sw.callbackR = callback
+	return sw.wrapper
+}
+
 // WithTotalBytes sets the total number of bytes to be streamed.
 //
 // This function specifies the expected total size of the data stream, which is essential for

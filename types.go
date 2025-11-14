@@ -277,6 +277,13 @@ type StreamingStats struct {
 // Streamer interface for streaming data with progress tracking
 type StreamingCallback func(progress *StreamProgress, err error)
 
+// StreamingCallbackR is a function type used for asynchronous notifications
+// that provides updates on the progress of a streaming operation along with
+// a reference to the associated R wrapper. This allows the callback
+// to access both the progress information and any relevant response data
+// encapsulated within the R type.
+type StreamingCallbackR func(progress *StreamProgress, wrap *R)
+
 // BufferPool for efficient buffer reuse
 type BufferPool struct {
 	buffers chan []byte
@@ -293,6 +300,7 @@ type StreamingWrapper struct {
 	progress       *StreamProgress    // Progress tracking information
 	stats          *StreamingStats    // Streaming statistics and metrics
 	callback       StreamingCallback  // Callback for progress updates
+	callbackR      StreamingCallbackR // Callback with R wrapper for progress updates
 	ctx            context.Context    // Context for managing streaming lifecycle
 	cancel         context.CancelFunc // Function to cancel streaming
 	currentChunk   int64              // Current chunk being processed
