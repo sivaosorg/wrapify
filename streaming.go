@@ -9591,8 +9591,9 @@ func (sw *StreamingWrapper) updateProgress(chunk *StreamChunk) {
 	}
 	sw.stats.AverageBandwidth = sw.progress.TransferRate
 
-	sw.fireCallback(nil)
-	sw.fireHook(sw.wrapper.ReplyPtr())
+	// Trigger callback to notify progress update
+	go sw.fireCallback(nil)
+	go sw.fireHook(sw.wrapper.ReplyPtr())
 }
 
 // fireCallback triggers the user-provided callback function with current progress and error information.
