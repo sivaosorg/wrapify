@@ -651,7 +651,7 @@ func (sw *StreamingWrapper) WithReceiveMode(isReceiving bool) *wrapper {
 //
 // Example:
 //
-//	streaming := response.AsStreamingResponse(reader).
+//	streaming := response.AsStreaming(reader).
 //	    WithWriter(outputFile).
 //	    Start(ctx)
 func (sw *StreamingWrapper) WithWriter(writer io.Writer) *wrapper {
@@ -681,7 +681,7 @@ func (sw *StreamingWrapper) WithWriter(writer io.Writer) *wrapper {
 //
 // Example:
 //
-//	streaming := response.AsStreamingResponse(reader).
+//	streaming := response.AsStreaming(reader).
 //	    WithCallback(func(p *StreamProgress, err error) {
 //	        if err != nil {
 //	            log.Printf("Streaming error at chunk %d: %v", p.CurrentChunk, err)
@@ -745,7 +745,7 @@ func (sw *StreamingWrapper) WithHook(callback StreamingHook) *wrapper {
 // Example:
 //
 //	fileInfo, _ := os.Stat("large_file.iso")
-//	streaming := response.AsStreamingResponse(fileReader).
+//	streaming := response.AsStreaming(fileReader).
 //	    WithChunkSize(1024 * 1024).
 //	    WithTotalBytes(fileInfo.Size()).
 //	    WithCallback(func(p *StreamProgress, err error) {

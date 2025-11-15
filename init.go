@@ -1120,7 +1120,7 @@ func (w *wrapper) Hash() string {
 //	    WithMessage("File transfer completed")
 //
 // See Also:
-//   - AsStreamingResponse: Simplified version with default configuration
+//   - AsStreaming: Simplified version with default configuration
 //   - Start: Initiates the streaming operation
 //   - WithChunkSize: Configures chunk size
 //   - WithCompressionType: Enables data compression
