@@ -3,6 +3,7 @@ package wrapify
 import (
 	"fmt"
 	"io"
+	"net/http"
 	"time"
 
 	"github.com/sivaosorg/unify4g"
@@ -167,6 +168,9 @@ func (h *header) JsonPretty() string {
 // Returns:
 //   - A pointer to the modified `pagination` instance (enabling method chaining).
 func (p *pagination) WithPage(v int) *pagination {
+	if v < 1 {
+		v = 1
+	}
 	p.page = v
 	return p
 }
@@ -175,6 +179,7 @@ func (p *pagination) WithPage(v int) *pagination {
 //
 // This function updates the `perPage` field of the `pagination` and
 // returns the modified `pagination` instance to allow method chaining.
+// Validates that perPage is >= 1, defaults to 10 if invalid value.
 //
 // Parameters:
 //   - `v`: An integer representing the number of items per page to set.
@@ -182,11 +187,15 @@ func (p *pagination) WithPage(v int) *pagination {
 // Returns:
 //   - A pointer to the modified `pagination` instance (enabling method chaining).
 func (p *pagination) WithPerPage(v int) *pagination {
+	if v < 1 {
+		v = 10
+	}
 	p.perPage = v
 	return p
 }
 
 // WithTotalPages sets the total number of pages for the `pagination` instance.
+// Ensure that totalPages is >= 0, defaults to 0 if invalid value.
 //
 // This function updates the `totalPages` field of the `pagination` and
 // returns the modified `pagination` instance to allow method chaining.
@@ -197,11 +206,15 @@ func (p *pagination) WithPerPage(v int) *pagination {
 // Returns:
 //   - A pointer to the modified `pagination` instance (enabling method chaining).
 func (p *pagination) WithTotalPages(v int) *pagination {
+	if v < 0 {
+		v = 0
+	}
 	p.totalPages = v
 	return p
 }
 
 // WithTotalItems sets the total number of items for the `pagination` instance.
+// Ensure that totalItems is >= 0, defaults to 0 if invalid value.
 //
 // This function updates the `totalItems` field of the `pagination` and
 // returns the modified `pagination` instance to allow method chaining.
@@ -212,6 +225,9 @@ func (p *pagination) WithTotalPages(v int) *pagination {
 // Returns:
 //   - A pointer to the modified `pagination` instance (enabling method chaining).
 func (p *pagination) WithTotalItems(v int) *pagination {
+	if v < 0 {
+		v = 0
+	}
 	p.totalItems = v
 	return p
 }
@@ -437,6 +453,7 @@ func (h *header) WithDescription(v string) *header {
 }
 
 // WithStatusCode sets the HTTP status code for the `wrapper` instance.
+// Ensure that code is between 100 and 599, defaults to 500 if invalid value.
 //
 // This function updates the `statusCode` field of the `wrapper` and
 // returns the modified `wrapper` instance to allow method chaining.
@@ -447,6 +464,9 @@ func (h *header) WithDescription(v string) *header {
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithStatusCode(code int) *wrapper {
+	if code < 100 || code > 599 {
+		code = http.StatusInternalServerError
+	}
 	w.statusCode = code
 	return w
 }
