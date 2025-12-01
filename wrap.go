@@ -1451,3 +1451,61 @@ func WrapPaymentRequired(message string, data any) *wrapper {
 		WithBody(data)
 	return w
 }
+
+// WrapConflict creates a wrapper for a response indicating a conflict (409 Conflict).
+//
+// This function sets the HTTP status code to 409 (Conflict) and includes a message and data payload
+// in the response body. It is typically used when the request conflicts with the current state of the server.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func WrapConflict(message string, data any) *wrapper {
+	w := New().
+		WithStatusCode(http.StatusConflict).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// WrapGone creates a wrapper for a response indicating the resource is gone (410 Gone).
+//
+// This function sets the HTTP status code to 410 (Gone) and includes a message and data payload
+// in the response body. It is typically used when the requested resource is no longer available.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func WrapGone(message string, data any) *wrapper {
+	w := New().
+		WithStatusCode(http.StatusGone).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// WrapUnprocessableEntity creates a wrapper for a response indicating the request was well-formed but was unable to be followed due to semantic errors (422 Unprocessable Entity).
+//
+// This function sets the HTTP status code to 422 (Unprocessable Entity) and includes a message and data payload
+// in the response body. It is typically used when the server understands the content type of the request entity,
+// and the syntax of the request entity is correct, but it was unable to process the contained instructions.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func WrapUnprocessableEntity(message string, data any) *wrapper {
+	w := New().
+		WithStatusCode(http.StatusUnprocessableEntity).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
