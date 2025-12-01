@@ -1509,3 +1509,42 @@ func WrapUnprocessableEntity(message string, data any) *wrapper {
 		WithBody(data)
 	return w
 }
+
+// WrapPreconditionFailed creates a wrapper for a response indicating the precondition failed (412 Precondition Failed).
+//
+// This function sets the HTTP status code to 412 (Precondition Failed) and includes a message and data payload
+// in the response body. It is typically used when the request has not been applied because one or more conditions were not met.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func WrapPreconditionFailed(message string, data any) *wrapper {
+	w := New().
+		WithStatusCode(http.StatusPreconditionFailed).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
+
+// WrapBadGateway creates a wrapper for a response indicating a bad gateway (502 Bad Gateway).
+//
+// This function sets the HTTP status code to 502 (Bad Gateway) and includes a message and data payload
+// in the response body. It is typically used when the server, while acting as a gateway or proxy,
+// received an invalid response from an upstream server.
+//
+// Parameters:
+//   - message: A string containing the response message.
+//   - data: The data payload to include in the response.
+//
+// Returns:
+//   - A pointer to a `wrapper` instance representing the response.
+func WrapBadGateway(message string, data any) *wrapper {
+	w := New().
+		WithStatusCode(http.StatusBadGateway).
+		WithMessage(message).
+		WithBody(data)
+	return w
+}
