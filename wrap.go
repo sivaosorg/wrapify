@@ -32,7 +32,11 @@ func (w *wrapper) Error() string {
 	if !w.Available() {
 		return ""
 	}
-	return w.Cause().Error()
+	cause := w.Cause()
+	if cause == nil {
+		return ""
+	}
+	return cause.Error()
 }
 
 // Cause traverses the error chain and returns the underlying cause of the error
@@ -45,15 +49,6 @@ func (w *wrapper) Error() string {
 // Returns:
 //   - The underlying cause of the error, which can be another error or the original error.
 func (w *wrapper) Cause() error {
-	// cause := w.errors
-	// for cause != nil {
-	// 	if err, ok := cause.(interface{ Cause() error }); ok {
-	// 		cause = err.Cause()
-	// 	} else {
-	// 		break
-	// 	}
-	// }
-	// return cause
 	if !w.Available() || w.errors == nil {
 		return nil
 	}
