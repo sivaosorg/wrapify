@@ -262,7 +262,7 @@ func (m *meta) WithApiVersion(v string) *meta {
 //
 // Returns:
 //   - A pointer to the modified `meta` instance, enabling method chaining.
-func (m *meta) WithApiVersionf(format string, args ...interface{}) *meta {
+func (m *meta) WithApiVersionf(format string, args ...any) *meta {
 	return m.WithApiVersion(fmt.Sprintf(format, args...))
 }
 
@@ -293,7 +293,7 @@ func (m *meta) WithRequestID(v string) *meta {
 //
 // Returns:
 //   - A pointer to the modified `meta` instance, enabling method chaining.
-func (m *meta) WithRequestIDf(format string, args ...interface{}) *meta {
+func (m *meta) WithRequestIDf(format string, args ...any) *meta {
 	return m.WithRequestID(fmt.Sprintf(format, args...))
 }
 
@@ -337,7 +337,7 @@ func (m *meta) WithRequestedTime(v time.Time) *meta {
 //
 // Returns:
 //   - A pointer to the modified `meta` instance, enabling method chaining.
-func (m *meta) WithCustomFields(values map[string]interface{}) *meta {
+func (m *meta) WithCustomFields(values map[string]any) *meta {
 	m.customFields = values
 	return m
 }
@@ -353,7 +353,7 @@ func (m *meta) WithCustomFields(values map[string]interface{}) *meta {
 //
 // Returns:
 //   - A pointer to the modified `meta` instance, enabling method chaining.
-func (m *meta) WithCustomFieldKV(key string, value interface{}) *meta {
+func (m *meta) WithCustomFieldKV(key string, value any) *meta {
 	if !m.IsCustomFieldPresent() {
 		m.customFields = make(map[string]interface{})
 	}
@@ -376,7 +376,7 @@ func (m *meta) WithCustomFieldKV(key string, value interface{}) *meta {
 //
 // Returns:
 //   - A pointer to the modified `meta` instance, enabling method chaining.
-func (m *meta) WithCustomFieldKVf(key string, format string, args ...interface{}) *meta {
+func (m *meta) WithCustomFieldKVf(key string, format string, args ...any) *meta {
 	return m.WithCustomFieldKV(key, fmt.Sprintf(format, args...))
 }
 
@@ -496,7 +496,7 @@ func (w *wrapper) WithMessage(message string) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance, enabling method chaining.
-func (w *wrapper) WithMessagef(message string, args ...interface{}) *wrapper {
+func (w *wrapper) WithMessagef(message string, args ...any) *wrapper {
 	w.message = fmt.Sprintf(message, args...)
 	return w
 }
@@ -511,7 +511,7 @@ func (w *wrapper) WithMessagef(message string, args ...interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
-func (w *wrapper) WithBody(v interface{}) *wrapper {
+func (w *wrapper) WithBody(v any) *wrapper {
 	w.data = v
 	return w
 }
@@ -542,7 +542,7 @@ func (w *wrapper) WithPath(v string) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance, enabling method chaining.
-func (w *wrapper) WithPathf(v string, args ...interface{}) *wrapper {
+func (w *wrapper) WithPathf(v string, args ...any) *wrapper {
 	w.path = fmt.Sprintf(v, args...)
 	return w
 }
@@ -603,7 +603,7 @@ func (w *wrapper) WithPagination(v *pagination) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
-func (w *wrapper) WithDebugging(v map[string]interface{}) *wrapper {
+func (w *wrapper) WithDebugging(v map[string]any) *wrapper {
 	w.debug = v
 	return w
 }
@@ -649,7 +649,7 @@ func (w *wrapper) WithError(message string) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance to support method chaining.
-func (w *wrapper) WithErrorf(format string, args ...interface{}) *wrapper {
+func (w *wrapper) WithErrorf(format string, args ...any) *wrapper {
 	w.errors = WithErrorf(format, args...)
 	return w
 }
@@ -697,7 +697,7 @@ func (w *wrapper) WithErrWrap(err error, message string) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance to support method chaining.
-func (w *wrapper) WithErrWrapf(err error, format string, args ...interface{}) *wrapper {
+func (w *wrapper) WithErrWrapf(err error, format string, args ...any) *wrapper {
 	w.errors = WithErrWrapf(err, format, args...)
 	return w
 }
@@ -730,7 +730,7 @@ func (w *wrapper) WithErrMessage(err error, message string) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance to support method chaining.
-func (w *wrapper) WithErrMessagef(err error, format string, args ...interface{}) *wrapper {
+func (w *wrapper) WithErrMessagef(err error, format string, args ...any) *wrapper {
 	w.errors = WithMessagef(err, format, args...)
 	return w
 }
@@ -762,9 +762,9 @@ func (w *wrapper) BindCause() *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
-func (w *wrapper) WithDebuggingKV(key string, value interface{}) *wrapper {
+func (w *wrapper) WithDebuggingKV(key string, value any) *wrapper {
 	if !w.IsDebuggingPresent() {
-		w.debug = make(map[string]interface{})
+		w.debug = make(map[string]any)
 	}
 	w.debug[key] = value
 	return w
@@ -783,7 +783,7 @@ func (w *wrapper) WithDebuggingKV(key string, value interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance, enabling method chaining.
-func (w *wrapper) WithDebuggingKVf(key string, format string, args ...interface{}) *wrapper {
+func (w *wrapper) WithDebuggingKVf(key string, format string, args ...any) *wrapper {
 	return w.WithDebuggingKV(key, fmt.Sprintf(format, args...))
 }
 
@@ -820,7 +820,7 @@ func (w *wrapper) WithApiVersion(v string) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance, enabling method chaining.
-func (w *wrapper) WithApiVersionf(format string, args ...interface{}) *wrapper {
+func (w *wrapper) WithApiVersionf(format string, args ...any) *wrapper {
 	if !w.IsMetaPresent() {
 		w.meta = NewMeta()
 	}
@@ -861,7 +861,7 @@ func (w *wrapper) WithRequestID(v string) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance, allowing for method chaining.
-func (w *wrapper) WithRequestIDf(format string, args ...interface{}) *wrapper {
+func (w *wrapper) WithRequestIDf(format string, args ...any) *wrapper {
 	if !w.IsMetaPresent() {
 		w.meta = NewMeta()
 	}
@@ -915,7 +915,7 @@ func (w *wrapper) WithRequestedTime(v time.Time) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
-func (w *wrapper) WithCustomFields(values map[string]interface{}) *wrapper {
+func (w *wrapper) WithCustomFields(values map[string]any) *wrapper {
 	if !w.IsMetaPresent() {
 		w.meta = NewMeta()
 	}
@@ -934,7 +934,7 @@ func (w *wrapper) WithCustomFields(values map[string]interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
-func (w *wrapper) WithCustomFieldKV(key string, value interface{}) *wrapper {
+func (w *wrapper) WithCustomFieldKV(key string, value any) *wrapper {
 	if !w.IsMetaPresent() {
 		w.meta = NewMeta()
 	}
@@ -957,7 +957,7 @@ func (w *wrapper) WithCustomFieldKV(key string, value interface{}) *wrapper {
 //
 // Returns:
 //   - A pointer to the modified `wrapper` instance, enabling method chaining.
-func (w *wrapper) WithCustomFieldKVf(key string, format string, args ...interface{}) *wrapper {
+func (w *wrapper) WithCustomFieldKVf(key string, format string, args ...any) *wrapper {
 	if !w.IsMetaPresent() {
 		w.meta = NewMeta()
 	}
