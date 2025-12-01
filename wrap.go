@@ -628,11 +628,7 @@ func (w *wrapper) Reset() *wrapper {
 	w.cachedWrap = nil
 
 	// Reset meta
-	w.meta = NewMeta().
-		WithLocale("en_US"). // vi_VN, en_US
-		WithApiVersion("v0.0.1").
-		WithRequestedTime(time.Now()).
-		WithRequestID(unify4g.GenerateCryptoID())
+	w.meta = defaultMetaValues()
 
 	return w
 }

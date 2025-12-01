@@ -53,11 +53,7 @@ func NewHeader() *header {
 //   - A pointer to a newly created `wrapper` instance with initialized fields.
 func New() *wrapper {
 	w := &wrapper{
-		meta: NewMeta().
-			WithLocale("en_US"). // vi_VN, en_US
-			WithApiVersion("v0.0.1").
-			WithRequestedTime(time.Now()).
-			WithRequestID(unify4g.GenerateCryptoID()),
+		meta: defaultMetaValues(),
 	}
 	return w
 }
