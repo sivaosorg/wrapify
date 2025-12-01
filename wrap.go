@@ -525,6 +525,76 @@ func (w *wrapper) IsLastPage() bool {
 	return w.Available() && w.IsPagingPresent() && w.pagination.IsLast()
 }
 
+// Clone creates a deep copy of the `wrapper` instance.
+//
+// This function creates a new `wrapper` instance with the same fields as the original instance.
+// It creates a new `header`, `meta`, and `pagination` instances and copies the values from the original instance.
+// It also creates a new `debug` map and copies the values from the original instance.
+//
+// Returns:
+//   - A pointer to the cloned `wrapper` instance.
+//   - `nil` if the `wrapper` instance is not available.
+func (w *wrapper) Clone() *wrapper {
+	if !w.Available() {
+		return New()
+	}
+
+	clone := &wrapper{
+		statusCode: w.statusCode,
+		total:      w.total,
+		message:    w.message,
+		data:       w.data,
+		path:       w.path,
+		errors:     w.errors,
+	}
+
+	// Clone header
+	if w.header != nil {
+		clone.header = NewHeader().
+			WithCode(w.header.code).
+			WithText(w.header.text).
+			WithType(w.header.typez).
+			WithDescription(w.header.description)
+	}
+
+	// Clone meta
+	if w.meta != nil {
+		clone.meta = NewMeta().
+			WithApiVersion(w.meta.apiVersion).
+			WithRequestID(w.meta.requestID).
+			WithLocale(w.meta.locale).
+			WithRequestedTime(w.meta.requestedTime)
+
+		if w.meta.customFields != nil {
+			customFieldsCopy := make(map[string]any)
+			for k, v := range w.meta.customFields {
+				customFieldsCopy[k] = v
+			}
+			clone.meta.WithCustomFields(customFieldsCopy)
+		}
+	}
+
+	// Clone pagination
+	if w.pagination != nil {
+		clone.pagination = NewPagination().
+			WithPage(w.pagination.page).
+			WithPerPage(w.pagination.perPage).
+			WithTotalPages(w.pagination.totalPages).
+			WithTotalItems(w.pagination.totalItems).
+			WithIsLast(w.pagination.isLast)
+	}
+
+	// Clone debug
+	if w.debug != nil {
+		clone.debug = make(map[string]any)
+		for k, v := range w.debug {
+			clone.debug[k] = v
+		}
+	}
+
+	return clone
+}
+
 // Available checks whether the `pagination` instance is non-nil.
 //
 // This function ensures that the `pagination` object exists and is not nil.
