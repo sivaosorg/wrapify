@@ -269,46 +269,165 @@ const (
 
 // Media Type constants define commonly used MIME types for different content types in HTTP requests and responses.
 const (
-	MediaTypeApplicationJSON         = "application/json"                                                          // Specifies that the content is JSON-formatted data.
-	MediaTypeApplicationXML          = "application/xml"                                                           // Specifies that the content is XML-formatted data.
-	MediaTypeApplicationForm         = "application/x-www-form-urlencoded"                                         // Specifies that the content is URL-encoded form data.
-	MediaTypeApplicationOctetStream  = "application/octet-stream"                                                  // Specifies that the content is binary data (not interpreted by the browser).
-	MediaTypeTextPlain               = "text/plain"                                                                // Specifies that the content is plain text.
-	MediaTypeTextHTML                = "text/html"                                                                 // Specifies that the content is HTML-formatted data.
-	MediaTypeImageJPEG               = "image/jpeg"                                                                // Specifies that the content is a JPEG image.
-	MediaTypeImagePNG                = "image/png"                                                                 // Specifies that the content is a PNG image.
-	MediaTypeImageGIF                = "image/gif"                                                                 // Specifies that the content is a GIF image.
-	MediaTypeAudioMP3                = "audio/mpeg"                                                                // Specifies that the content is an MP3 audio file.
-	MediaTypeAudioWAV                = "audio/wav"                                                                 // Specifies that the content is a WAV audio file.
-	MediaTypeVideoMP4                = "video/mp4"                                                                 // Specifies that the content is an MP4 video file.
-	MediaTypeVideoAVI                = "video/x-msvideo"                                                           // Specifies that the content is an AVI video file.
-	MediaTypeApplicationPDF          = "application/pdf"                                                           // Specifies that the content is a PDF file.
-	MediaTypeApplicationMSWord       = "application/msword"                                                        // Specifies that the content is a Microsoft Word document.
-	MediaTypeApplicationMSPowerPoint = "application/vnd.ms-powerpoint"                                             // Specifies that the content is a Microsoft PowerPoint presentation.
-	MediaTypeApplicationExcel        = "application/vnd.ms-excel"                                                  // Specifies that the content is a Microsoft Excel spreadsheet.
-	MediaTypeApplicationZip          = "application/zip"                                                           // Specifies that the content is a ZIP archive.
-	MediaTypeApplicationGzip         = "application/gzip"                                                          // Specifies that the content is a GZIP-compressed file.
-	MediaTypeMultipartFormData       = "multipart/form-data"                                                       // Specifies that the content is a multipart form, typically used for file uploads.
-	MediaTypeImageBMP                = "image/bmp"                                                                 // Specifies that the content is a BMP image.
-	MediaTypeImageTIFF               = "image/tiff"                                                                // Specifies that the content is a TIFF image.
-	MediaTypeTextCSS                 = "text/css"                                                                  // Specifies that the content is CSS (Cascading Style Sheets).
-	MediaTypeTextJavaScript          = "text/javascript"                                                           // Specifies that the content is JavaScript code.
-	MediaTypeApplicationJSONLD       = "application/ld+json"                                                       // Specifies that the content is a JSON-LD (JSON for Linked Data) document.
-	MediaTypeApplicationRDFXML       = "application/rdf+xml"                                                       // Specifies that the content is in RDF (Resource Description Framework) XML format.
-	MediaTypeApplicationGeoJSON      = "application/geo+json"                                                      // Specifies that the content is a GeoJSON (geospatial data) document.
-	MediaTypeApplicationMsgpack      = "application/msgpack"                                                       // Specifies that the content is in MessagePack format (binary JSON).
-	MediaTypeApplicationOgg          = "application/ogg"                                                           // Specifies that the content is an Ogg multimedia container format.
-	MediaTypeApplicationGraphQL      = "application/graphql"                                                       // Specifies that the content is in GraphQL format.
-	MediaTypeApplicationProtobuf     = "application/protobuf"                                                      // Specifies that the content is in Protocol Buffers format (binary serialization).
-	MediaTypeImageWebP               = "image/webp"                                                                // Specifies that the content is a WebP image.
-	MediaTypeFontWOFF                = "font/woff"                                                                 // Specifies that the content is a WOFF (Web Open Font Format) font.
-	MediaTypeFontWOFF2               = "font/woff2"                                                                // Specifies that the content is a WOFF2 (Web Open Font Format 2) font.
-	MediaTypeAudioFLAC               = "audio/flac"                                                                // Specifies that the content is a FLAC audio file (Free Lossless Audio Codec).
-	MediaTypeVideoWebM               = "video/webm"                                                                // Specifies that the content is a WebM video file.
-	MediaTypeApplicationDart         = "application/dart"                                                          // Specifies that the content is a Dart programming language file.
-	MediaTypeApplicationXLSX         = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"         // Specifies that the content is an Excel file in XLSX format.
-	MediaTypeApplicationPPTX         = "application/vnd.openxmlformats-officedocument.presentationml.presentation" // Specifies that the content is a PowerPoint file in PPTX format.
-	MediaTypeApplicationGRPC         = "application/grpc"                                                          // Specifies that the content is in gRPC format (a high-performance RPC framework).
+	// ApplicationJSON specifies that the content is JSON-formatted data.
+	//  Example: "application/json"
+	MediaTypeApplicationJSON = "application/json"
+
+	// ApplicationXML specifies that the content is XML-formatted data.
+	//  Example: "application/xml"
+	MediaTypeApplicationXML = "application/xml"
+
+	// ApplicationForm specifies that the content is URL-encoded form data.
+	//  Example: "application/x-www-form-urlencoded"
+	MediaTypeApplicationForm = "application/x-www-form-urlencoded"
+
+	// ApplicationOctetStream specifies that the content is binary data (not interpreted by the browser).
+	//  Example: "application/octet-stream"
+	MediaTypeApplicationOctetStream = "application/octet-stream"
+
+	// TextPlain specifies that the content is plain text.
+	//  Example: "text/plain"
+	MediaTypeTextPlain = "text/plain"
+
+	// TextHTML specifies that the content is HTML-formatted data.
+	//  Example: "text/html"
+	MediaTypeTextHTML = "text/html"
+
+	// ImageJPEG specifies that the content is a JPEG image.
+	//  Example: "image/jpeg"
+	MediaTypeImageJPEG = "image/jpeg"
+
+	// ImagePNG specifies that the content is a PNG image.
+	//  Example: "image/png"
+	MediaTypeImagePNG = "image/png"
+
+	// ImageGIF specifies that the content is a GIF image.
+	//  Example: "image/gif"
+	MediaTypeImageGIF = "image/gif"
+
+	// AudioMP3 specifies that the content is an MP3 audio file.
+	//  Example: "audio/mpeg"
+	MediaTypeAudioMP3 = "audio/mpeg"
+
+	// AudioWAV specifies that the content is a WAV audio file.
+	//  Example: "audio/wav"
+	MediaTypeAudioWAV = "audio/wav"
+
+	// VideoMP4 specifies that the content is an MP4 video file.
+	//  Example: "video/mp4"
+	MediaTypeVideoMP4 = "video/mp4"
+
+	// VideoAVI specifies that the content is an AVI video file.
+	//  Example: "video/x-msvideo"
+	MediaTypeVideoAVI = "video/x-msvideo"
+
+	// ApplicationPDF specifies that the content is a PDF file.
+	//  Example: "application/pdf"
+	MediaTypeApplicationPDF = "application/pdf"
+
+	// ApplicationMSWord specifies that the content is a Microsoft Word document (.doc).
+	//  Example: "application/msword"
+	MediaTypeApplicationMSWord = "application/msword"
+
+	// ApplicationMSPowerPoint specifies that the content is a Microsoft PowerPoint presentation (.ppt).
+	//  Example: "application/vnd.ms-powerpoint"
+	MediaTypeApplicationMSPowerPoint = "application/vnd.ms-powerpoint"
+
+	// ApplicationExcel specifies that the content is a Microsoft Excel spreadsheet (.xls).
+	//  Example: "application/vnd.ms-excel"
+	MediaTypeApplicationExcel = "application/vnd.ms-excel"
+
+	// ApplicationZip specifies that the content is a ZIP archive.
+	//  Example: "application/zip"
+	MediaTypeApplicationZip = "application/zip"
+
+	// ApplicationGzip specifies that the content is a GZIP-compressed file.
+	//  Example: "application/gzip"
+	MediaTypeApplicationGzip = "application/gzip"
+
+	// MultipartFormData specifies that the content is a multipart form, typically used for file uploads.
+	//  Example: "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW"
+	MediaTypeMultipartFormData = "multipart/form-data"
+
+	// ImageBMP specifies that the content is a BMP image.
+	//  Example: "image/bmp"
+	MediaTypeImageBMP = "image/bmp"
+
+	// ImageTIFF specifies that the content is a TIFF image.
+	//  Example: "image/tiff"
+	MediaTypeImageTIFF = "image/tiff"
+
+	// TextCSS specifies that the content is CSS (Cascading Style Sheets).
+	//  Example: "text/css"
+	MediaTypeTextCSS = "text/css"
+
+	// TextJavaScript specifies that the content is JavaScript code.
+	//  Example: "text/javascript"
+	MediaTypeTextJavaScript = "text/javascript"
+
+	// ApplicationJSONLD specifies that the content is a JSON-LD (JSON for Linked Data) document.
+	//  Example: "application/ld+json"
+	MediaTypeApplicationJSONLD = "application/ld+json"
+
+	// ApplicationRDFXML specifies that the content is in RDF (Resource Description Framework) XML format.
+	//  Example: "application/rdf+xml"
+	MediaTypeApplicationRDFXML = "application/rdf+xml"
+
+	// ApplicationGeoJSON specifies that the content is a GeoJSON (geospatial data) document.
+	//  Example: "application/geo+json"
+	MediaTypeApplicationGeoJSON = "application/geo+json"
+
+	// ApplicationMsgpack specifies that the content is in MessagePack format (binary JSON).
+	//  Example: "application/msgpack"
+	MediaTypeApplicationMsgpack = "application/msgpack"
+
+	// ApplicationOgg specifies that the content is an Ogg multimedia container format.
+	//  Example: "application/ogg"
+	MediaTypeApplicationOgg = "application/ogg"
+
+	// ApplicationGraphQL specifies that the content is in GraphQL format.
+	//  Example: "application/graphql"
+	MediaTypeApplicationGraphQL = "application/graphql"
+
+	// ApplicationProtobuf specifies that the content is in Protocol Buffers format (binary serialization).
+	//  Example: "application/protobuf"
+	MediaTypeApplicationProtobuf = "application/protobuf"
+
+	// ImageWebP specifies that the content is a WebP image.
+	//  Example: "image/webp"
+	MediaTypeImageWebP = "image/webp"
+
+	// FontWOFF specifies that the content is a WOFF (Web Open Font Format) font.
+	//  Example: "font/woff"
+	MediaTypeFontWOFF = "font/woff"
+
+	// FontWOFF2 specifies that the content is a WOFF2 (Web Open Font Format 2) font.
+	//  Example: "font/woff2"
+	MediaTypeFontWOFF2 = "font/woff2"
+
+	// AudioFLAC specifies that the content is a FLAC audio file (Free Lossless Audio Codec).
+	//  Example: "audio/flac"
+	MediaTypeAudioFLAC = "audio/flac"
+
+	// VideoWebM specifies that the content is a WebM video file.
+	//  Example: "video/webm"
+	MediaTypeVideoWebM = "video/webm"
+
+	// ApplicationDart specifies that the content is a Dart programming language file.
+	//  Example: "application/dart"
+	MediaTypeApplicationDart = "application/dart"
+
+	// ApplicationXLSX specifies that the content is an Excel file in XLSX format.
+	//  Example: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	MediaTypeApplicationXLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+	// ApplicationPPTX specifies that the content is a PowerPoint file in PPTX format.
+	//  Example: "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+	MediaTypeApplicationPPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+
+	// ApplicationGRPC specifies that the content is in gRPC format (a high-performance RPC framework).
+	//  Example: "application/grpc"
+	MediaTypeApplicationGRPC = "application/grpc"
 )
 
 var (
