@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+// ///////////////////////////
+// Section exported types
+// ///////////////////////////
+
 // R represents a wrapper around the main `wrapper` struct. It is used as a high-level
 // abstraction to provide a simplified interface for handling API responses.
 // The `R` type allows for easier manipulation of the wrapped data, metadata, and other
@@ -14,6 +18,14 @@ import (
 type R struct {
 	*wrapper
 }
+
+// StreamingStrategy defines how streaming is performed
+// for large datasets or long-running operations.
+type StreamingStrategy string
+
+// CompressionType defines compression algorithm
+// used for data transmission.
+type CompressionType string
 
 // Frame represents a program counter inside a stack frame.
 // A `Frame` is essentially a single point in the stack trace,
@@ -56,115 +68,11 @@ type Frame uintptr
 //	fmt.Println(trace) // Prints the stack trace with the frames
 type StackTrace []Frame
 
-// pagination represents pagination details for paginated API responses.
-type pagination struct {
-	page       int  // Current page number.
-	perPage    int  // Number of items per page.
-	totalPages int  // Total number of pages.
-	totalItems int  // Total number of items available.
-	isLast     bool // Indicates whether this is the last page.
+// BufferPool for efficient buffer reuse
+type BufferPool struct {
+	buffers chan []byte
+	size    int64
 }
-
-// meta represents metadata information about an API response.
-type meta struct {
-	apiVersion    string                 // API version used for the request.
-	requestID     string                 // Unique identifier for the request, useful for debugging.
-	locale        string                 // Locale used for the request, e.g., "en-US".
-	requestedTime time.Time              // Timestamp when the request was made.
-	customFields  map[string]interface{} // Additional custom metadata fields.
-}
-
-// header represents a structured header for API responses.
-type header struct {
-	code        int    // Application-specific status code.
-	text        string // Human-readable status text.
-	typez       string // Type or category of the status, e.g., "info", "error".
-	description string // Detailed description of the status.
-}
-
-// wrapper is the main structure for wrapping API responses, including metadata, data, and debugging information.
-type wrapper struct {
-	statusCode int            // HTTP status code for the response.
-	total      int            // Total number of items (used in non-paginated responses).
-	message    string         // A message providing additional context about the response.
-	data       any            // The primary data payload of the response.
-	path       string         // Request path for which the response is generated.
-	header     *header        // Structured header details for the response.
-	meta       *meta          // Metadata about the API response.
-	pagination *pagination    // Pagination details, if applicable.
-	debug      map[string]any // Debugging information (useful for development).
-	errors     error          // Internal errors (not exposed in JSON responses).
-	cachedWrap map[string]any // Cached response data for performance optimization.
-	cacheHash  string         // Hash of the cached response, used for cache validation.
-	cacheMutex sync.RWMutex   // Mutex for synchronizing access to the cached response data.
-}
-
-// stack represents a stack of program counters. It is a slice of `uintptr`
-// values that store the addresses (or locations) of program counters
-// from a function call stack. This is useful for tracking where errors
-// or events originated in the code, and it is used by the other error
-// types to capture a stack trace at the time of error creation.
-//
-// The stack is typically populated using a function like `Callers()`,
-// which retrieves the current call stack.
-type stack []uintptr
-
-// underlying represents an error with an associated message and a stack trace.
-// It is used to encapsulate the message (i.e., what went wrong) and the
-// program's call stack (i.e., where the error occurred) at the point when
-// the error is created. This type is used internally by functions like
-// `WithError` and `WithErrorf`.
-//
-// Fields:
-//   - msg: The error message describing what went wrong. This is a string
-//     representation of the error context.
-//   - stack: A pointer to a stack of program counters that represent the
-//     stack trace where the error was created.
-type underlying struct {
-	msg    string // Message that describes the error
-	*stack        // Pointer to the stack trace where the error occurred
-}
-
-// underlyingStack is an error type that contains an existing error and its
-// associated stack trace. It is used when we need to annotate an existing
-// error with a stack trace, preserving the original error while adding
-// additional information such as the place where the annotation occurred.
-//
-// This type is typically used in functions like `Wrap` and `Wrapf`.
-//
-// Fields:
-//   - error: The original error that is being wrapped or annotated.
-//   - stack: A pointer to the stack trace captured at the point this
-//     annotation was added.
-type underlyingStack struct {
-	error  // The original error being wrapped or annotated
-	*stack // Pointer to the stack trace where the annotation occurred
-}
-
-// underlyingMessage represents an error with a cause (another error)
-// and a message. This type is used to create errors that have both
-// an associated message and a "cause," which can be another error
-// that led to the current one. It is commonly used to propagate errors
-// and add context to the original error message.
-//
-// Fields:
-//   - cause: The underlying error that caused this error. This could be
-//     another error returned from a function, allowing us to trace back
-//     the error chain.
-//   - msg: A string message describing the context of the error, which
-//     can be appended to the original cause message to provide more clarity.
-type underlyingMessage struct {
-	cause error  // The original error being wrapped or annotated
-	msg   string // The message describing the additional context for the error
-}
-
-// StreamingStrategy defines how streaming is performed
-// for large datasets or long-running operations.
-type StreamingStrategy string
-
-// CompressionType defines compression algorithm
-// used for data transmission.
-type CompressionType string
 
 // StreamConfig contains streaming configuration
 // options for handling large data transfers.
@@ -286,12 +194,6 @@ type StreamingCallback func(progress *StreamProgress, err error)
 // encapsulated within the R type.
 type StreamingHook func(progress *StreamProgress, wrap *R)
 
-// BufferPool for efficient buffer reuse
-type BufferPool struct {
-	buffers chan []byte
-	size    int64
-}
-
 // StreamingWrapper wraps response with streaming capabilities
 // BufferPool represents a pool of reusable byte buffers to optimize memory usage during streaming.
 type StreamingWrapper struct {
@@ -370,4 +272,110 @@ type StreamingMetadata struct {
 
 	// Indicates if streaming can be resumed
 	IsResumable bool `json:"is_resumable"`
+}
+
+// ///////////////////////////
+// Section unexported types
+// ///////////////////////////
+
+// pagination represents pagination details for paginated API responses.
+type pagination struct {
+	page       int  // Current page number.
+	perPage    int  // Number of items per page.
+	totalPages int  // Total number of pages.
+	totalItems int  // Total number of items available.
+	isLast     bool // Indicates whether this is the last page.
+}
+
+// meta represents metadata information about an API response.
+type meta struct {
+	apiVersion    string         // API version used for the request.
+	requestID     string         // Unique identifier for the request, useful for debugging.
+	locale        string         // Locale used for the request, e.g., "en-US".
+	requestedTime time.Time      // Timestamp when the request was made.
+	customFields  map[string]any // Additional custom metadata fields.
+}
+
+// header represents a structured header for API responses.
+type header struct {
+	code        int    // Application-specific status code.
+	text        string // Human-readable status text.
+	typez       string // Type or category of the status, e.g., "info", "error".
+	description string // Detailed description of the status.
+}
+
+// wrapper is the main structure for wrapping API responses, including metadata, data, and debugging information.
+type wrapper struct {
+	statusCode int            // HTTP status code for the response.
+	total      int            // Total number of items (used in non-paginated responses).
+	message    string         // A message providing additional context about the response.
+	data       any            // The primary data payload of the response.
+	path       string         // Request path for which the response is generated.
+	header     *header        // Structured header details for the response.
+	meta       *meta          // Metadata about the API response.
+	pagination *pagination    // Pagination details, if applicable.
+	debug      map[string]any // Debugging information (useful for development).
+	errors     error          // Internal errors (not exposed in JSON responses).
+	cachedWrap map[string]any // Cached response data for performance optimization.
+	cacheHash  string         // Hash of the cached response, used for cache validation.
+	cacheMutex sync.RWMutex   // Mutex for synchronizing access to the cached response data.
+}
+
+// stack represents a stack of program counters. It is a slice of `uintptr`
+// values that store the addresses (or locations) of program counters
+// from a function call stack. This is useful for tracking where errors
+// or events originated in the code, and it is used by the other error
+// types to capture a stack trace at the time of error creation.
+//
+// The stack is typically populated using a function like `Callers()`,
+// which retrieves the current call stack.
+type stack []uintptr
+
+// underlying represents an error with an associated message and a stack trace.
+// It is used to encapsulate the message (i.e., what went wrong) and the
+// program's call stack (i.e., where the error occurred) at the point when
+// the error is created. This type is used internally by functions like
+// `WithError` and `WithErrorf`.
+//
+// Fields:
+//   - msg: The error message describing what went wrong. This is a string
+//     representation of the error context.
+//   - stack: A pointer to a stack of program counters that represent the
+//     stack trace where the error was created.
+type underlying struct {
+	msg    string // Message that describes the error
+	*stack        // Pointer to the stack trace where the error occurred
+}
+
+// underlyingStack is an error type that contains an existing error and its
+// associated stack trace. It is used when we need to annotate an existing
+// error with a stack trace, preserving the original error while adding
+// additional information such as the place where the annotation occurred.
+//
+// This type is typically used in functions like `Wrap` and `Wrapf`.
+//
+// Fields:
+//   - error: The original error that is being wrapped or annotated.
+//   - stack: A pointer to the stack trace captured at the point this
+//     annotation was added.
+type underlyingStack struct {
+	error  // The original error being wrapped or annotated
+	*stack // Pointer to the stack trace where the annotation occurred
+}
+
+// underlyingMessage represents an error with a cause (another error)
+// and a message. This type is used to create errors that have both
+// an associated message and a "cause," which can be another error
+// that led to the current one. It is commonly used to propagate errors
+// and add context to the original error message.
+//
+// Fields:
+//   - cause: The underlying error that caused this error. This could be
+//     another error returned from a function, allowing us to trace back
+//     the error chain.
+//   - msg: A string message describing the context of the error, which
+//     can be appended to the original cause message to provide more clarity.
+type underlyingMessage struct {
+	cause error  // The original error being wrapped or annotated
+	msg   string // The message describing the additional context for the error
 }
