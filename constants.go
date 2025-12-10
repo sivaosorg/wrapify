@@ -581,9 +581,9 @@ var (
 )
 
 const (
-	// UnknownXC is a constant string used to represent an unknown or unspecified value in the context of XC (cross-cutting) concerns.
+	// ErrUnknown is a constant string used to represent an unknown or unspecified value in the context of XC (cross-cutting) concerns.
 	// It is typically used as a placeholder when the actual value is not available or not applicable.
-	UnknownXC string = "unknown"
+	ErrUnknown string = "unknown"
 
 	// DefaultChunkSize defines the maximum number of bytes in each chunk.
 	// DefaultChunkSize is used to limit the size of data chunks when processing large responses or requests.

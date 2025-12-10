@@ -42,7 +42,7 @@ func (s *stack) StackTrace() StackTrace {
 //	}
 func (f Frame) MarshalText() ([]byte, error) {
 	name := f.name()
-	if name == UnknownXC {
+	if name == ErrUnknown {
 		return []byte(name), nil
 	}
 	return []byte(fmt.Sprintf("%s %s:%d", name, f.file(), f.line())), nil
@@ -190,7 +190,7 @@ func (f Frame) pc() uintptr { return uintptr(f) - 1 }
 func (f Frame) file() string {
 	fn := runtime.FuncForPC(f.pc())
 	if fn == nil {
-		return UnknownXC
+		return ErrUnknown
 	}
 	file, _ := fn.FileLine(f.pc())
 	return file
