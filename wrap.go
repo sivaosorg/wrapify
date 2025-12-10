@@ -235,28 +235,6 @@ func (w *wrapper) Stream() <-chan []byte {
 	return ch
 }
 
-// WithMiddleware applies a series of middleware to the `wrapper` instance.
-//
-// This function takes a variadic number of `WrapMiddleware` functions and applies
-// them to the `wrapper` instance in the order they are provided. Each middleware
-// can modify the `wrapper` instance, allowing for flexible processing of the response.
-// It returns a new `wrapper` instance that has been processed by the provided middlewares.
-//
-// Parameters:
-//   - `middlewares`: A variadic list of `WrapMiddleware` functions to apply to the `wrapper`.
-//     Each middleware should implement the `Process` method, which takes a `wrapper`
-//     and returns a modified `wrapper`.
-//
-// Returns:
-//   - A pointer to the modified `wrapper` instance after applying all middlewares.
-func (w *wrapper) WithMiddleware(middlewares ...WrapMiddleware) *wrapper {
-	result := w
-	for _, middleware := range middlewares {
-		result = middleware.Process(result)
-	}
-	return result
-}
-
 // Debugging retrieves the debugging information from the `wrapper` instance.
 //
 // This function checks if the `wrapper` instance is available (non-nil) before returning

@@ -854,3 +854,701 @@ func Filter[T any](ptr *T, predicate func(T) bool) *T {
 	}
 	return nil
 }
+
+// OrElse returns the pointer if it's not nil, otherwise returns the alternative pointer.
+// This is useful for providing fallback pointer values.
+//
+// Example - Configuration fallback:
+//
+//	type Config struct {
+//	    Timeout *time.Duration
+//	}
+//
+//	userConfig := Config{} // Timeout is nil
+//	defaultConfig := Config{
+//	    Timeout: wrapify.Ptr(30 * time.Second),
+//	}
+//
+//	timeout := wrapify.OrElse(userConfig.Timeout, defaultConfig.Timeout)
+//	fmt.Println(*timeout) // 30s
+//
+// Example - HTTP client options:
+//
+//	type HTTPOptions struct {
+//	    UserAgent *string
+//	    Timeout   *time.Duration
+//	}
+//
+//	opts := HTTPOptions{
+//	    UserAgent: wrapify.Ptr("custom-agent"),
+//	}
+//
+//	defaultOpts := HTTPOptions{
+//	    UserAgent: wrapify.Ptr("default-agent"),
+//	    Timeout:   wrapify.Ptr(10 * time.Second),
+//	}
+//
+//	ua := wrapify.OrElse(opts.UserAgent, defaultOpts.UserAgent)
+//	to := wrapify.OrElse(opts.Timeout, defaultOpts.Timeout)
+//
+// Example - Response data with cache:
+//
+//	liveData := fetchFromAPI()  // May return nil
+//	cachedData := getFromCache() // Fallback
+//
+//	data := wrapify.OrElse(liveData, cachedData)
+func OrElse[T any](ptr, alternative *T) *T {
+	if ptr != nil {
+		return ptr
+	}
+	return alternative
+}
+
+// OrElseGet returns the pointer if it's not nil, otherwise calls the supplier function.
+// This is useful when the fallback value is expensive to compute and should only be
+// computed if needed (lazy evaluation).
+//
+// Example - Lazy database query:
+//
+//	func GetUserName(userID int) *string {
+//	    // Try cache first
+//	    cached := getFromCache(userID)
+//
+//	    // Only query database if cache miss
+//	    return wrapify.OrElseGet(cached, func() *string {
+//	        return queryDatabase(userID) // Expensive operation
+//	    })
+//	}
+//
+// Example - Lazy configuration loading:
+//
+//	type Config struct {
+//	    APIKey *string
+//	}
+//
+//	envConfig := loadFromEnv() // Fast
+//
+//	config := wrapify.OrElseGet(envConfig.APIKey, func() *string {
+//	    // Only load from file if env var not set
+//	    cfg := loadFromFile() // Slow
+//	    return cfg.APIKey
+//	})
+//
+// Example - Lazy default value generation:
+//
+//	sessionID := wrapify.OrElseGet(existingSession, func() *string {
+//	    // Only generate new UUID if no existing session
+//	    return wrapify.Ptr(uuid.New().String())
+//	})
+//
+// Example - Conditional API call:
+//
+//	cachedPrice := getCachedPrice(productID)
+//
+//	price := wrapify.OrElseGet(cachedPrice, func() *float64 {
+//	    // Only call pricing API if cache miss
+//	    return fetchPriceFromAPI(productID)
+//	})
+func OrElseGet[T any](ptr *T, supplier func() *T) *T {
+	if ptr != nil {
+		return ptr
+	}
+	return supplier()
+}
+
+// If executes the consumer function if the pointer is not nil.
+// Returns true if the consumer was executed, false otherwise.
+// This is useful for side effects on non-nil values.
+//
+// Example - Logging optional fields:
+//
+//	type User struct {
+//	    Name  string
+//	    Email *string
+//	    Phone *string
+//	}
+//
+//	user := User{
+//	    Name:  "John",
+//	    Email: wrapify.Ptr("john@example.com"),
+//	}
+//
+//	wrapify.If(user.Email, func(email string) {
+//	    log.Printf("Email: %s", email)
+//	})
+//
+//	wrapify.If(user.Phone, func(phone string) {
+//	    log.Printf("Phone: %s", phone) // Not executed
+//	})
+//
+// Example - Sending notifications:
+//
+//	type Notification struct {
+//	    Email *string
+//	    SMS   *string
+//	    Push  *string
+//	}
+//
+//	notif := Notification{
+//	    Email: wrapify.Ptr("user@example.com"),
+//	    SMS:   wrapify.Ptr("+1234567890"),
+//	}
+//
+//	wrapify.If(notif.Email, func(email string) {
+//	    sendEmail(email, "Hello!")
+//	})
+//
+//	wrapify.If(notif.SMS, func(phone string) {
+//	    sendSMS(phone, "Hello!")
+//	})
+//
+//	wrapify.If(notif.Push, func(token string) {
+//	    sendPush(token, "Hello!") // Not executed
+//	})
+//
+// Example - Processing optional metadata:
+//
+//	type Event struct {
+//	    Name     string
+//	    Metadata *map[string]string
+//	}
+//
+//	event := Event{
+//	    Name:     "user.login",
+//	    Metadata: wrapify.Ptr(map[string]string{"ip": "127.0.0.1"}),
+//	}
+//
+//	wrapify.If(event.Metadata, func(meta map[string]string) {
+//	    for k, v := range meta {
+//	        log.Printf("  %s: %s", k, v)
+//	    }
+//	})
+func If[T any](ptr *T, consumer func(T)) bool {
+	if ptr != nil {
+		consumer(*ptr)
+		return true
+	}
+	return false
+}
+
+// IfElse executes onPresent if pointer is not nil, otherwise executes onAbsent.
+// This is useful for branching logic based on pointer presence.
+//
+// Example - User greeting with fallback:
+//
+//	user := User{
+//	    Name:          "John",
+//	    PreferredName: wrapify.Ptr("Johnny"),
+//	}
+//
+//	wrapify.IfElse(user.PreferredName,
+//	    func(name string) {
+//	        fmt.Printf("Hello, %s!", name)
+//	    },
+//	    func() {
+//	        fmt.Printf("Hello, %s!", user.Name)
+//	    },
+//	)
+//
+// Example - Configuration with default behavior:
+//
+//	config := Config{
+//	    CustomHandler: wrapify.Ptr(myHandler),
+//	}
+//
+//	wrapify.IfElse(config.CustomHandler,
+//	    func(handler Handler) {
+//	        handler.Handle(request)
+//	    },
+//	    func() {
+//	        defaultHandler.Handle(request)
+//	    },
+//	)
+//
+// Example - Caching strategy:
+//
+//	cached := getFromCache(key)
+//
+//	wrapify.IfElse(cached,
+//	    func(data Data) {
+//	        log.Println("Cache hit")
+//	        processData(data)
+//	    },
+//	    func() {
+//	        log.Println("Cache miss, fetching...")
+//	        data := fetchFromDB(key)
+//	        saveToCache(key, data)
+//	        processData(data)
+//	    },
+//	)
+func IfElse[T any](ptr *T, onPresent func(T), onAbsent func()) {
+	if ptr != nil {
+		onPresent(*ptr)
+	} else {
+		onAbsent()
+	}
+}
+
+// Must dereferences the pointer and panics if it's nil.
+// This should only be used when you're certain the pointer is not nil,
+// such as after validation or in test code.
+//
+// Example - After validation:
+//
+//	func ProcessUser(req CreateUserRequest) error {
+//	    if wrapify.IsNil(req.Name) {
+//	        return errors.New("name is required")
+//	    }
+//	    if wrapify.IsNil(req.Email) {
+//	        return errors.New("email is required")
+//	    }
+//
+//	    // Safe to use Must after validation
+//	    name := wrapify.Must(req.Name)
+//	    email := wrapify.Must(req.Email)
+//
+//	    createUser(name, email)
+//	    return nil
+//	}
+//
+// Example - Test code:
+//
+//	func TestUserCreation(t *testing.T) {
+//	    user := createTestUser()
+//
+//	    // In tests, we expect these to be non-nil
+//	    name := wrapify.Must(user.Name)
+//	    email := wrapify.Must(user.Email)
+//
+//	    assert.Equal(t, "Test User", name)
+//	    assert.Equal(t, "test@example.com", email)
+//	}
+//
+// Example - Configuration that must exist:
+//
+//	config := loadConfig()
+//
+//	// These are required, panic if missing
+//	dbHost := wrapify.Must(config.Database.Host)
+//	dbPort := wrapify.Must(config.Database.Port)
+//	apiKey := wrapify.Must(config.API.Key)
+//
+//	connectDB(dbHost, dbPort, apiKey)
+//
+// Warning: Only use Must when you're absolutely certain the pointer is not nil.
+// For production code, prefer using If, IfElse, or explicit nil checks.
+func Must[T any](ptr *T) T {
+	if ptr == nil {
+		panic("wrapify: attempted to dereference nil pointer")
+	}
+	return *ptr
+}
+
+// MustPtr is like Must but returns a panic-safe pointer dereference.
+// Panics with a custom message if the pointer is nil.
+//
+// Example - With custom error message:
+//
+//	func GetConfig() Config {
+//	    cfg := loadConfigFromFile()
+//
+//	    return Config{
+//	        DBHost: wrapify.MustPtr(cfg.DBHost, "database host is required"),
+//	        DBPort: wrapify.MustPtr(cfg.DBPort, "database port is required"),
+//	        APIKey: wrapify.MustPtr(cfg.APIKey, "API key is required"),
+//	    }
+//	}
+//
+// Example - Critical validation:
+//
+//	func ProcessPayment(req PaymentRequest) error {
+//	    amount := wrapify.MustPtr(req.Amount, "payment amount is required")
+//	    currency := wrapify.MustPtr(req.Currency, "currency is required")
+//	    cardToken := wrapify.MustPtr(req.CardToken, "card token is required")
+//
+//	    return processPayment(amount, currency, cardToken)
+//	}
+func MustPtr[T any](ptr *T, message string) T {
+	if ptr == nil {
+		panic("wrapify: " + message)
+	}
+	return *ptr
+}
+
+// FlatMap applies a function that returns a pointer to the dereferenced value.
+// If the input pointer is nil, returns nil without calling the function.
+// This is useful for chaining operations that may return nil.
+//
+// Example - Nested optional access:
+//
+//	type Address struct {
+//	    City    string
+//	    ZipCode *string
+//	}
+//
+//	type User struct {
+//	    Name    string
+//	    Address *Address
+//	}
+//
+//	user := User{
+//	    Name:    "John",
+//	    Address: wrapify.Ptr(Address{City: "NYC"}),
+//	}
+//
+//	zipCode := wrapify.FlatMap(user.Address, func(addr Address) *string {
+//	    return addr.ZipCode
+//	})
+//	// Returns nil if Address is nil OR ZipCode is nil
+//
+// Example - Database lookup chain:
+//
+//	userID := wrapify.Ptr(123)
+//
+//	user := wrapify.FlatMap(userID, func(id int) *User {
+//	    return findUserByID(id) // May return nil
+//	})
+//
+//	address := wrapify.FlatMap(user, func(u User) *Address {
+//	    return u.Address // May be nil
+//	})
+//
+// Example - API response chain:
+//
+//	type APIResponse struct {
+//	    Data *ResponseData
+//	}
+//
+//	type ResponseData struct {
+//	    User *User
+//	}
+//
+//	resp := callAPI()
+//
+//	user := wrapify.FlatMap(resp.Data, func(data ResponseData) *User {
+//	    return data.User
+//	})
+//
+// Example - Safe navigation:
+//
+//	type Config struct {
+//	    Database *DatabaseConfig
+//	}
+//
+//	type DatabaseConfig struct {
+//	    Connection *ConnectionConfig
+//	}
+//
+//	config := loadConfig()
+//
+//	connString := wrapify.FlatMap(config.Database, func(db DatabaseConfig) *string {
+//	    return wrapify.FlatMap(db.Connection, func(conn ConnectionConfig) *string {
+//	        return wrapify.Ptr(conn.String())
+//	    })
+//	})
+func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
+	if ptr == nil {
+		return nil
+	}
+	return fn(*ptr)
+}
+
+// Validate returns the pointer if it passes validation, otherwise returns nil.
+// The validator function should return an error if validation fails.
+// This is useful for filtering values based on complex validation rules.
+//
+// Example - Email validation:
+//
+//	func isValidEmail(email string) error {
+//	    if !strings.Contains(email, "@") {
+//	        return errors.New("invalid email format")
+//	    }
+//	    return nil
+//	}
+//
+//	email := wrapify.Ptr("user@example.com")
+//	validEmail := wrapify.Validate(email, isValidEmail)
+//	// Returns email pointer
+//
+//	badEmail := wrapify.Ptr("invalid-email")
+//	invalidEmail := wrapify.Validate(badEmail, isValidEmail)
+//	// Returns nil
+//
+// Example - Age validation:
+//
+//	func isAdult(age int) error {
+//	    if age < 18 {
+//	        return errors.New("must be 18 or older")
+//	    }
+//	    return nil
+//	}
+//
+//	age := wrapify.Ptr(25)
+//	validAge := wrapify.Validate(age, isAdult) // Returns age pointer
+//
+//	minorAge := wrapify.Ptr(15)
+//	invalidAge := wrapify.Validate(minorAge, isAdult) // Returns nil
+//
+// Example - Password strength validation:
+//
+//	func isStrongPassword(pwd string) error {
+//	    if len(pwd) < 8 {
+//	        return errors.New("password too short")
+//	    }
+//	    return nil
+//	}
+//
+//	password := wrapify.Ptr("StrongP@ss123")
+//	validPassword := wrapify.Validate(password, isStrongPassword)
+//
+//	if wrapify.IsNotNil(validPassword) {
+//	    // Password is valid, proceed
+//	    hashAndStore(*validPassword)
+//	}
+//
+// Example - URL validation:
+//
+//	func isValidURL(url string) error {
+//	    _, err := url.Parse(url)
+//	    return err
+//	}
+//
+//	inputURL := wrapify.Ptr("https://example.com")
+//	validURL := wrapify.Validate(inputURL, isValidURL)
+func Validate[T any](ptr *T, validator func(T) error) *T {
+	if ptr == nil {
+		return nil
+	}
+	if err := validator(*ptr); err != nil {
+		return nil
+	}
+	return ptr
+}
+
+// MapOr applies a function to the pointer value if not nil, otherwise returns default.
+// This combines Map and DerefOr in a single operation.
+//
+// Example - String formatting with default:
+//
+//	name := wrapify.Ptr("john")
+//
+//	formatted := wrapify.MapOr(name,
+//	    func(n string) string {
+//	        return strings.ToUpper(n)
+//	    },
+//	    "ANONYMOUS",
+//	)
+//	// Returns "JOHN"
+//
+//	var nilName *string
+//	formatted2 := wrapify.MapOr(nilName,
+//	    func(n string) string {
+//	        return strings.ToUpper(n)
+//	    },
+//	    "ANONYMOUS",
+//	)
+//	// Returns "ANONYMOUS"
+//
+// Example - Price calculation with default:
+//
+//	discount := wrapify.Ptr(0.1) // 10% discount
+//
+//	finalPrice := wrapify.MapOr(discount,
+//	    func(d float64) float64 {
+//	        return 100.0 * (1 - d)
+//	    },
+//	    100.0, // No discount
+//	)
+//	// Returns 90.0
+//
+// Example - Date formatting:
+//
+//	createdAt := wrapify.Ptr(time.Now())
+//
+//	formatted := wrapify.MapOr(createdAt,
+//	    func(t time.Time) string {
+//	        return t.Format("2006-01-02")
+//	    },
+//	    "N/A",
+//	)
+func MapOr[T any, R any](ptr *T, fn func(T) R, defaultValue R) R {
+	if ptr == nil {
+		return defaultValue
+	}
+	return fn(*ptr)
+}
+
+// Zip combines two pointers into a pointer of a tuple (pair).
+// Returns nil if either pointer is nil.
+// This is useful for combining optional values that should exist together.
+//
+// Example - Combining coordinates:
+//
+//	type Point struct {
+//	    X, Y float64
+//	}
+//
+//	x := wrapify.Ptr(10.0)
+//	y := wrapify.Ptr(20.0)
+//
+//	point := wrapify.Zip(x, y)
+//	if wrapify.IsNotNil(point) {
+//	    fmt.Printf("Point: (%.1f, %.1f)\n", point.First, point.Second)
+//	}
+//
+// Example - Username and password validation:
+//
+//	username := wrapify.Ptr("john")
+//	password := wrapify.Ptr("secret123")
+//
+//	credentials := wrapify.Zip(username, password)
+//	if wrapify.IsNotNil(credentials) {
+//	    authenticate(credentials.First, credentials.Second)
+//	}
+//
+// Example - API key and secret:
+//
+//	apiKey := config.APIKey       // *string
+//	apiSecret := config.APISecret // *string
+//
+//	credentials := wrapify.Zip(apiKey, apiSecret)
+//	if wrapify.IsNil(credentials) {
+//	    return errors.New("both API key and secret are required")
+//	}
+//
+//	client := NewAPIClient(credentials.First, credentials.Second)
+func Zip[T any, U any](a *T, b *U) *Pair[T, U] {
+	if a == nil || b == nil {
+		return nil
+	}
+	return &Pair[T, U]{
+		First:  *a,
+		Second: *b,
+	}
+}
+
+// All checks if all pointers in the slice are non-nil.
+// Returns true if all pointers are non-nil, false otherwise.
+// This is useful for validating that all required fields are present.
+//
+// Example - Validating required fields:
+//
+//	type CreateUserRequest struct {
+//	    Name     *string
+//	    Email    *string
+//	    Password *string
+//	}
+//
+//	req := CreateUserRequest{
+//	    Name:     wrapify.Ptr("John"),
+//	    Email:    wrapify.Ptr("john@example.com"),
+//	    Password: wrapify.Ptr("secret"),
+//	}
+//
+//	if wrapify.All(req.Name, req.Email, req.Password) {
+//	    createUser(*req.Name, *req.Email, *req.Password)
+//	} else {
+//	    return errors.New("all fields are required")
+//	}
+//
+// Example - Configuration validation:
+//
+//	type DatabaseConfig struct {
+//	    Host     *string
+//	    Port     *int
+//	    Database *string
+//	    User     *string
+//	    Password *string
+//	}
+//
+//	func ValidateConfig(cfg DatabaseConfig) error {
+//	    if !wrapify.All(cfg.Host, cfg.Port, cfg.Database, cfg.User, cfg.Password) {
+//	        return errors.New("all database config fields are required")
+//	    }
+//	    return nil
+//	}
+//
+// Example - Payment validation:
+//
+//	type Payment struct {
+//	    Amount   *float64
+//	    Currency *string
+//	    CardToken *string
+//	}
+//
+//	payment := Payment{
+//	    Amount:   wrapify.Ptr(100.0),
+//	    Currency: wrapify.Ptr("USD"),
+//	    // CardToken is nil
+//	}
+//
+//	if !wrapify.All(payment.Amount, payment.Currency, payment.CardToken) {
+//	    return errors.New("incomplete payment information")
+//	}
+func All[T any](ptrs ...*T) bool {
+	for _, ptr := range ptrs {
+		if ptr == nil {
+			return false
+		}
+	}
+	return true
+}
+
+// Any checks if any pointer in the slice is non-nil.
+// Returns true if at least one pointer is non-nil, false otherwise.
+// This is useful for checking if any optional field is provided.
+//
+// Example - Checking if any contact method provided:
+//
+//	type ContactInfo struct {
+//	    Email *string
+//	    Phone *string
+//	    SMS   *string
+//	}
+//
+//	contact := ContactInfo{
+//	    Phone: wrapify.Ptr("+1234567890"),
+//	}
+//
+//	if wrapify.Any(contact.Email, contact.Phone, contact.SMS) {
+//	    fmt.Println("At least one contact method provided")
+//	} else {
+//	    return errors.New("at least one contact method is required")
+//	}
+//
+// Example - Search filter validation:
+//
+//	type SearchFilter struct {
+//	    Query     *string
+//	    Category  *string
+//	    MinPrice  *float64
+//	    MaxPrice  *float64
+//	}
+//
+//	filter := SearchFilter{} // All nil
+//
+//	if !wrapify.Any(filter.Query, filter.Category, filter.MinPrice, filter.MaxPrice) {
+//	    return errors.New("at least one search criteria is required")
+//	}
+//
+// Example - Update validation:
+//
+//	type UpdateUserRequest struct {
+//	    Name  *string
+//	    Email *string
+//	    Bio   *string
+//	}
+//
+//	req := UpdateUserRequest{} // All nil
+//
+//	if !wrapify.Any(req.Name, req.Email, req.Bio) {
+//	    return errors.New("at least one field must be updated")
+//	}
+func Any[T any](ptrs ...*T) bool {
+	for _, ptr := range ptrs {
+		if ptr != nil {
+			return true
+		}
+	}
+	return false
+}
