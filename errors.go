@@ -28,7 +28,7 @@ func WithError(message string) error {
 //
 //	err := WithErrorf("Failed to load file %s", filename)
 //	fmt.Println(err) // "Failed to load file <filename>" along with stack trace
-func WithErrorf(format string, args ...interface{}) error {
+func WithErrorf(format string, args ...any) error {
 	return &underlying{
 		msg:   fmt.Sprintf(format, args...),
 		stack: Callers(),
@@ -85,7 +85,7 @@ func WithErrWrap(err error, message string) error {
 //	err := errors.New("file not found")
 //	wrappedErr := WithErrWrapf(err, "Failed to load file %s", filename)
 //	fmt.Println(wrappedErr) // "Failed to load file <filename>: file not found" with stack trace
-func WithErrWrapf(err error, format string, args ...interface{}) error {
+func WithErrWrapf(err error, format string, args ...any) error {
 	if err == nil {
 		return nil
 	}
@@ -125,7 +125,7 @@ func WithMessage(err error, message string) error {
 //	err := errors.New("original error")
 //	errWithMessage := WithMessagef(err, "Context: %s", "something went wrong")
 //	fmt.Println(errWithMessage) // "Context: something went wrong: original error"
-func WithMessagef(err error, format string, args ...interface{}) error {
+func WithMessagef(err error, format string, args ...any) error {
 	if err == nil {
 		return nil
 	}
