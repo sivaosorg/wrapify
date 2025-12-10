@@ -609,8 +609,15 @@ const (
 // CompressionType defines the type of compression applied to data.
 // It specifies the algorithm used to compress or decompress data.
 const (
-	COMP_NONE    CompressionType = "none"    // No compression applied
-	COMP_GZIP    CompressionType = "gzip"    // GZIP compression algorithm
-	COMP_DEFLATE CompressionType = "deflate" // Deflate compression algorithm
-	COMP_FLATE   CompressionType = "flate"   // Flate compression algorithm
+	// No compression applied
+	COMP_NONE CompressionType = "none"
+
+	// GZIP compression algorithm
+	COMP_GZIP CompressionType = "gzip"
+
+	// Deflate compression algorithm
+	COMP_DEFLATE CompressionType = "deflate"
+
+	// Flate compression algorithm
+	COMP_FLATE CompressionType = "flate"
 )
