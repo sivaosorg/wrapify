@@ -90,7 +90,7 @@ func (f Frame) Format(s fmt.State, verb rune) {
 	case 'd':
 		io.WriteString(s, strconv.Itoa(f.line()))
 	case 'n':
-		io.WriteString(s, get_func_name(f.name()))
+		io.WriteString(s, getFuncName(f.name()))
 	case 'v':
 		f.Format(s, 's')
 		io.WriteString(s, ":")
@@ -247,15 +247,15 @@ func (st StackTrace) fmtSlice(s fmt.State, verb rune) {
 	io.WriteString(s, "]")
 }
 
-// get_func_name extracts the function name without its path prefix.
+// getFuncName extracts the function name without its path prefix.
 //
 // Usage:
 // Useful for displaying function names in a compact format.
 //
 // Example:
 //
-//	shortName := get_func_name("path/to/package.FunctionName")
-func get_func_name(name string) string {
+//	shortName := getFuncName("path/to/package.FunctionName")
+func getFuncName(name string) string {
 	i := strings.LastIndex(name, "/")
 	name = name[i+1:]
 	i = strings.Index(name, ".")
