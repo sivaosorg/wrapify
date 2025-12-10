@@ -1,6 +1,7 @@
 package wrapify
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -50,7 +51,9 @@ func (w *wrapper) Error() string {
 //   - The underlying cause of the error, which can be another error or the original error.
 func (w *wrapper) Cause() error {
 	if !w.Available() || w.errors == nil {
-		return nil
+		// prevent nil pointer dereference
+		// then just leave it as empty string
+		return errors.New("")
 	}
 	// Traverse through wrapped errors.
 	// We will use Unwrap() method to unwrap errors instead of checking for *wrapper explicitly.
