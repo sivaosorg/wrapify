@@ -1392,6 +1392,42 @@ func (h *header) Respond() map[string]any {
 	return m
 }
 
+// Get returns buffer from pool
+//
+// If pool is empty, it creates a new buffer
+// of predefined size
+//
+// Returns:
+//   - A byte slice buffer
+func (bp *BufferPool) Get() []byte {
+	select {
+	case buf := <-bp.buffers:
+		return buf
+	default:
+		return make([]byte, bp.size)
+	}
+}
+
+// Put returns buffer to pool
+//
+// # If pool is full, the buffer is discarded
+//
+// Parameters:
+//   - buf: A byte slice buffer to be returned to the pool
+//
+// Returns:
+//   - None
+func (bp *BufferPool) Put(buf []byte) {
+	if buf == nil {
+		return
+	}
+	select {
+	case bp.buffers <- buf:
+	default:
+		// Pool is full, discard
+	}
+}
+
 // build generates a map representation of the `wrapper` instance.
 // This method collects various fields of the `wrapper` (e.g., `data`, `header`, `meta`, etc.)
 // and organizes them into a key-value map. It ensures that only non-empty or meaningful fields
