@@ -259,7 +259,7 @@ func main() {
 		"total": 1
 	  }`
 	t := time.Now()
-	w, err := wrapify.Parse(jsonStr)
+	w, err := wrapify.UnwrapJSON(jsonStr)
 	diff := time.Since(t)
 	if err != nil {
 		log.Fatalf("Error parsing JSON: %v", err)

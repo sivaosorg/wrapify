@@ -6,7 +6,7 @@ import (
 	"github.com/sivaosorg/unify4g"
 )
 
-// Parse takes a JSON string as input and maps it into a 'wrapper' struct, populating its fields
+// UnwrapJSON takes a JSON string as input and maps it into a 'wrapper' struct, populating its fields
 // with data extracted from the JSON. The function handles different parts of the response such as
 // status code, message, pagination, headers, metadata, and debugging information. It uses
 // `unify4g.UnmarshalFromStringN` for unmarshaling the JSON string into a map, then assigns the
@@ -32,7 +32,7 @@ import (
 // structured format, making it easier to work with in Go. It handles various
 // nested objects (like `header`, `meta`, and `pagination`), checking for the
 // presence of keys and converting them into their appropriate types.
-func Parse(json string) (w *wrapper, err error) {
+func UnwrapJSON(json string) (w *wrapper, err error) {
 	var data map[string]any
 	err = unify4g.UnmarshalFromStringN(json, &data)
 	if err != nil {
@@ -119,7 +119,7 @@ func Parse(json string) (w *wrapper, err error) {
 	return w, nil
 }
 
-// Deserialize converts a map containing API response data into a `wrapper` struct
+// WrapFrom converts a map containing API response data into a `wrapper` struct
 // by serializing the map into JSON format and then parsing it.
 //
 // The function is a helper that bridges between raw map data (e.g., deserialized JSON
@@ -154,16 +154,16 @@ func Parse(json string) (w *wrapper, err error) {
 //	    "message": "Success",
 //	    "data": "response body",
 //	}
-//	wrapper, err := wrapify.Deserialize(rawData)
+//	wrapper, err := wrapify.WrapFrom(rawData)
 //	if err != nil {
 //	    log.Println("Error extracting wrapper:", err)
 //	} else {
 //	    log.Println("Wrapper:", wrapper)
 //	}
-func Deserialize(data map[string]any) (w *wrapper, err error) {
+func WrapFrom(data map[string]any) (w *wrapper, err error) {
 	if len(data) == 0 {
 		return nil, WithErrorf("data is nil/null")
 	}
 	json := unify4g.JsonN(data)
-	return Parse(json)
+	return UnwrapJSON(json)
 }
