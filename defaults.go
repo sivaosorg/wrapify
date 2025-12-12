@@ -14,7 +14,7 @@ import (
 // Returns:
 //   - A pointer to a newly created `meta` instance with the default values.
 func defaultMetaValues() *meta {
-	return NewMeta().
+	return Meta().
 		WithLocale("en_US"). // vi_VN, en_US
 		WithApiVersion("v0.0.1").
 		WithRequestedTime(time.Now()).

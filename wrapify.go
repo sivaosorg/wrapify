@@ -532,7 +532,7 @@ func (w *wrapper) Clone() *wrapper {
 
 	// Clone header
 	if w.header != nil {
-		clone.header = NewHeader().
+		clone.header = Header().
 			WithCode(w.header.code).
 			WithText(w.header.text).
 			WithType(w.header.typez).
@@ -541,7 +541,7 @@ func (w *wrapper) Clone() *wrapper {
 
 	// Clone meta
 	if w.meta != nil {
-		clone.meta = NewMeta().
+		clone.meta = Meta().
 			WithApiVersion(w.meta.apiVersion).
 			WithRequestID(w.meta.requestID).
 			WithLocale(w.meta.locale).
@@ -558,7 +558,7 @@ func (w *wrapper) Clone() *wrapper {
 
 	// Clone pagination
 	if w.pagination != nil {
-		clone.pagination = NewPagination().
+		clone.pagination = Pages().
 			WithPage(w.pagination.page).
 			WithPerPage(w.pagination.perPage).
 			WithTotalPages(w.pagination.totalPages).
@@ -1377,7 +1377,7 @@ func (w *wrapper) WithDebuggingKVf(key string, format string, args ...any) *wrap
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithApiVersion(v string) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithApiVersion(v)
 	return w
@@ -1399,7 +1399,7 @@ func (w *wrapper) WithApiVersion(v string) *wrapper {
 //   - A pointer to the modified `wrapper` instance, enabling method chaining.
 func (w *wrapper) WithApiVersionf(format string, args ...any) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithApiVersionf(format, args...)
 	return w
@@ -1418,7 +1418,7 @@ func (w *wrapper) WithApiVersionf(format string, args ...any) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithRequestID(v string) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithRequestID(v)
 	return w
@@ -1440,7 +1440,7 @@ func (w *wrapper) WithRequestID(v string) *wrapper {
 //   - A pointer to the modified `wrapper` instance, allowing for method chaining.
 func (w *wrapper) WithRequestIDf(format string, args ...any) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithRequestIDf(format, args...)
 	return w
@@ -1458,7 +1458,7 @@ func (w *wrapper) WithRequestIDf(format string, args ...any) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithLocale(v string) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithLocale(v)
 	return w
@@ -1476,7 +1476,7 @@ func (w *wrapper) WithLocale(v string) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithRequestedTime(v time.Time) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithRequestedTime(v)
 	return w
@@ -1494,7 +1494,7 @@ func (w *wrapper) WithRequestedTime(v time.Time) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithCustomFields(values map[string]any) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithCustomFields(values)
 	return w
@@ -1513,7 +1513,7 @@ func (w *wrapper) WithCustomFields(values map[string]any) *wrapper {
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) WithCustomFieldKV(key string, value any) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithCustomFieldKV(key, value)
 	return w
@@ -1536,7 +1536,7 @@ func (w *wrapper) WithCustomFieldKV(key string, value any) *wrapper {
 //   - A pointer to the modified `wrapper` instance, enabling method chaining.
 func (w *wrapper) WithCustomFieldKVf(key string, format string, args ...any) *wrapper {
 	if !w.IsMetaPresent() {
-		w.meta = NewMeta()
+		w.meta = Meta()
 	}
 	w.meta.WithCustomFieldKVf(key, format, args...)
 	return w
@@ -1555,7 +1555,7 @@ func (w *wrapper) WithCustomFieldKVf(key string, format string, args ...any) *wr
 //   - A pointer to the updated `wrapper` instance.
 func (w *wrapper) WithPage(v int) *wrapper {
 	if !w.IsPagingPresent() {
-		w.pagination = NewPagination()
+		w.pagination = Pages()
 	}
 	w.pagination.WithPage(v)
 	return w
@@ -1574,7 +1574,7 @@ func (w *wrapper) WithPage(v int) *wrapper {
 //   - A pointer to the updated `wrapper` instance.
 func (w *wrapper) WithPerPage(v int) *wrapper {
 	if !w.IsPagingPresent() {
-		w.pagination = NewPagination()
+		w.pagination = Pages()
 	}
 	w.pagination.WithPerPage(v)
 	return w
@@ -1593,7 +1593,7 @@ func (w *wrapper) WithPerPage(v int) *wrapper {
 //   - A pointer to the updated `wrapper` instance.
 func (w *wrapper) WithTotalPages(v int) *wrapper {
 	if !w.IsPagingPresent() {
-		w.pagination = NewPagination()
+		w.pagination = Pages()
 	}
 	w.pagination.WithTotalPages(v)
 	return w
@@ -1612,7 +1612,7 @@ func (w *wrapper) WithTotalPages(v int) *wrapper {
 //   - A pointer to the updated `wrapper` instance.
 func (w *wrapper) WithTotalItems(v int) *wrapper {
 	if !w.IsPagingPresent() {
-		w.pagination = NewPagination()
+		w.pagination = Pages()
 	}
 	w.pagination.WithTotalItems(v)
 	return w
@@ -1631,7 +1631,7 @@ func (w *wrapper) WithTotalItems(v int) *wrapper {
 //   - A pointer to the updated `wrapper` instance.
 func (w *wrapper) WithIsLast(v bool) *wrapper {
 	if !w.IsPagingPresent() {
-		w.pagination = NewPagination()
+		w.pagination = Pages()
 	}
 	w.pagination.WithIsLast(v)
 	return w
