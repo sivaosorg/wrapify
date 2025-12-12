@@ -213,3 +213,15 @@ func (m *meta) Json() string {
 func (m *meta) JsonPretty() string {
 	return unify4g.JsonPrettyN(m.Respond())
 }
+
+// RandRequestID generates and sets a random request ID for the `meta` instance.
+//
+// This function utilizes the `CryptoID` function to generate a unique request ID
+// and assigns it to the `requestID` field of the `meta` instance. The modified
+// `meta` instance is returned to allow for method chaining.
+//
+// Returns:
+//   - A pointer to the modified `meta` instance, enabling method chaining.
+func (m *meta) RandRequestID() *meta {
+	return m.WithRequestID(CryptoID())
+}
