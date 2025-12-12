@@ -1013,30 +1013,6 @@ func (h *header) Description() string {
 	return h.description
 }
 
-// Json serializes the `wrapper` instance into a compact JSON string.
-//
-// This function uses the `unify4g.JsonN` utility to generate a JSON representation
-// of the `wrapper` instance. The output is a compact JSON string with no additional
-// whitespace or formatting.
-//
-// Returns:
-//   - A compact JSON string representation of the `wrapper` instance.
-func (w *wrapper) Json() string {
-	return unify4g.JsonN(w.Respond())
-}
-
-// JsonPretty serializes the `wrapper` instance into a prettified JSON string.
-//
-// This function uses the `unify4g.JsonPrettyN` utility to generate a JSON representation
-// of the `wrapper` instance. The output is a human-readable JSON string with
-// proper indentation and formatting for better readability.
-//
-// Returns:
-//   - A prettified JSON string representation of the `wrapper` instance.
-func (w *wrapper) JsonPretty() string {
-	return unify4g.JsonPrettyN(w.Respond())
-}
-
 // WithStatusCode sets the HTTP status code for the `wrapper` instance.
 // Ensure that code is between 100 and 599, defaults to 500 if invalid value.
 //
@@ -1875,6 +1851,30 @@ func (w *wrapper) Reply() R {
 //	fmt.Println(responsePtr.Json())  // Prints the wrapped response details, including data, headers, and metadata.
 func (w *wrapper) ReplyPtr() *R {
 	return &R{wrapper: w}
+}
+
+// Json serializes the `wrapper` instance into a compact JSON string.
+//
+// This function uses the `unify4g.JsonN` utility to generate a JSON representation
+// of the `wrapper` instance. The output is a compact JSON string with no additional
+// whitespace or formatting.
+//
+// Returns:
+//   - A compact JSON string representation of the `wrapper` instance.
+func (w *wrapper) Json() string {
+	return unify4g.JsonN(w.Respond())
+}
+
+// JsonPretty serializes the `wrapper` instance into a prettified JSON string.
+//
+// This function uses the `unify4g.JsonPrettyN` utility to generate a JSON representation
+// of the `wrapper` instance. The output is a human-readable JSON string with
+// proper indentation and formatting for better readability.
+//
+// Returns:
+//   - A prettified JSON string representation of the `wrapper` instance.
+func (w *wrapper) JsonPretty() string {
+	return unify4g.JsonPrettyN(w.Respond())
 }
 
 // build generates a map representation of the `wrapper` instance.
