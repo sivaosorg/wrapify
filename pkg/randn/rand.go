@@ -1,4 +1,4 @@
-package wrapify
+package randn
 
 import (
 	"math/rand"

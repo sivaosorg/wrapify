@@ -157,7 +157,7 @@ func defaultMetaValues() *meta {
 		WithLocale("en_US"). // vi_VN, en_US
 		WithApiVersion("v0.0.1").
 		WithRequestedTime(time.Now()).
-		WithRequestID(CryptoID())
+		WithRequestID(cryptoID())
 }
 
 // DefaultOptionsConfig is a pre-configured default set of options for pretty-printing JSON.

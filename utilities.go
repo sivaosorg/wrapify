@@ -3,7 +3,10 @@ package wrapify
 import (
 	"bytes"
 	"compress/gzip"
+	cr "crypto/rand"
 	"encoding/base64"
+	"encoding/hex"
+	"log"
 
 	"github.com/sivaosorg/unify4g"
 )
@@ -64,4 +67,32 @@ func chunk(data map[string]any) [][]byte {
 		chunks = append(chunks, chunk)
 	}
 	return chunks
+}
+
+// cryptoID generates a cryptographically secure random ID as a hexadecimal string.
+// It uses 16 random bytes, which are then encoded to a hexadecimal string for easy representation.
+//
+// Returns:
+//   - A string representing a secure random hexadecimal ID of 32 characters (since 16 bytes are used, and each byte
+//     is represented by two hexadecimal characters).
+//
+// The function uses crypto/rand.Read to ensure cryptographic security in the generated ID, making it suitable for
+// sensitive use cases such as API keys, session tokens, or any security-critical identifiers.
+//
+// Example:
+//
+//	id := cryptoID()
+//	fmt.Println("Generated Crypto ID:", id)
+//
+// Notes:
+//   - This function is suitable for use cases where high security is required in the generated ID.
+//   - It is not recommended for use cases where deterministic or non-cryptographic IDs are preferred.
+func cryptoID() string {
+	bytes := make([]byte, 16)
+	// Use crypto/rand.Read for cryptographically secure random byte generation.
+	if _, err := cr.Read(bytes); err != nil {
+		log.Fatalf("Failed to generate secure random bytes: %v", err)
+		return ""
+	}
+	return hex.EncodeToString(bytes)
 }

@@ -223,5 +223,5 @@ func (m *meta) JsonPretty() string {
 // Returns:
 //   - A pointer to the modified `meta` instance, enabling method chaining.
 func (m *meta) RandRequestID() *meta {
-	return m.WithRequestID(CryptoID())
+	return m.WithRequestID(cryptoID())
 }
