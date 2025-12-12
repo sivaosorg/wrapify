@@ -51,8 +51,8 @@ func chunk(data map[string]any) [][]byte {
 		return nil
 	}
 	var chunks [][]byte
-	for i := 0; i < len(_bytes); i += DefaultChunkSize {
-		end := i + DefaultChunkSize
+	for i := 0; i < len(_bytes); i += defaultChunkSize {
+		end := i + defaultChunkSize
 		if end > len(_bytes) {
 			end = len(_bytes)
 		}
