@@ -1267,6 +1267,41 @@ func Capitalize(str string) string {
 	return ""
 }
 
+// Title converts the first letter of each word in the given string to title case.
+// A word is defined as a sequence of characters separated by whitespace or punctuation.
+//
+// This function iterates through each character in the input string `str` and checks if it is
+// the first character of a word. If it is, the character is converted to title case using
+// `unicode.ToTitle`. The function uses a helper function `isSeparator` to determine if the
+// previous character is a separator (whitespace or punctuation).
+//
+// Parameters:
+//   - `str`: The input string to be converted to title case.
+//
+// Returns:
+//   - A new string with the first letter of each word converted to title case.
+//
+// Example:
+//
+//	input := "hello world! this is a test."
+//	output := Title(input) // output will be "Hello World! This Is A Test."
+func Title(str string) string {
+	if IsEmpty(str) {
+		return str
+	}
+	prev := ' '
+	return strings.Map(
+		func(r rune) rune {
+			if isSeparator(prev) {
+				prev = r
+				return unicode.ToTitle(r)
+			}
+			prev = r
+			return r
+		},
+		str)
+}
+
 // Chomp removes the trailing newline or carriage return characters from the given string.
 //
 // This function trims newline (`\n`), carriage return (`\r`), or the combination of both (`\r\n`) from the
@@ -3397,4 +3432,30 @@ func normalizeRune(r rune) string {
 		return "Y"
 	}
 	return string(r)
+}
+
+// isSeparator checks if a rune is considered a separator.
+// This function defines separators as any character that is not an ASCII alphanumeric
+// or underscore. For non-ASCII characters, it treats letters and digits as non-separators,
+// and considers spaces as separators.
+func isSeparator(r rune) bool {
+	if r <= 0x7F {
+		switch {
+		case '0' <= r && r <= '9':
+			return false
+		case 'a' <= r && r <= 'z':
+			return false
+		case 'A' <= r && r <= 'Z':
+			return false
+		case r == '_':
+			return false
+		}
+		return true
+	}
+	// Letters and digits are not separators
+	if unicode.IsLetter(r) || unicode.IsDigit(r) {
+		return false
+	}
+	// Otherwise, all we can do for now is treat spaces as separators.
+	return unicode.IsSpace(r)
 }
