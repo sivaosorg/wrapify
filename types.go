@@ -428,26 +428,6 @@ type underlyingMessage struct {
 // TerminalStyle is for terminals
 var TerminalStyle *Style
 
-type result int
-type byKind int
+type tools struct{}
 
-// jsonType represents the different types of JSON values.
-//
-// This enumeration defines constants representing various JSON data types, including `null`, `boolean`, `number`,
-// `string`, and `JSON object or array`. These constants are used by the `getJsonType` function to identify the type
-// of a given JSON value based on its first character.
-type jsonType int
-
-type pair struct {
-	keyStart, keyEnd     int
-	valueStart, valueEnd int
-}
-
-// byKeyVal is a struct that provides a way to sort JSON key-value pairs.
-// It contains the JSON data, a buffer to hold trimmed values, and a list of pairs to be sorted.
-type byKeyVal struct {
-	sorted bool   // indicates whether the pairs are sorted
-	json   []byte // original JSON data
-	buf    []byte // buffer used for processing values
-	pairs  []pair // list of key-value pairs to sort
-}
+var Toolbox tools = tools{}
