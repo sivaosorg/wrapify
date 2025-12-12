@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"sync"
 	"time"
-
-	"github.com/sivaosorg/unify4g"
 )
 
 // New creates a new instance of the `wrapper` struct.
@@ -159,5 +157,5 @@ func defaultMetaValues() *meta {
 		WithLocale("en_US"). // vi_VN, en_US
 		WithApiVersion("v0.0.1").
 		WithRequestedTime(time.Now()).
-		WithRequestID(unify4g.GenerateCryptoID())
+		WithRequestID(CryptoID())
 }
