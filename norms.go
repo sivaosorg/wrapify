@@ -1,4 +1,4 @@
-package utilities
+package wrapify
 
 // normalizeRune takes a rune as input and returns its normalized string representation.
 //

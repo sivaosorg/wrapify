@@ -159,3 +159,8 @@ func defaultMetaValues() *meta {
 		WithRequestedTime(time.Now()).
 		WithRequestID(CryptoID())
 }
+
+// DefaultOptionsConfig is a pre-configured default set of options for pretty-printing JSON.
+// This configuration uses a width of 80, an empty prefix, two-space indentation, and does not sort keys.
+// It is used when no custom options are provided in the PrettyOptions function.
+var DefaultOptionsConfig = &OptionsConfig{Width: 80, Prefix: "", Indent: "  ", SortKeys: false}

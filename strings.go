@@ -1,4 +1,4 @@
-package utilities
+package wrapify
 
 import (
 	"crypto/sha256"

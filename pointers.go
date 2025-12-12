@@ -1,4 +1,4 @@
-package utilities
+package wrapify
 
 // Ptr returns a pointer to the given value.
 // This is useful for creating pointers to literals or values inline,
