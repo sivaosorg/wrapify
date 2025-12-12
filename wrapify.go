@@ -176,7 +176,7 @@ func (w *wrapper) OptimizeSafe(threshold int) *wrapper {
 	// If the body is a string, we will check its length.
 	if s, ok := w.data.(string); ok {
 		if len(s) > threshold {
-			compressed := Compress(s)
+			compressed := compress(s)
 			w.
 				WithBody(compressed).
 				WithDebuggingKV("compression", "gzip").
@@ -188,13 +188,13 @@ func (w *wrapper) OptimizeSafe(threshold int) *wrapper {
 	// If the body is not a string, we will check its size using CalculateSize.
 	// Calculate the size of the body data.
 	if data := w.Body(); data != nil {
-		if size := CalculateSize(data); size > threshold {
-			compressed := Compress(data)
+		if size := calculateSize(data); size > threshold {
+			compressed := compress(data)
 			w.
 				WithBody(compressed).
 				WithDebuggingKV("compression", "gzip").
 				WithDebuggingKV("original_size", size).
-				WithDebuggingKV("compressed_size", CalculateSize(compressed))
+				WithDebuggingKV("compressed_size", calculateSize(compressed))
 		}
 	}
 	return w
@@ -228,7 +228,7 @@ func (w *wrapper) Stream() <-chan []byte {
 		// Chunk the response data into smaller parts.
 		// This is useful for streaming large responses in smaller segments.
 		// We will use the Chunk function to split the response data into manageable chunks.
-		chunks := Chunk(w.Respond())
+		chunks := chunk(w.Respond())
 		for _, chunk := range chunks {
 			ch <- chunk
 		}
