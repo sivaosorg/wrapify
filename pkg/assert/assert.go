@@ -1,8 +1,10 @@
-package wrapify
+package assert
 
 import (
 	"reflect"
 	"testing"
+
+	"github.com/sivaosorg/wrapify/pkg/pointers"
 )
 
 // AssertEqual compares two objects for equality and reports a test failure if they are not equal.
@@ -38,7 +40,7 @@ func AssertEqual(t *testing.T, object1, object2 any) {
 //
 //	AssertNil(t, err)
 func AssertNil(t *testing.T, object any) {
-	if !IsNil(&object) {
+	if !pointers.IsNil(&object) {
 		t.Helper()
 		t.Errorf("expected %v to be nil, but wasn't nil", object)
 	}
@@ -57,7 +59,7 @@ func AssertNil(t *testing.T, object any) {
 //
 //	AssertNotNil(t, result)
 func AssertNotNil(t *testing.T, object any) {
-	if IsNil(&object) {
+	if pointers.IsNil(&object) {
 		t.Helper()
 		t.Errorf("expected %v not to be nil, but was nil", object)
 	}

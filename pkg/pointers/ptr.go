@@ -1,4 +1,4 @@
-package wrapify
+package pointers
 
 // Ptr returns a pointer to the given value.
 // This is useful for creating pointers to literals or values inline,
@@ -1376,55 +1376,6 @@ func MapOr[T any, R any](ptr *T, fn func(T) R, defaultValue R) R {
 		return defaultValue
 	}
 	return fn(*ptr)
-}
-
-// Zip combines two pointers into a pointer of a tuple (pair).
-// Returns nil if either pointer is nil.
-// This is useful for combining optional values that should exist together.
-//
-// Example - Combining coordinates:
-//
-//	type Point struct {
-//	    X, Y float64
-//	}
-//
-//	x := wrapify.Ptr(10.0)
-//	y := wrapify.Ptr(20.0)
-//
-//	point := wrapify.Zip(x, y)
-//	if wrapify.IsNotNil(point) {
-//	    fmt.Printf("Point: (%.1f, %.1f)\n", point.First, point.Second)
-//	}
-//
-// Example - Username and password validation:
-//
-//	username := wrapify.Ptr("john")
-//	password := wrapify.Ptr("secret123")
-//
-//	credentials := wrapify.Zip(username, password)
-//	if wrapify.IsNotNil(credentials) {
-//	    authenticate(credentials.First, credentials.Second)
-//	}
-//
-// Example - API key and secret:
-//
-//	apiKey := config.APIKey       // *string
-//	apiSecret := config.APISecret // *string
-//
-//	credentials := wrapify.Zip(apiKey, apiSecret)
-//	if wrapify.IsNil(credentials) {
-//	    return errors.New("both API key and secret are required")
-//	}
-//
-//	client := NewAPIClient(credentials.First, credentials.Second)
-func Zip[T any, U any](a *T, b *U) *Pair[T, U] {
-	if a == nil || b == nil {
-		return nil
-	}
-	return &Pair[T, U]{
-		First:  *a,
-		Second: *b,
-	}
 }
 
 // All checks if all pointers in the slice are non-nil.
