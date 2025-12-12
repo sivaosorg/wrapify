@@ -1,7 +1,5 @@
 package wrapify
 
-import "github.com/sivaosorg/unify4g"
-
 // WithCode sets the `code` field of the `header` instance.
 //
 // This function assigns the provided integer value to the `code` field of the `header`
@@ -105,7 +103,7 @@ func (h *header) Respond() map[string]any {
 // Returns:
 //   - A compact JSON string representation of the `header` instance.
 func (h *header) Json() string {
-	return unify4g.JsonN(h.Respond())
+	return jsonpass(h.Respond())
 }
 
 // JsonPretty serializes the `header` instance into a prettified JSON string.
@@ -118,5 +116,5 @@ func (h *header) Json() string {
 // Returns:
 //   - A prettified JSON string representation of the `header` instance, formatted for improved readability.
 func (h *header) JsonPretty() string {
-	return unify4g.JsonPrettyN(h.Respond())
+	return jsonpretty(h.Respond())
 }

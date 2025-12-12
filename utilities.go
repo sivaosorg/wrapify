@@ -98,7 +98,7 @@ func cryptoID() string {
 	return hex.EncodeToString(bytes)
 }
 
-// marshalToString converts a Go value to its JSON string representation.
+// marshalToStr converts a Go value to its JSON string representation.
 //
 // This function utilizes the standard json library to marshal the input value `v`
 // into a JSON string. If the marshalling is successful, it returns the resulting
@@ -113,13 +113,35 @@ func cryptoID() string {
 //
 // Example:
 //
-//	jsonString, err := marshalToString(myStruct)
-func marshalToString(v any) (string, error) {
+//	jsonString, err := marshalToStr(myStruct)
+func marshalToStr(v any) (string, error) {
 	data, err := json.Marshal(v)
 	if err != nil {
 		return "", err
 	}
 	return string(data), nil
+}
+
+// marshalIndent converts a Go value to its JSON string representation with indentation.
+//
+// This function marshals the input value `v` into a formatted JSON string,
+// allowing for easy readability by including a specified prefix and indentation.
+// It returns the resulting JSON byte slice or an error if marshalling fails.
+//
+// Parameters:
+//   - `v`: The Go value to be marshalled into JSON.
+//   - `prefix`: A string that will be prefixed to each line of the output JSON.
+//   - `indent`: A string used for indentation (typically a series of spaces or a tab).
+//
+// Returns:
+//   - A byte slice containing the formatted JSON representation of the input value.
+//   - An error if the marshalling fails.
+//
+// Example:
+//
+//	jsonIndented, err := marshalIndent(myStruct, "", "    ")
+func marshalIndent(v any, prefix, indent string) ([]byte, error) {
+	return json.MarshalIndent(v, prefix, indent)
 }
 
 // jsonpass converts a Go value to its JSON string representation or returns the value directly if it is already a string.
@@ -142,9 +164,36 @@ func jsonpass(data any) string {
 	if ok {
 		return s
 	}
-	result, err := marshalToString(data)
+	result, err := marshalToStr(data)
 	if err != nil {
 		return ""
 	}
 	return result
+}
+
+// jsonpretty converts a Go value to its pretty-printed JSON string representation or returns the value directly if it is already a string.
+//
+// This function checks if the input data is a string; if so, it returns it directly.
+// Otherwise, it marshals the input value `data` into a formatted JSON string using
+// the MarshalIndent function. If an error occurs during marshalling, it returns an empty string.
+//
+// Parameters:
+//   - `data`: The Go value to be converted to pretty-printed JSON, or a string to be returned directly.
+//
+// Returns:
+//   - A string containing the pretty-printed JSON representation of the input value, or an empty string if an error occurs.
+//
+// Example:
+//
+//	jsonPrettyStr := jsonpretty(myStruct)
+func jsonpretty(data any) string {
+	s, ok := data.(string)
+	if ok {
+		return s
+	}
+	result, err := marshalIndent(data, "", "    ")
+	if err != nil {
+		return ""
+	}
+	return string(result)
 }
