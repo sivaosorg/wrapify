@@ -13,7 +13,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sivaosorg/unify4g"
+	"github.com/sivaosorg/wrapify/pkg/strs"
 )
 
 // Start initiates streaming operation and returns *wrapper for consistency with wrapify API.
@@ -510,21 +510,21 @@ func (sw *StreamingWrapper) Start(ctx context.Context) *wrapper {
 // This method serializes the StreamConfig struct into a JSON string
 // using the unify4g.JsonN function.
 func (s *StreamConfig) Json() string {
-	return unify4g.JsonN(s)
+	return jsonpass(s)
 }
 
 // Json returns the JSON representation of the StreamingStats.
 // This method serializes the StreamingStats struct into a JSON string
 // using the unify4g.JsonN function.
 func (s *StreamingStats) Json() string {
-	return unify4g.JsonN(s)
+	return jsonpass(s)
 }
 
 // Json returns the JSON representation of the StreamProgress.
 // This method serializes the StreamProgress struct into a JSON string
 // using the unify4g.JsonN function.
 func (s *StreamProgress) Json() string {
-	return unify4g.JsonN(s)
+	return jsonpass(s)
 }
 
 // WithReceiveMode sets the streaming mode to receiving or sending.
@@ -772,7 +772,7 @@ func (sw *StreamingWrapper) WithStreamingStrategy(strategy StreamingStrategy) *w
 		return respondStreamBadRequestDefault()
 	}
 
-	if unify4g.IsEmpty(string(strategy)) {
+	if strs.IsEmpty(string(strategy)) {
 		return sw.wrapper.
 			WithStatusCode(http.StatusBadRequest).
 			WithMessage("Invalid streaming strategy: cannot be empty").
@@ -920,7 +920,7 @@ func (sw *StreamingWrapper) WithCompressionType(comp CompressionType) *wrapper {
 		return respondStreamBadRequestDefault()
 	}
 
-	if unify4g.IsEmpty(string(comp)) {
+	if strs.IsEmpty(string(comp)) {
 		return sw.wrapper.
 			WithStatusCode(http.StatusBadRequest).
 			WithMessage("Invalid compression type: cannot be empty").

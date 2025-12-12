@@ -1,7 +1,5 @@
 package wrapify
 
-import "github.com/sivaosorg/unify4g"
-
 // WithPage sets the page number for the `pagination` instance.
 //
 // This function updates the `page` field of the `pagination` and
@@ -129,7 +127,7 @@ func (p *pagination) Respond() map[string]any {
 // Returns:
 //   - A compact JSON string representation of the `pagination` instance.
 func (p *pagination) Json() string {
-	return unify4g.JsonN(p.Respond())
+	return jsonpass(p.Respond())
 }
 
 // JsonPretty serializes the `pagination` instance into a prettified JSON string.
@@ -142,5 +140,5 @@ func (p *pagination) Json() string {
 // Returns:
 //   - A prettified JSON string representation of the `pagination` instance.
 func (p *pagination) JsonPretty() string {
-	return unify4g.JsonPrettyN(p.Respond())
+	return jsonpretty(p.Respond())
 }

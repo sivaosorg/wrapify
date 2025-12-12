@@ -3,8 +3,6 @@ package wrapify
 import (
 	"fmt"
 	"time"
-
-	"github.com/sivaosorg/unify4g"
 )
 
 // WithApiVersion sets the API version for the `meta` instance.
@@ -199,7 +197,7 @@ func (m *meta) Respond() map[string]any {
 // Returns:
 //   - A compact JSON string representation of the `meta` instance.
 func (m *meta) Json() string {
-	return unify4g.JsonN(m.Respond())
+	return jsonpass(m.Respond())
 }
 
 // JsonPretty serializes the `meta` instance into a prettified JSON string.
@@ -211,7 +209,7 @@ func (m *meta) Json() string {
 // Returns:
 //   - A prettified JSON string representation of the `meta` instance.
 func (m *meta) JsonPretty() string {
-	return unify4g.JsonPrettyN(m.Respond())
+	return jsonpretty(m.Respond())
 }
 
 // RandRequestID generates and sets a random request ID for the `meta` instance.

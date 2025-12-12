@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/sivaosorg/unify4g"
+	"github.com/sivaosorg/wrapify/pkg/collections"
 )
 
 // Available checks whether the `wrapper` instance is non-nil.
@@ -336,7 +337,7 @@ func (w *wrapper) IsDebuggingPresent() bool {
 //   - `true` if the `debug` field is present and contains the specified key.
 //   - `false` if `debug` is nil or does not contain the key.
 func (w *wrapper) IsDebuggingKeyPresent(key string) bool {
-	return w.IsDebuggingPresent() && unify4g.MapContainsKey(w.debug, key)
+	return w.IsDebuggingPresent() && collections.MapContainsKey(w.debug, key)
 }
 
 // IsBodyPresent checks whether the body data is present in the `wrapper` instance.
