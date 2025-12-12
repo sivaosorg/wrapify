@@ -1,5 +1,13 @@
 package wrapify
 
+import (
+	"context"
+	"io"
+	"net/http"
+	"sync"
+	"time"
+)
+
 // NewPagination creates a new instance of the `pagination` struct.
 //
 // This function initializes a `pagination` struct with its default values.
@@ -50,38 +58,89 @@ func New() *wrapper {
 	return w
 }
 
-// Get returns buffer from pool
+// NewBufferPool creates new buffer pool
 //
-// If pool is empty, it creates a new buffer
-// of predefined size
+// This function initializes a `BufferPool` struct with a specified buffer size
+// and pool size.
+//
+// Parameters:
+//   - bufferSize: The size of each buffer in bytes.
+//   - poolSize: The maximum number of buffers to maintain in the pool.
 //
 // Returns:
-//   - A byte slice buffer
-func (bp *BufferPool) Get() []byte {
-	select {
-	case buf := <-bp.buffers:
-		return buf
-	default:
-		return make([]byte, bp.size)
+//
+//   - A pointer to a newly created `BufferPool` instance with the specified settings.
+func NewBufferPool(bufferSize int64, poolSize int) *BufferPool {
+	return &BufferPool{
+		buffers: make(chan []byte, poolSize),
+		size:    bufferSize,
 	}
 }
 
-// Put returns buffer to pool
+// NewStreamConfig creates default streaming configuration
 //
-// # If pool is full, the buffer is discarded
-//
-// Parameters:
-//   - buf: A byte slice buffer to be returned to the pool
+// This function initializes a `StreamConfig` struct with default values
+// suitable for typical streaming scenarios.
 //
 // Returns:
-//   - None
-func (bp *BufferPool) Put(buf []byte) {
-	if buf == nil {
-		return
+//   - A pointer to a newly created `StreamConfig` instance with default settings.
+func NewStreamConfig() *StreamConfig {
+	return &StreamConfig{
+		ChunkSize:           65536, // 64KB default
+		Strategy:            STRATEGY_BUFFERED,
+		Compression:         COMP_NONE,
+		UseBufferPool:       true,
+		MaxConcurrentChunks: 4,
+		ReadTimeout:         30 * time.Second,
+		WriteTimeout:        30 * time.Second,
+		ThrottleRate:        0, // unlimited
 	}
-	select {
-	case bp.buffers <- buf:
-	default:
-		// Pool is full, discard
+}
+
+// NewStreaming creates a new instance of the `StreamingWrapper` struct.
+//
+// This function initializes a `StreamingWrapper` struct with the provided
+// `reader`, and `config`. If the `config` is nil, it uses default
+// streaming configuration.
+//
+// Parameters:
+//   - `reader`: An `io.Reader` instance from which data will be streamed.
+//   - `config`: A pointer to a `StreamConfig` struct containing streaming configuration.
+//
+// Returns:
+//   - A pointer to a newly created `StreamingWrapper` instance with initialized fields.
+func NewStreaming(reader io.Reader, config *StreamConfig) *StreamingWrapper {
+	if config == nil {
+		config = NewStreamConfig()
 	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	sw := &StreamingWrapper{
+		wrapper:        New(),
+		config:         config,
+		reader:         reader,
+		ctx:            ctx,
+		cancel:         cancel,
+		progress:       &StreamProgress{},
+		stats:          &StreamingStats{StartTime: time.Now()},
+		errors:         make([]error, 0),
+		isStreaming:    false,
+		compressionBuf: make([]byte, 0),
+		mu:             sync.RWMutex{},
+	}
+
+	// Initialize wrapper defaults
+	sw.wrapper.WithStatusCode(http.StatusOK)
+	sw.wrapper.WithMessage("Streaming initialized")
+	sw.wrapper.WithDebuggingKV("streaming", true)
+	sw.wrapper.WithDebuggingKV("strategy", string(config.Strategy))
+	sw.wrapper.WithDebuggingKV("compression", string(config.Compression))
+
+	// Initialize buffer pool if enabled
+	if config.UseBufferPool {
+		sw.bufferPool = NewBufferPool(config.ChunkSize, 4)
+	}
+
+	return sw
 }
