@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sivaosorg/unify4g"
 	"github.com/sivaosorg/wrapify/pkg/collections"
+	"github.com/sivaosorg/wrapify/pkg/randn"
+	"github.com/sivaosorg/wrapify/pkg/strs"
 )
 
 // Available checks whether the `wrapper` instance is non-nil.
@@ -352,8 +353,8 @@ func (w *wrapper) IsBodyPresent() bool {
 	s, ok := w.data.(string)
 	if ok {
 		return w.Available() &&
-			unify4g.IsNotEmpty(s) &&
-			unify4g.IsNotBlank(s)
+			strs.IsNotEmpty(s) &&
+			strs.IsNotBlank(s)
 	}
 	return w.Available() && w.data != nil
 }
@@ -730,7 +731,7 @@ func (m *meta) Available() bool {
 //   - `true` if `apiVersion` is non-empty.
 //   - `false` if `meta` is unavailable or `apiVersion` is empty.
 func (m *meta) IsApiVersionPresent() bool {
-	return m.Available() && unify4g.IsNotEmpty(m.apiVersion)
+	return m.Available() && strs.IsNotEmpty(m.apiVersion)
 }
 
 // IsRequestIDPresent checks whether the request ID is present in the `meta` instance.
@@ -742,7 +743,7 @@ func (m *meta) IsApiVersionPresent() bool {
 //   - `true` if `requestID` is non-empty.
 //   - `false` if `meta` is unavailable or `requestID` is empty.
 func (m *meta) IsRequestIDPresent() bool {
-	return m.Available() && unify4g.IsNotEmpty(m.requestID)
+	return m.Available() && strs.IsNotEmpty(m.requestID)
 }
 
 // IsLocalePresent checks whether the locale information is present in the `meta` instance.
@@ -754,7 +755,7 @@ func (m *meta) IsRequestIDPresent() bool {
 //   - `true` if `locale` is non-empty.
 //   - `false` if `meta` is unavailable or `locale` is empty.
 func (m *meta) IsLocalePresent() bool {
-	return m.Available() && unify4g.IsNotEmpty(m.locale)
+	return m.Available() && strs.IsNotEmpty(m.locale)
 }
 
 // IsRequestedTimePresent checks whether the requested time is present in the `meta` instance.
@@ -793,7 +794,7 @@ func (m *meta) IsCustomFieldPresent() bool {
 //   - `true` if the `customFields` map is available and contains the specified key.
 //   - `false` if `customFields` is nil, empty, or does not contain the specified key.
 func (m *meta) IsCustomFieldKeyPresent(key string) bool {
-	return m.IsCustomFieldPresent() && unify4g.MapContainsKey(m.customFields, key)
+	return m.IsCustomFieldPresent() && collections.MapContainsKey(m.customFields, key)
 }
 
 // OnKeyCustomField retrieves the value associated with a specific key in the custom fields of the `meta` instance.
@@ -842,8 +843,8 @@ func (m *meta) RequestID() string {
 	if !m.Available() {
 		return ""
 	}
-	if unify4g.IsEmpty(m.requestID) || unify4g.IsBlank(m.requestID) {
-		m.WithRequestID(unify4g.GenerateCryptoID())
+	if strs.IsEmpty(m.requestID) || strs.IsBlank(m.requestID) {
+		m.WithRequestID(randn.CryptoID())
 	}
 	return m.requestID
 }
@@ -927,7 +928,7 @@ func (h *header) IsCodePresent() bool {
 //   - `true` if the `text` field is non-empty.
 //   - `false` if the `text` field is either not present (nil) or empty.
 func (h *header) IsTextPresent() bool {
-	return h.Available() && unify4g.IsNotEmpty(h.text)
+	return h.Available() && strs.IsNotEmpty(h.text)
 }
 
 // IsTypePresent checks if the `Type` field in the `header` instance is present and not empty.
@@ -939,7 +940,7 @@ func (h *header) IsTextPresent() bool {
 //   - `true` if the `Type` field is non-empty.
 //   - `false` if the `Type` field is either not present (nil) or empty.
 func (h *header) IsTypePresent() bool {
-	return h.Available() && unify4g.IsNotEmpty(h.typez)
+	return h.Available() && strs.IsNotEmpty(h.typez)
 }
 
 // IsDescriptionPresent checks if the `description` field in the `header` instance is present and not empty.
@@ -951,7 +952,7 @@ func (h *header) IsTypePresent() bool {
 //   - `true` if the `description` field is non-empty.
 //   - `false` if the `description` field is either not present (nil) or empty.
 func (h *header) IsDescriptionPresent() bool {
-	return h.Available() && unify4g.IsNotEmpty(h.description)
+	return h.Available() && strs.IsNotEmpty(h.description)
 }
 
 // Code retrieves the code value from the `header` instance.
@@ -1322,7 +1323,7 @@ func (w *wrapper) WithErrMessagef(err error, format string, args ...any) *wrappe
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) BindCause() *wrapper {
-	if unify4g.IsNotEmpty(w.message) {
+	if strs.IsNotEmpty(w.message) {
 		w.errors = WithError(w.message)
 	}
 	return w
@@ -1665,7 +1666,7 @@ func (w *wrapper) Hash() string {
 	}
 	data := fmt.Sprintf("%v%v%v%v",
 		w.statusCode, w.message, w.data, w.meta)
-	return unify4g.Hash(data)
+	return strs.Hash(data)
 }
 
 // WithStreaming enables streaming mode for the wrapper and returns a streaming wrapper for enhanced data transfer capabilities.
@@ -1879,7 +1880,7 @@ func (w *wrapper) ReplyPtr() *R {
 // Returns:
 //   - A compact JSON string representation of the `wrapper` instance.
 func (w *wrapper) Json() string {
-	return unify4g.JsonN(w.Respond())
+	return jsonpass(w.Respond())
 }
 
 // JsonPretty serializes the `wrapper` instance into a prettified JSON string.
@@ -1891,7 +1892,7 @@ func (w *wrapper) Json() string {
 // Returns:
 //   - A prettified JSON string representation of the `wrapper` instance.
 func (w *wrapper) JsonPretty() string {
-	return unify4g.JsonPrettyN(w.Respond())
+	return jsonpretty(w.Respond())
 }
 
 // build generates a map representation of the `wrapper` instance.
@@ -1934,10 +1935,10 @@ func (w *wrapper) build() map[string]any {
 	if w.IsStatusCodePresent() {
 		m["status_code"] = w.statusCode
 	}
-	if unify4g.IsNotEmpty(w.message) {
+	if strs.IsNotEmpty(w.message) {
 		m["message"] = w.message
 	}
-	if unify4g.IsNotEmpty(w.path) {
+	if strs.IsNotEmpty(w.path) {
 		m["path"] = w.path
 	}
 	return m
