@@ -328,7 +328,7 @@ func (w *wrapper) IsDebuggingPresent() bool {
 // IsDebuggingKeyPresent checks whether a specific key exists in the `debug` information.
 //
 // This function first checks if debugging information is present using `IsDebuggingPresent()`.
-// Then it uses `unify4g.MapContainsKey` to verify if the given key is present within the `debug` map.
+// Then it uses `collections.MapContainsKey` to verify if the given key is present within the `debug` map.
 //
 // Parameters:
 //   - `key`: The key to search for within the `debug` field.
@@ -1873,7 +1873,7 @@ func (w *wrapper) ReplyPtr() *R {
 
 // Json serializes the `wrapper` instance into a compact JSON string.
 //
-// This function uses the `unify4g.JsonN` utility to generate a JSON representation
+// This function uses the `encoding.Json` utility to generate a JSON representation
 // of the `wrapper` instance. The output is a compact JSON string with no additional
 // whitespace or formatting.
 //
@@ -1885,7 +1885,7 @@ func (w *wrapper) Json() string {
 
 // JsonPretty serializes the `wrapper` instance into a prettified JSON string.
 //
-// This function uses the `unify4g.JsonPrettyN` utility to generate a JSON representation
+// This function uses the `encoding.JsonPretty` utility to generate a JSON representation
 // of the `wrapper` instance. The output is a human-readable JSON string with
 // proper indentation and formatting for better readability.
 //

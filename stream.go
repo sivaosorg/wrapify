@@ -508,21 +508,21 @@ func (sw *StreamingWrapper) Start(ctx context.Context) *wrapper {
 
 // Json returns the JSON representation of the StreamConfig.
 // This method serializes the StreamConfig struct into a JSON string
-// using the unify4g.JsonN function.
+// using the encoding.Json function.
 func (s *StreamConfig) Json() string {
 	return jsonpass(s)
 }
 
 // Json returns the JSON representation of the StreamingStats.
 // This method serializes the StreamingStats struct into a JSON string
-// using the unify4g.JsonN function.
+// using the encoding.Json function.
 func (s *StreamingStats) Json() string {
 	return jsonpass(s)
 }
 
 // Json returns the JSON representation of the StreamProgress.
 // This method serializes the StreamProgress struct into a JSON string
-// using the unify4g.JsonN function.
+// using the encoding.Json function.
 func (s *StreamProgress) Json() string {
 	return jsonpass(s)
 }

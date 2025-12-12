@@ -190,7 +190,7 @@ func (m *meta) Respond() map[string]any {
 
 // Json serializes the `meta` instance into a compact JSON string.
 //
-// This function uses the `unify4g.JsonN` utility to create a compact JSON representation
+// This function uses the `encoding.Json` utility to create a compact JSON representation
 // of the `meta` instance. The resulting string is formatted without additional whitespace,
 // suitable for efficient storage or transmission of metadata.
 //
@@ -202,7 +202,7 @@ func (m *meta) Json() string {
 
 // JsonPretty serializes the `meta` instance into a prettified JSON string.
 //
-// This function calls the `unify4g.JsonPrettyN` utility to produce a formatted, human-readable
+// This function calls the `encoding.JsonPretty` utility to produce a formatted, human-readable
 // JSON string representation of the `meta` instance. The output is useful for debugging
 // or inspecting metadata in a more structured format.
 //

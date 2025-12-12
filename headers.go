@@ -96,7 +96,7 @@ func (h *header) Respond() map[string]any {
 
 // Json serializes the `header` instance into a compact JSON string.
 //
-// This function uses the `unify4g.JsonN` utility to create a compact JSON representation
+// This function uses the `encoding.Json` utility to create a compact JSON representation
 // of the `header` instance. The resulting string contains only the key information, formatted
 // with minimal whitespace, making it suitable for compact storage or transmission of header data.
 //
@@ -108,7 +108,7 @@ func (h *header) Json() string {
 
 // JsonPretty serializes the `header` instance into a prettified JSON string.
 //
-// This function uses the `unify4g.JsonPrettyN` utility to produce a formatted, human-readable
+// This function uses the `encoding.JsonPretty` utility to produce a formatted, human-readable
 // JSON string representation of the `header` instance. The output is structured with indentation
 // and newlines, making it ideal for inspecting header data in a clear, easy-to-read format, especially
 // during debugging or development.

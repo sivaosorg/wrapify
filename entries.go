@@ -4,13 +4,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sivaosorg/unify4g"
+	"github.com/sivaosorg/wrapify/pkg/encoding"
 )
 
 // UnwrapJSON takes a JSON string as input and maps it into a 'wrapper' struct, populating its fields
 // with data extracted from the JSON. The function handles different parts of the response such as
 // status code, message, pagination, headers, metadata, and debugging information. It uses
-// `unify4g.UnmarshalFromStringN` for unmarshaling the JSON string into a map, then assigns the
+// `encoding.UnmarshalFromString` for unmarshaling the JSON string into a map, then assigns the
 // respective values from the map to the fields of the `wrapper` struct.
 //
 // The function extracts information from the provided JSON, handles nested
@@ -35,7 +35,7 @@ import (
 // presence of keys and converting them into their appropriate types.
 func UnwrapJSON(json string) (w *wrapper, err error) {
 	var data map[string]any
-	err = unify4g.UnmarshalFromStringN(json, &data)
+	err = encoding.UnmarshalFromString(json, &data)
 	if err != nil {
 		return nil, WithErrStack(err)
 	}
@@ -125,7 +125,7 @@ func UnwrapJSON(json string) (w *wrapper, err error) {
 //
 // The function is a helper that bridges between raw map data (e.g., deserialized JSON
 // or other dynamic input) and the strongly-typed `wrapper` struct used in the codebase.
-// It first converts the input map into a JSON string using `unify4g.JsonN`, then calls
+// It first converts the input map into a JSON string using `encoding.Json`, then calls
 // the `Parse` function to handle the deserialization and field mapping to the `wrapper`.
 //
 // Parameters:
@@ -140,7 +140,7 @@ func UnwrapJSON(json string) (w *wrapper, err error) {
 // Error Handling:
 //   - If the input map is empty or nil, the function returns an error
 //     indicating that the data is invalid.
-//   - If serialization or parsing fails, the error from `Parse` or `unify4g.JsonN`
+//   - If serialization or parsing fails, the error from `Parse` or `encoding.Json`
 //     is propagated, providing context about the failure.
 //
 // Usage:

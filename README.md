@@ -278,8 +278,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/sivaosorg/unify4g"
 	"github.com/sivaosorg/wrapify"
+	"github.com/sivaosorg/wrapify/randn"
 )
 
 func main() {
@@ -295,7 +295,7 @@ func main() {
 		WithTotal(1).
 		WithMessagef("How are you? %v", "I'm good").
 		WithDebuggingKV("refer", 1234).
-		WithDebuggingKVf("___abc", "trace sessions_id: %v", unify4g.GenerateCryptoID()).
+		WithDebuggingKVf("___abc", "trace sessions_id: %v", randn.CryptoID()).
 		WithBody("response body here").
 		WithPath("/api/v1/users").
 		WithCustomFieldKVf("fields", "userID: %v", 103).
