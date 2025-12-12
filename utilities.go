@@ -6,6 +6,7 @@ import (
 	cr "crypto/rand"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"log"
 
 	"github.com/sivaosorg/unify4g"
@@ -95,4 +96,55 @@ func cryptoID() string {
 		return ""
 	}
 	return hex.EncodeToString(bytes)
+}
+
+// marshalToString converts a Go value to its JSON string representation.
+//
+// This function utilizes the standard json library to marshal the input value `v`
+// into a JSON string. If the marshalling is successful, it returns the resulting
+// JSON string. If an error occurs during the process, it returns an error.
+//
+// Parameters:
+//   - `v`: The Go value to be marshalled into JSON.
+//
+// Returns:
+//   - A string containing the JSON representation of the input value.
+//   - An error if the marshalling fails.
+//
+// Example:
+//
+//	jsonString, err := marshalToString(myStruct)
+func marshalToString(v any) (string, error) {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+// jsonpass converts a Go value to its JSON string representation or returns the value directly if it is already a string.
+//
+// This function checks if the input data is a string; if so, it returns it directly.
+// Otherwise, it marshals the input value `data` into a JSON string using the
+// MarshalToString function. If an error occurs during marshalling, it returns an empty string.
+//
+// Parameters:
+//   - `data`: The Go value to be converted to JSON, or a string to be returned directly.
+//
+// Returns:
+//   - A string containing the JSON representation of the input value, or an empty string if an error occurs.
+//
+// Example:
+//
+//	jsonStr := jsonpass(myStruct)
+func jsonpass(data any) string {
+	s, ok := data.(string)
+	if ok {
+		return s
+	}
+	result, err := marshalToString(data)
+	if err != nil {
+		return ""
+	}
+	return result
 }

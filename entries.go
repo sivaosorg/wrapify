@@ -165,7 +165,7 @@ func WrapFrom(data map[string]any) (w *wrapper, err error) {
 	if len(data) == 0 {
 		return nil, WithErrorf("data is nil/null")
 	}
-	json := unify4g.JsonN(data)
+	json := jsonpass(data)
 	return UnwrapJSON(json)
 }
 
