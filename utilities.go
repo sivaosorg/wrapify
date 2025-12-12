@@ -13,7 +13,7 @@ import (
 )
 
 // calculateSize calculates the size of the marshaled data.
-// It uses unify4g.MarshalN to marshal the data and returns the length of the resulting byte slice.
+// It uses encoding.Marshal to marshal the data and returns the length of the resulting byte slice.
 // If an error occurs during marshaling, it returns 0.
 func calculateSize(data any) int {
 	_bytes, err := encoding.Marshal(data)
@@ -24,7 +24,7 @@ func calculateSize(data any) int {
 }
 
 // compress compresses the given data using gzip and encodes it in base64.
-// It first marshals the data using unify4g.MarshalN, then compresses the resulting byte slice
+// It first marshals the data using encoding.Marshal, then compresses the resulting byte slice
 // using gzip. The compressed data is then encoded in base64 and returned as a string.
 // If any error occurs during marshaling or compression, it returns an empty string.
 func compress(data any) string {

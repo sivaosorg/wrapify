@@ -922,7 +922,7 @@ func (h *header) IsCodePresent() bool {
 // IsTextPresent checks if the `text` field in the `header` instance is present and not empty.
 //
 // This function verifies if the `header` is available and if the `text` field is not empty, using
-// the `unify4g.IsNotEmpty` utility to ensure the presence of the `text` field.
+// the `strs.IsNotEmpty` utility to ensure the presence of the `text` field.
 //
 // Returns:
 //   - `true` if the `text` field is non-empty.
@@ -934,7 +934,7 @@ func (h *header) IsTextPresent() bool {
 // IsTypePresent checks if the `Type` field in the `header` instance is present and not empty.
 //
 // This function checks if the `header` instance is available and if the `Type` field is not empty,
-// utilizing the `unify4g.IsNotEmpty` utility to determine whether the `Type` field contains a value.
+// utilizing the `strs.IsNotEmpty` utility to determine whether the `Type` field contains a value.
 //
 // Returns:
 //   - `true` if the `Type` field is non-empty.
@@ -946,7 +946,7 @@ func (h *header) IsTypePresent() bool {
 // IsDescriptionPresent checks if the `description` field in the `header` instance is present and not empty.
 //
 // This function ensures that the `header` is available and that the `description` field is not empty,
-// using `unify4g.IsNotEmpty` to check for non-emptiness.
+// using `strs.IsNotEmpty` to check for non-emptiness.
 //
 // Returns:
 //   - `true` if the `description` field is non-empty.
@@ -1658,7 +1658,7 @@ func (w *wrapper) WithIsLast(v bool) *wrapper {
 // Hash generates a hash string for the `wrapper` instance.
 //
 // This method concatenates the values of the `statusCode`, `message`, `data`, and `meta` fields
-// into a single string and then computes a hash of that string using the `unify4g.Hash` function.
+// into a single string and then computes a hash of that string using the `strs.Hash` function.
 // The resulting hash string can be used for various purposes, such as caching or integrity checks.
 func (w *wrapper) Hash() string {
 	if !w.Available() {
