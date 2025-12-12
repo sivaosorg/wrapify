@@ -283,7 +283,7 @@ import (
 )
 
 func main() {
-	p := wrapify.NewPagination().
+	p := wrapify.Pages().
 		WithIsLast(true).
 		WithPage(1).
 		WithTotalItems(120).
