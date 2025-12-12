@@ -1446,6 +1446,22 @@ func (w *wrapper) WithRequestIDf(format string, args ...any) *wrapper {
 	return w
 }
 
+// RandRequestID generates and sets a random request ID in the `meta` field of the `wrapper` instance.
+//
+// This function checks if the `meta` field is present in the `wrapper`. If it is not,
+// a new `meta` instance is created. Then, it calls the `RandRequestID` method on the `meta`
+// instance to generate and set a random request ID.
+//
+// Returns:
+//   - A pointer to the modified `wrapper` instance (enabling method chaining).
+func (w *wrapper) RandRequestID() *wrapper {
+	if !w.IsMetaPresent() {
+		w.meta = Meta()
+	}
+	w.meta.RandRequestID()
+	return w
+}
+
 // WithLocale sets the locale in the `meta` field of the `wrapper` instance.
 //
 // This function ensures the `meta` field is present, creating a new instance if needed, and
