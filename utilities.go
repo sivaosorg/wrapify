@@ -3,13 +3,12 @@ package wrapify
 import (
 	"bytes"
 	"compress/gzip"
-	cr "crypto/rand"
 	"encoding/base64"
-	"encoding/hex"
-	"encoding/json"
-	"log"
+	"fmt"
 
+	"github.com/sivaosorg/wrapify/pkg/common"
 	"github.com/sivaosorg/wrapify/pkg/encoding"
+	"github.com/sivaosorg/wrapify/pkg/randn"
 )
 
 // calculateSize calculates the size of the marshaled data.
@@ -89,59 +88,7 @@ func chunk(data map[string]any) [][]byte {
 //   - This function is suitable for use cases where high security is required in the generated ID.
 //   - It is not recommended for use cases where deterministic or non-cryptographic IDs are preferred.
 func cryptoID() string {
-	bytes := make([]byte, 16)
-	// Use crypto/rand.Read for cryptographically secure random byte generation.
-	if _, err := cr.Read(bytes); err != nil {
-		log.Fatalf("Failed to generate secure random bytes: %v", err)
-		return ""
-	}
-	return hex.EncodeToString(bytes)
-}
-
-// marshalToStr converts a Go value to its JSON string representation.
-//
-// This function utilizes the standard json library to marshal the input value `v`
-// into a JSON string. If the marshalling is successful, it returns the resulting
-// JSON string. If an error occurs during the process, it returns an error.
-//
-// Parameters:
-//   - `v`: The Go value to be marshalled into JSON.
-//
-// Returns:
-//   - A string containing the JSON representation of the input value.
-//   - An error if the marshalling fails.
-//
-// Example:
-//
-//	jsonString, err := marshalToStr(myStruct)
-func marshalToStr(v any) (string, error) {
-	data, err := json.Marshal(v)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
-
-// marshalIndent converts a Go value to its JSON string representation with indentation.
-//
-// This function marshals the input value `v` into a formatted JSON string,
-// allowing for easy readability by including a specified prefix and indentation.
-// It returns the resulting JSON byte slice or an error if marshalling fails.
-//
-// Parameters:
-//   - `v`: The Go value to be marshalled into JSON.
-//   - `prefix`: A string that will be prefixed to each line of the output JSON.
-//   - `indent`: A string used for indentation (typically a series of spaces or a tab).
-//
-// Returns:
-//   - A byte slice containing the formatted JSON representation of the input value.
-//   - An error if the marshalling fails.
-//
-// Example:
-//
-//	jsonIndented, err := marshalIndent(myStruct, "", "    ")
-func marshalIndent(v any, prefix, indent string) ([]byte, error) {
-	return json.MarshalIndent(v, prefix, indent)
+	return randn.CryptoID()
 }
 
 // jsonpass converts a Go value to its JSON string representation or returns the value directly if it is already a string.
@@ -160,11 +107,17 @@ func marshalIndent(v any, prefix, indent string) ([]byte, error) {
 //
 //	jsonStr := jsonpass(myStruct)
 func jsonpass(data any) string {
-	s, ok := data.(string)
-	if ok {
-		return s
+	if data == nil {
+		return ""
 	}
-	result, err := marshalToStr(data)
+	// Check for scalar types and convert directly
+	// This avoids unnecessary JSON marshalling for simple types
+	ok := common.IsScalarType(data)
+	if ok {
+		return fmt.Sprintf("%v", data)
+	}
+
+	result, err := encoding.MarshalToString(data)
 	if err != nil {
 		return ""
 	}
@@ -187,11 +140,17 @@ func jsonpass(data any) string {
 //
 //	jsonPrettyStr := jsonpretty(myStruct)
 func jsonpretty(data any) string {
-	s, ok := data.(string)
-	if ok {
-		return s
+	if data == nil {
+		return ""
 	}
-	result, err := marshalIndent(data, "", "    ")
+	// Check for scalar types and convert directly
+	// This avoids unnecessary JSON marshalling for simple types
+	ok := common.IsScalarType(data)
+	if ok {
+		return fmt.Sprintf("%v", data)
+	}
+
+	result, err := encoding.MarshalIndent(data, "", "    ")
 	if err != nil {
 		return ""
 	}
