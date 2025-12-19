@@ -1,5 +1,11 @@
 package collections
 
+import (
+	"fmt"
+
+	"github.com/sivaosorg/wrapify/pkg/encoding"
+)
+
 // Contains checks if a specified item is present within a given slice.
 //
 // This function iterates over a slice of any type that supports comparison
@@ -406,6 +412,55 @@ func Flatten[T any](s []any) []T {
 	return result
 }
 
+// FlattenDeep takes a nested structure of arbitrary depth and returns a flat slice
+// containing all elements in a single level.
+//
+// This function recursively processes each element in `arr`. If an element is itself a
+// slice (`[]interface{}`), `FlattenDeep` calls itself to flatten that nested slice and
+// appends its elements to the `result` slice. If the element is not a slice, it is directly
+// added to `result`. The function allows flattening of complex nested structures while
+// maintaining all elements in a single-level output.
+//
+// This function operates with values of type `interface{}`, making it flexible enough
+// to handle mixed types in the input. It returns a slice of `interface{}`, which may
+// contain elements of varying types from the original nested structure.
+//
+// Parameters:
+//   - `arr`: The input slice, which can contain nested slices of arbitrary depth and elements
+//     of any type.
+//
+// Returns:
+//   - A slice of `[]interface{}` containing all elements from `arr` flattened into a single level.
+//
+// Example:
+//
+//	// Flattening a nested structure of mixed values
+//	nested := []interface{}{1, []interface{}{2, 3, []interface{}{4, []interface{}{5}}}}
+//	flat := FlattenDeep(nested)
+//	// flat will be []interface{}{1, 2, 3, 4, 5}
+//
+//	// Flattening a deeply nested structure with varied types
+//	mixedNested := []interface{}{"apple", []interface{}{"banana", 1, []interface{}{"cherry"}}}
+//	flatMixed := FlattenDeep(mixedNested)
+//	// flatMixed will be []interface{}{"apple", "banana", 1, "cherry"}
+//
+//	// Flattening a non-nested input returns the input as-is
+//	nonNested := 5
+//	flatNonNested := FlattenDeep(nonNested)
+//	// flatNonNested will be []interface{}{5}
+func FlattenDeep(arr any) []any {
+	result := make([]any, 0)
+	switch v := arr.(type) {
+	case []any:
+		for _, val := range v {
+			result = append(result, FlattenDeep(val)...)
+		}
+	case any:
+		result = append(result, v)
+	}
+	return result
+}
+
 // GroupBy groups elements of a slice into a map based on a specified key.
 //
 // This function iterates over each element in the input slice `slice`, applies the
@@ -457,6 +512,51 @@ func GroupBy[T any, K comparable](slice []T, getKey func(T) K) map[K][]T {
 	for _, item := range slice {
 		key := getKey(item)
 		result[key] = append(result[key], item)
+	}
+	return result
+}
+
+// Join concatenates the string representation of each element in a slice into a single
+// string, with a specified separator between each element.
+//
+// This function iterates over each element in the input slice `slice`, converts each
+// element to a string using `fmt.Sprintf` with the `%v` format, and appends it to the
+// `result` string. A separator string `separator` is inserted between elements in the
+// final concatenated result. If the slice has only one element, no separator is added.
+// The function is generic and can work with slices containing elements of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice containing elements to be joined. It can contain elements
+//     of any type `T`.
+//   - `separator`: A string that will be inserted between each element in the final result.
+//
+// Returns:
+//   - A single string that is the result of concatenating all elements in `slice` with the
+//     specified `separator` in between.
+//
+// Example:
+//
+//	// Joining integers with a comma separator
+//	numbers := []int{1, 2, 3}
+//	joinedNumbers := Join(numbers, ", ")
+//	// joinedNumbers will be "1, 2, 3"
+//
+//	// Joining strings with a space separator
+//	words := []string{"Go", "is", "awesome"}
+//	joinedWords := Join(words, " ")
+//	// joinedWords will be "Go is awesome"
+//
+//	// Joining an empty slice returns an empty string
+//	emptySlice := []int{}
+//	joinedEmpty := Join(emptySlice, ",")
+//	// joinedEmpty will be ""
+func Join[T any](slice []T, separator string) string {
+	result := ""
+	for i, item := range slice {
+		if i > 0 {
+			result += separator
+		}
+		result += fmt.Sprintf("%v", encoding.JsonSafe(item))
 	}
 	return result
 }

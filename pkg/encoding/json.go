@@ -2,6 +2,9 @@ package encoding
 
 import (
 	"encoding/json"
+	"fmt"
+
+	"github.com/sivaosorg/wrapify/pkg/common"
 )
 
 // Marshal converts a Go value into its JSON byte representation.
@@ -110,7 +113,7 @@ func UnmarshalFromString(str string, v any) error {
 	return json.Unmarshal([]byte(str), v)
 }
 
-// Json converts a Go value to its JSON string representation or returns the value directly if it is already a string.
+// JsonSafe converts a Go value to its JSON string representation or returns the value directly if it is already a string.
 //
 // This function checks if the input data is a string; if so, it returns it directly.
 // Otherwise, it marshals the input value `data` into a JSON string using the
@@ -124,12 +127,18 @@ func UnmarshalFromString(str string, v any) error {
 //
 // Example:
 //
-//	jsonStr := Json(myStruct)
-func Json(data any) string {
-	s, ok := data.(string)
-	if ok {
-		return s
+//	jsonStr := JsonSafe(myStruct)
+func JsonSafe(data any) string {
+	if data == nil {
+		return ""
 	}
+	// Check for scalar types and convert directly
+	// This avoids unnecessary JSON marshalling for simple types
+	ok := common.IsScalarType(data)
+	if ok {
+		return fmt.Sprintf("%v", data)
+	}
+
 	result, err := MarshalToString(data)
 	if err != nil {
 		return ""
@@ -137,7 +146,7 @@ func Json(data any) string {
 	return result
 }
 
-// JsonPretty converts a Go value to its pretty-printed JSON string representation or returns the value directly if it is already a string.
+// JsonSafePretty converts a Go value to its pretty-printed JSON string representation or returns the value directly if it is already a string.
 //
 // This function checks if the input data is a string; if so, it returns it directly.
 // Otherwise, it marshals the input value `data` into a formatted JSON string using
@@ -151,12 +160,18 @@ func Json(data any) string {
 //
 // Example:
 //
-//	jsonPrettyStr := JsonPretty(myStruct)
-func JsonPretty(data any) string {
-	s, ok := data.(string)
-	if ok {
-		return s
+//	jsonPrettyStr := JsonSafePretty(myStruct)
+func JsonSafePretty(data any) string {
+	if data == nil {
+		return ""
 	}
+	// Check for scalar types and convert directly
+	// This avoids unnecessary JSON marshalling for simple types
+	ok := common.IsScalarType(data)
+	if ok {
+		return fmt.Sprintf("%v", data)
+	}
+
 	result, err := MarshalIndent(data, "", "    ")
 	if err != nil {
 		return ""
