@@ -113,3 +113,101 @@ func ToMap[T any, K comparable](slice []T, keyFunc func(T) K) map[K]T {
 	}
 	return result
 }
+
+// ToSlice applies a mapping function to each element in the input slice
+// and returns a new slice containing the results of the mapping.
+//
+// This function iterates over each element in the input slice `slice` and applies
+// the provided `mapper` function to each element. The result of applying the mapping
+// function to each element is stored in a new slice `mappedSlice`. This allows for
+// transforming the elements of the input slice into a new slice of a different type.
+//
+// The function is generic, allowing it to work with slices of any type `T` as input,
+// and the result can be a slice of any type `U`.
+//
+// Parameters:
+//   - `slice`: The input slice containing elements of type `T` to be mapped.
+//   - `mapper`: A function that takes an element of type `T` and returns a transformed
+//     element of type `U`.
+//
+// Returns:
+//   - A new slice of type `[]U` containing the mapped elements, with the same length
+//     as the input slice, but with elements transformed according to the `mapper` function.
+//
+// Example:
+//
+//	// Mapping a slice of integers to their string representations
+//	numbers := []int{1, 2, 3}
+//	mappedStrings := ToSlice(numbers, func(n int) string {
+//		return fmt.Sprintf("Number %d", n)
+//	})
+//	// mappedStrings will be []string{"Number 1", "Number 2", "Number 3"}
+//
+//	// Mapping a slice of strings to their lengths
+//	words := []string{"apple", "banana", "cherry"}
+//	mappedLengths := ToSlice(words, func(word string) int {
+//		return len(word)
+//	})
+//	// mappedLengths will be []int{5, 6, 6}
+//
+//	// Mapping an empty slice returns an empty slice
+//	empty := []int{}
+//	mappedEmpty := ToSlice(empty, func(n int) string {
+//		return fmt.Sprintf("Number %d", n)
+//	})
+//	// mappedEmpty will be []string{}
+func ToSlice[T any, U any](slice []T, mapper func(T) U) []U {
+	mappedSlice := make([]U, len(slice))
+	for i, item := range slice {
+		mappedSlice[i] = mapper(item)
+	}
+	return mappedSlice
+}
+
+// MergeMap combines multiple maps into a single map. If there are any key conflicts,
+// the value from the last map will be used.
+//
+// This function accepts a variable number of maps of type `map[interface{}]V` and merges
+// them into a single map. It iterates through each input map, adding all key-value pairs
+// to the `mergedMap`. If a key already exists in `mergedMap`, the corresponding value
+// from the current map will overwrite the existing value. The function returns the merged map.
+//
+// The function is generic, allowing it to work with maps where the key is of any type `K`
+// and the value is of any type `V`. It uses `interface{}` as the key type, enabling it to
+// handle a variety of key types, though this may require careful handling of the key types
+// to ensure they are comparable if needed.
+//
+// Parameters:
+//   - `maps`: A variadic parameter representing multiple maps to be merged. Each map has keys
+//     of type `interface{}` and values of type `V`.
+//
+// Returns:
+//   - A new map of type `map[interface{}]V` containing the merged key-value pairs. If there
+//     are key conflicts, the last map's value will be used.
+//
+// Example:
+//
+//	// Merging two maps with integer keys and string values
+//	map1 := map[interface{}]string{"a": "apple", "b": "banana"}
+//	map2 := map[interface{}]string{"b": "blueberry", "c": "cherry"}
+//	merged := MergeMap(map1, map2)
+//	// merged will be map[interface{}]string{"a": "apple", "b": "blueberry", "c": "cherry"}
+//
+//	// Merging maps with different value types (e.g., int and string)
+//	map3 := map[interface{}]int{"x": 10, "y": 20}
+//	map4 := map[interface{}]string{"y": "yellow", "z": "zebra"}
+//	mergedMixed := MergeMap(map3, map4)
+//	// mergedMixed will be map[interface{}]string{"x": "10", "y": "yellow", "z": "zebra"}
+//
+//	// Merging an empty slice of maps returns an empty map
+//	mergedEmpty := MergeMap()
+//	// mergedEmpty will be an empty map
+func MergeMap[K any, V any](maps ...map[any]V) map[any]V {
+	merged := make(map[any]V)
+	for _, m := range maps {
+		for k, v := range m {
+			merged[k] = v
+		}
+	}
+	return merged
+}

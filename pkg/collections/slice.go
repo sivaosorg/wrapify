@@ -560,3 +560,87 @@ func Join[T any](slice []T, separator string) string {
 	}
 	return result
 }
+
+// ReverseN reverses the order of elements in the input slice and returns a new slice
+// containing the elements in reverse order.
+//
+// This function creates a new slice `reversed` with the same length as the input slice `slice`.
+// It then uses a two-pointer approach to swap the elements of `slice` from both ends toward the center,
+// effectively reversing the slice. The result is a new slice with elements in the opposite order.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice whose elements are to be reversed. It can contain elements of any type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T` containing the elements of `slice` in reverse order.
+//
+// Example:
+//
+//	// Reversing a slice of integers
+//	numbers := []int{1, 2, 3, 4}
+//	reversedNumbers := ReverseN(numbers)
+//	// reversedNumbers will be []int{4, 3, 2, 1}
+//
+//	// Reversing a slice of strings
+//	words := []string{"apple", "banana", "cherry"}
+//	reversedWords := ReverseN(words)
+//	// reversedWords will be []string{"cherry", "banana", "apple"}
+//
+//	// Reversing an empty slice returns an empty slice
+//	empty := []int{}
+//	reversedEmpty := ReverseN(empty)
+//	// reversedEmpty will be []int{}
+func ReverseN[T any](slice []T) []T {
+	reversed := make([]T, len(slice))
+	for i, j := 0, len(slice)-1; i <= j; i, j = i+1, j-1 {
+		reversed[i], reversed[j] = slice[j], slice[i]
+	}
+	return reversed
+}
+
+// FindIndex searches for the first occurrence of a target element in a slice
+// and returns its index. If the element is not found, it returns -1.
+//
+// This function iterates over each element in the input slice `slice` and compares
+// each element to the specified `target`. When the first occurrence of `target` is found,
+// the function returns the index of that element. If the element is not found, the function
+// returns -1 to indicate that the target is not present in the slice.
+//
+// The function is generic, allowing it to work with slices of any comparable type `T`,
+// such as integers, strings, or other types that support equality comparison.
+//
+// Parameters:
+//   - `slice`: The input slice in which to search for the target element. It can contain
+//     elements of any comparable type `T`.
+//   - `target`: The element to search for within the slice. It should be of the same type `T`
+//     as the elements in `slice`.
+//
+// Returns:
+//   - The zero-based index of the first occurrence of `target` in the slice if it exists;
+//     otherwise, -1 if the target is not found.
+//
+// Example:
+//
+//	// Searching for an integer in a slice
+//	numbers := []int{1, 2, 3, 4}
+//	index := FindIndex(numbers, 3)
+//	// index will be 2, as 3 is located at index 2 in the slice
+//
+//	// Searching for a string in a slice
+//	words := []string{"apple", "banana", "cherry"}
+//	index = FindIndex(words, "banana")
+//	// index will be 1, as "banana" is at index 1 in the slice
+//
+//	// Item not found in the slice
+//	index = FindIndex(words, "date")
+//	// index will be -1, as "date" is not in the slice
+func FindIndex[T comparable](slice []T, target T) int {
+	for i, item := range slice {
+		if item == target {
+			return i
+		}
+	}
+	return -1
+}
