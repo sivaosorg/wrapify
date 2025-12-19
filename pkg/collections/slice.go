@@ -405,3 +405,58 @@ func Flatten[T any](s []any) []T {
 	}
 	return result
 }
+
+// GroupBy groups elements of a slice into a map based on a specified key.
+//
+// This function iterates over each element in the input slice `slice`, applies the
+// provided `getKey` function to extract a key for each element, and groups elements
+// that share the same key into a slice. The function then returns a map where each
+// key maps to a slice of elements that correspond to that key.
+//
+// The function is generic, allowing it to work with slices of any type `T` and to
+// generate keys of any comparable type `K`. This makes `GroupBy` useful for organizing
+// data based on shared attributes, such as grouping items by category or organizing
+// records by a specific field.
+//
+// Parameters:
+//   - `slice`: The input slice containing elements to be grouped. It can be of any type `T`.
+//   - `getKey`: A function that takes an element of type `T` and returns a key of type `K`,
+//     which is used to group the element in the resulting map.
+//
+// Returns:
+//   - A map of type `map[K][]T`, where each key is associated with a slice of elements
+//     that share that key.
+//
+// Example:
+//
+//	// Grouping integers by even and odd
+//	numbers := []int{1, 2, 3, 4, 5}
+//	grouped := GroupBy(numbers, func(n int) string {
+//		if n%2 == 0 {
+//			return "even"
+//		}
+//		return "odd"
+//	})
+//	// grouped will be map[string][]int{"even": {2, 4}, "odd": {1, 3, 5}}
+//
+//	// Grouping people by age
+//	type Person struct {
+//	    Name string
+//	    Age  int
+//	}
+//	people := []Person{{Name: "Alice", Age: 30}, {Name: "Bob", Age: 25}, {Name: "Charlie", Age: 30}}
+//	groupedByAge := GroupBy(people, func(p Person) int { return p.Age })
+//	// groupedByAge will be map[int][]Person{30: {{Name: "Alice", Age: 30}, {Name: "Charlie", Age: 30}}, 25: {{Name: "Bob", Age: 25}}}
+//
+//	// Grouping strings by their length
+//	words := []string{"apple", "pear", "banana", "peach"}
+//	groupedByLength := GroupBy(words, func(word string) int { return len(word) })
+//	// groupedByLength will be map[int][]string{5: {"apple", "peach"}, 4: {"pear"}, 6: {"banana"}}
+func GroupBy[T any, K comparable](slice []T, getKey func(T) K) map[K][]T {
+	result := make(map[K][]T)
+	for _, item := range slice {
+		key := getKey(item)
+		result[key] = append(result[key], item)
+	}
+	return result
+}
