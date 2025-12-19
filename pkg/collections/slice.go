@@ -212,3 +212,196 @@ func Equal[T comparable](a []T, b []T) bool {
 	}
 	return true
 }
+
+// Reduce applies an accumulator function over a slice, producing a single accumulated result.
+//
+// This function iterates over each element in the input slice `slice`, applying the
+// `accumulator` function to combine each element with an accumulated result. It starts
+// with an initial value `initialValue` and successively updates the result by applying
+// `accumulator` to each element in `slice`. The final accumulated result is returned
+// once all elements have been processed.
+//
+// The function is generic, allowing it to operate on slices of any type `T` and produce
+// an output of any type `U`. This enables flexible aggregation operations such as
+// summing, counting, or accumulating data into more complex structures.
+//
+// Parameters:
+//   - `slice`: The slice of elements to reduce. It can contain elements of any type `T`.
+//   - `accumulator`: A function that takes the current accumulated result of type `U`
+//     and an element of type `T`, then returns the updated accumulated result of type `U`.
+//   - `initialValue`: The initial value for the accumulator, of type `U`. This is the
+//     starting point for the reduction process.
+//
+// Returns:
+//   - The final accumulated result of type `U` after applying `accumulator` to each element
+//     in `slice`.
+//
+// Example:
+//
+//	// Summing integer values in a slice
+//	numbers := []int{1, 2, 3, 4}
+//	sum := Reduce(numbers, func(acc, n int) int { return acc + n }, 0)
+//	// sum will be 10 as each integer is added to the accumulated result
+//
+//	// Concatenating strings in a slice
+//	words := []string{"go", "is", "fun"}
+//	sentence := Reduce(words, func(acc, word string) string { return acc + " " + word }, "")
+//	// sentence will be " go is fun" (note leading space due to initial value being "")
+//
+//	// Using a custom struct and custom accumulator
+//	type Product struct {
+//	    Name  string
+//	    Price float64
+//	}
+//	products := []Product{{Name: "apple", Price: 0.99}, {Name: "banana", Price: 1.29}}
+//	totalPrice := Reduce(products, func(total float64, p Product) float64 { return total + p.Price }, 0.0)
+//	// totalPrice will be 2.28 as each product's price is added to the accumulated total
+func Reduce[T any, U any](slice []T, accumulator func(U, T) U, initialValue U) U {
+	result := initialValue
+	for _, item := range slice {
+		result = accumulator(result, item)
+	}
+	return result
+}
+
+// IndexOf searches for a specific element in a slice and returns its index if found.
+//
+// This function iterates over each element in the input slice `slice` to find the first
+// occurrence of the specified `item`. If `item` is found, the function returns the index
+// of `item` within `slice`. If `item` is not present in the slice, it returns -1.
+//
+// The function is generic, allowing it to operate on slices of any comparable type `T`
+// (e.g., int, string, or other types that support equality comparison).
+//
+// Parameters:
+//   - `slice`: The slice in which to search for `item`. It can contain elements of any
+//     comparable type `T`.
+//   - `item`: The item to search for within `slice`. It should be of the same type `T`
+//     as the elements in `slice`.
+//
+// Returns:
+//   - The zero-based index of `item` in `slice` if it exists; otherwise, -1.
+//
+// Example:
+//
+//	// Searching for an integer in a slice
+//	numbers := []int{1, 2, 3, 4}
+//	index := IndexOf(numbers, 3)
+//	// index will be 2, as 3 is located at index 2 in the slice
+//
+//	// Searching for a string in a slice
+//	words := []string{"apple", "banana", "cherry"}
+//	index = IndexOf(words, "banana")
+//	// index will be 1, as "banana" is at index 1 in the slice
+//
+//	// Item not found in the slice
+//	index = IndexOf(words, "date")
+//	// index will be -1, as "date" is not in the slice
+func IndexOf[T comparable](slice []T, item T) int {
+	for i, value := range slice {
+		if value == item {
+			return i
+		}
+	}
+	return -1
+}
+
+// Unique returns a new slice containing only the unique elements from the input slice,
+// preserving their original order.
+//
+// This function iterates over each element in the input slice `slice` and uses a map
+// `uniqueMap` to track elements that have already been encountered. If an element has
+// not been seen before, it is added to both the `uniqueValues` result slice and the
+// map. This ensures that only the first occurrence of each unique element is kept in
+// the final slice, while duplicates are ignored.
+//
+// The function is generic, allowing it to operate on slices of any comparable type `T`.
+// The elements must be of a comparable type to allow them to be used as keys in the map.
+//
+// Parameters:
+//   - `slice`: The input slice from which unique elements are extracted. It can contain
+//     elements of any comparable type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T` containing only the unique elements from `slice` in the
+//     order of their first appearance.
+//
+// Example:
+//
+//	// Extracting unique integers from a slice
+//	numbers := []int{1, 2, 2, 3, 4, 4, 5}
+//	uniqueNumbers := Unique(numbers)
+//	// uniqueNumbers will be []int{1, 2, 3, 4, 5}
+//
+//	// Extracting unique strings from a slice
+//	words := []string{"apple", "banana", "apple", "cherry"}
+//	uniqueWords := Unique(words)
+//	// uniqueWords will be []string{"apple", "banana", "cherry"}
+//
+//	// An empty slice will return an empty result
+//	empty := []int{}
+//	uniqueEmpty := Unique(empty)
+//	// uniqueEmpty will be []int{}
+func Unique[T comparable](slice []T) []T {
+	uniqueMap := make(map[T]bool)
+	uniqueValues := make([]T, 0)
+	for _, value := range slice {
+		if _, found := uniqueMap[value]; !found {
+			uniqueValues = append(uniqueValues, value)
+			uniqueMap[value] = true
+		}
+	}
+	return uniqueValues
+}
+
+// Flatten takes a slice of potentially nested elements and returns a new slice
+// containing all elements of type `T` in a flat structure.
+//
+// This function recursively processes each element in the input slice `s`, checking if
+// it is a nested slice (`[]interface{}`). If a nested slice is found, `Flatten` is called
+// recursively to flatten it and append its elements to the `result` slice. If an element
+// is of type `T`, it is directly appended to `result`. Elements that are neither `[]interface{}`
+// nor of type `T` are ignored.
+//
+// The function is generic, allowing it to work with any element type `T`, which must be
+// specified when calling the function. This makes `Flatten` useful for flattening slices
+// with nested structures while filtering only the elements of a specified type.
+//
+// Parameters:
+//   - `s`: A slice of `interface{}`, which can contain nested slices (`[]interface{}`) or
+//     elements of any type. Nested slices may contain more nested slices at arbitrary depths.
+//
+// Returns:
+//   - A new slice of type `[]T` containing all elements of type `T` from `s`, flattened
+//     into a single level.
+//
+// Example:
+//
+//	// Flattening a nested slice of integers
+//	nestedInts := []interface{}{1, []interface{}{2, 3}, []interface{}{[]interface{}{4, 5}}}
+//	flatInts := Flatten[int](nestedInts)
+//	// flatInts will be []int{1, 2, 3, 4, 5}
+//
+//	// Flattening a nested slice with mixed types, extracting only strings
+//	mixedNested := []interface{}{"apple", []interface{}{"banana", 1, []interface{}{"cherry"}}}
+//	flatStrings := Flatten[string](mixedNested)
+//	// flatStrings will be []string{"apple", "banana", "cherry"}
+//
+//	// Flattening an empty slice
+//	empty := []interface{}{}
+//	flatEmpty := Flatten[int](empty)
+//	// flatEmpty will be []int{}
+func Flatten[T any](s []any) []T {
+	result := make([]T, 0)
+	for _, v := range s {
+		switch val := v.(type) {
+		case []any:
+			result = append(result, Flatten[T](val)...)
+		default:
+			if _, ok := val.(T); ok {
+				result = append(result, val.(T))
+			}
+		}
+	}
+	return result
+}
