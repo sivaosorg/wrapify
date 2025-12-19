@@ -2,6 +2,8 @@ package collections
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/sivaosorg/wrapify/pkg/encoding"
 )
@@ -643,4 +645,164 @@ func FindIndex[T comparable](slice []T, target T) int {
 		}
 	}
 	return -1
+}
+
+// Chunk splits a slice into smaller slices (chunks) of the specified size.
+//
+// This function takes an input slice `slice` and a `chunkSize` and splits the input slice into
+// smaller slices, each containing up to `chunkSize` elements. The function returns a slice of slices
+// containing the chunked elements. If the `chunkSize` is greater than the length of the input slice,
+// the entire slice will be returned as a single chunk. If the `chunkSize` is less than or equal to 0,
+// the function returns `nil`.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice to be split into chunks. It can contain elements of any type `T`.
+//   - `chunkSize`: The size of each chunk. If this value is less than or equal to 0, the function returns `nil`.
+//
+// Returns:
+//   - A slice of slices (`[][]T`), where each inner slice contains up to `chunkSize` elements from
+//     the original slice. If the slice cannot be split into even chunks, the last chunk may contain
+//     fewer elements than `chunkSize`.
+//
+// Example:
+//
+//	// Chunking a slice of integers into chunks of size 2
+//	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+//	chunks := Chunk(numbers, 2)
+//	// chunks will be [][]int{{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9}}
+//
+//	// Chunking a slice of strings into chunks of size 3
+//	words := []string{"apple", "banana", "cherry", "date", "elderberry", "fig"}
+//	chunksWords := Chunk(words, 3)
+//	// chunksWords will be [][]string{{"apple", "banana", "cherry"}, {"date", "elderberry", "fig"}}
+//
+//	// Chunking an empty slice returns an empty slice of slices
+//	empty := []int{}
+//	chunksEmpty := Chunk(empty, 3)
+//	// chunksEmpty will be [][]int{}
+//
+//	// If chunkSize is 0 or negative, return nil
+//	chunksInvalid := Chunk(numbers, -1)
+//	// chunksInvalid will be nil
+func Chunk[T any](slice []T, chunkSize int) [][]T {
+	if chunkSize <= 0 {
+		return nil
+	}
+	var chunks [][]T
+	for i := 0; i < len(slice); i += chunkSize {
+		end := i + chunkSize
+		if end > len(slice) {
+			end = len(slice)
+		}
+		chunks = append(chunks, slice[i:end])
+	}
+	return chunks
+}
+
+// Shuffle randomly shuffles the elements of a slice and returns a new slice with the shuffled elements.
+//
+// This function takes an input slice `slice` and shuffles its elements using a random permutation.
+// It creates a new slice `shuffledSlice` and populates it by selecting elements from the original slice
+// according to a random permutation of indices. The resulting `shuffledSlice` contains the same elements
+// as the input slice, but in a random order. The function uses a seeded random generator to ensure different
+// results each time it is called.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice to be shuffled. It can contain elements of any type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T`, containing the shuffled elements of the input slice.
+//
+// Example:
+//
+//	// Shuffling a slice of integers
+//	numbers := []int{1, 2, 3, 4, 5}
+//	shuffledNumbers := Shuffle(numbers)
+//	// shuffledNumbers will be a random permutation of [1, 2, 3, 4, 5]
+//
+//	// Shuffling a slice of strings
+//	words := []string{"apple", "banana", "cherry"}
+//	shuffledWords := Shuffle(words)
+//	// shuffledWords will be a random permutation of ["apple", "banana", "cherry"]
+//
+//	// Shuffling an empty slice returns an empty slice
+//	empty := []int{}
+//	shuffledEmpty := Shuffle(empty)
+//	// shuffledEmpty will be []int{}
+func Shuffle[T any](slice []T) []T {
+	shuffledSlice := make([]T, len(slice))
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	perm := r.Perm(len(slice))
+	for i, randIndex := range perm {
+		shuffledSlice[i] = slice[randIndex]
+	}
+	return shuffledSlice
+}
+
+// Cartesian computes the Cartesian product of multiple slices and returns the result as a slice of slices.
+//
+// This function takes multiple slices of type `[]T` and computes their Cartesian product. The Cartesian
+// product of two or more sets (or slices in this case) is the set of all possible combinations where each
+// combination consists of one element from each slice. The function recursively computes the product of the
+// slices, starting from the second slice and combining it with each element of the first slice. The result is
+// a slice of slices, where each inner slice is a combination of elements from the input slices.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slices`: A variadic parameter that represents multiple slices to compute the Cartesian product of.
+//     Each slice can contain elements of any type `T`.
+//
+// Returns:
+//   - A slice of slices (`[][]T`), where each inner slice represents a unique combination of elements
+//     from the input slices.
+//
+// Example:
+//
+//	// Cartesian product of two slices of integers
+//	slice1 := []int{1, 2}
+//	slice2 := []int{3, 4}
+//	product := Cartesian(slice1, slice2)
+//	// product will be [][]int{{1, 3}, {1, 4}, {2, 3}, {2, 4}}
+//
+//	// Cartesian product of three slices of strings
+//	slice3 := []string{"a", "b"}
+//	slice4 := []string{"x", "y"}
+//	slice5 := []string{"1", "2"}
+//	productStrings := Cartesian(slice3, slice4, slice5)
+//	// productStrings will be [][]string{
+//	//   {"a", "x", "1"}, {"a", "x", "2"},
+//	//   {"a", "y", "1"}, {"a", "y", "2"},
+//	//   {"b", "x", "1"}, {"b", "x", "2"},
+//	//   {"b", "y", "1"}, {"b", "y", "2"}
+//	// }
+//
+//	// Cartesian product of an empty slice returns an empty slice
+//	empty := []int{}
+//	productEmpty := Cartesian(empty)
+//	// productEmpty will be [][]int{{}}
+func Cartesian[T any](slices ...[]T) [][]T {
+	n := len(slices)
+	if n == 0 {
+		return [][]T{{}}
+	}
+	if n == 1 {
+		product := make([][]T, len(slices[0]))
+		for i, item := range slices[0] {
+			product[i] = []T{item}
+		}
+		return product
+	}
+	tailProduct := Cartesian(slices[1:]...)
+	product := make([][]T, 0, len(slices[0])*len(tailProduct))
+	for _, head := range slices[0] {
+		for _, tail := range tailProduct {
+			product = append(product, append([]T{head}, tail...))
+		}
+	}
+	return product
 }

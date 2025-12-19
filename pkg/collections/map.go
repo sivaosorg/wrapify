@@ -211,3 +211,97 @@ func MergeMap[K any, V any](maps ...map[any]V) map[any]V {
 	}
 	return merged
 }
+
+// FilterMap filters the key-value pairs of a map based on a condition provided by the filter function.
+//
+// This function iterates over each key-value pair in the input map `m` and applies the provided
+// `filter` function to the value. If the `filter` function returns `true` for a value, that key-value
+// pair is added to the `filteredMap`. Otherwise, the pair is excluded. The function returns a new map
+// containing only the key-value pairs that satisfy the condition specified in the `filter` function.
+//
+// The function is generic, allowing it to work with maps where the keys and values can be of any type `K`
+// and `V`, respectively.
+//
+// Parameters:
+//   - `m`: The input map to be filtered, with keys of type `any` and values of type `V`.
+//   - `filter`: A function that takes a value of type `V` and returns a boolean. It determines
+//     whether the corresponding key-value pair should be included in the result map.
+//
+// Returns:
+//   - A new map of type `map[any]V`, containing only the key-value pairs for which the `filter`
+//     function returned `true`.
+//
+// Example:
+//
+//	// Filtering a map of integers, keeping only values greater than 10
+//	map1 := map[any]int{"a": 5, "b": 15, "c": 20}
+//	filtered := FilterMap(map1, func(v int) bool {
+//		return v > 10
+//	})
+//	// filtered will be map[any]int{"b": 15, "c": 20}
+//
+//	// Filtering a map of strings, keeping only values with length greater than 3
+//	map2 := map[any]string{"a": "apple", "b": "banana", "c": "cat"}
+//	filteredStrings := FilterMap(map2, func(v string) bool {
+//		return len(v) > 3
+//	})
+//	// filteredStrings will be map[any]string{"a": "apple", "b": "banana"}
+//
+//	// Filtering an empty map returns an empty map
+//	emptyMap := map[any]int{}
+//	filteredEmpty := FilterMap(emptyMap, func(v int) bool {
+//		return v > 10
+//	})
+//	// filteredEmpty will be an empty map
+func FilterMap[K any, V any](m map[any]V, filter func(V) bool) map[any]V {
+	filteredMap := make(map[any]V)
+	for k, v := range m {
+		if filter(v) {
+			filteredMap[k] = v
+		}
+	}
+	return filteredMap
+}
+
+// Values extracts and returns the values from a map as a slice.
+//
+// This function takes a map `m` with keys of type `any` and values of type `V`, and creates
+// a new slice containing all the values from the map. The function iterates over the map and
+// appends each value to the `values` slice. The resulting slice will have the same number of
+// elements as the map has key-value pairs, and the order of values will correspond to the
+// order in which they were iterated over (which is not guaranteed to be in any particular order).
+//
+// The function is generic, allowing it to work with maps of any key type `K` and value type `V`.
+//
+// Parameters:
+//   - `m`: The input map from which to extract the values. The keys are of type `any`
+//     and the values are of type `V`.
+//
+// Returns:
+//   - A slice of type `[]V` containing all the values from the map `m`.
+//
+// Example:
+//
+//	// Extracting values from a map of strings to integers
+//	map1 := map[any]int{"a": 1, "b": 2, "c": 3}
+//	values := Values(map1)
+//	// values will be []int{1, 2, 3}
+//
+//	// Extracting values from a map of strings to strings
+//	map2 := map[any]string{"x": "apple", "y": "banana", "z": "cherry"}
+//	valuesStrings := Values(map2)
+//	// valuesStrings will be []string{"apple", "banana", "cherry"}
+//
+//	// Extracting values from an empty map returns an empty slice
+//	emptyMap := map[any]int{}
+//	emptyValues := Values(emptyMap)
+//	// emptyValues will be []int{}
+func Values[K any, V any](m map[any]V) []V {
+	values := make([]V, len(m))
+	i := 0
+	for _, v := range m {
+		values[i] = v
+		i++
+	}
+	return values
+}
