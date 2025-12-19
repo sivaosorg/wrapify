@@ -1,5 +1,9 @@
 package collections
 
+import (
+	"strings"
+)
+
 // MapContainsKey checks if a specified key is present within a given map.
 //
 // This function takes a map with keys of any comparable type `K` and values of
@@ -212,6 +216,100 @@ func MergeMap[K any, V any](maps ...map[any]V) map[any]V {
 	return merged
 }
 
+// DeepMergeMap merges two maps, deeply combining values from the source map into the target map.
+//
+// This function takes two maps: `target` and `source`, both with string keys and interface{} values. It recursively merges
+// the values from the `source` map into the `target` map. If a key exists in both maps, the function checks if the values
+// associated with the key are themselves maps. If so, it recursively merges the nested maps. Otherwise, it directly overwrites
+// the target map's value with the value from the source map. This function allows for deep merging of nested maps.
+//
+// The function modifies the `target` map in place and does not return anything.
+//
+// Parameters:
+//   - `target`: The map that will be updated with values from the `source`. It is modified in place.
+//   - `source`: The map whose values will be merged into the `target`.
+//
+// Example:
+//
+//	// Merging two maps with nested maps
+//	target := map[string]interface{}{
+//		"fruit": map[string]interface{}{"apple": 5, "banana": 10},
+//		"vegetable": map[string]interface{}{"carrot": 3},
+//	}
+//	source := map[string]interface{}{
+//		"fruit": map[string]interface{}{"banana": 7, "orange": 2},
+//		"vegetable": map[string]interface{}{"spinach": 5},
+//		"grain": 100,
+//	}
+//	DeepMergeMap(target, source)
+//	// target will now be:
+//	// map[string]interface{}{
+//	//		"fruit": map[string]interface{}{"apple": 5, "banana": 7, "orange": 2},
+//	//		"vegetable": map[string]interface{}{"carrot": 3, "spinach": 5},
+//	//		"grain": 100,
+//	//	}
+//
+//	// If there is no conflict, the value from the source is added as is.
+//	// If the source value is a nested map, the function will perform a deep merge.
+func DeepMergeMap(target, source map[string]any) {
+	for key, sourceValue := range source {
+		if targetValue, exists := target[key]; exists {
+			if sourceMap, sourceIsMap := sourceValue.(map[string]any); sourceIsMap {
+				if targetMap, targetIsMap := targetValue.(map[string]any); targetIsMap {
+					DeepMergeMap(targetMap, sourceMap)
+				}
+			} else {
+				target[key] = sourceValue
+			}
+		} else {
+			target[key] = sourceValue
+		}
+	}
+}
+
+// MergeMapStr merges multiple maps of type map[string]string into a single map.
+//
+// This function takes a variadic number of maps of type map[string]string and combines their key-value pairs into a
+// single resulting map. If there are duplicate keys across the input maps, the value from the last map in the
+// variadic list will overwrite the earlier ones.
+//
+// The function creates a new map to hold the merged results, iterating over each input map and adding its
+// key-value pairs to the result map.
+//
+// Parameters:
+//   - `maps`: A variadic parameter that takes one or more maps of type map[string]string to be merged.
+//
+// Returns:
+//   - A new map of type map[string]string that contains all the key-value pairs from the input maps.
+//     If a key appears in multiple maps, the value from the last map will be used.
+//
+// Example:
+//
+//	// Merging two maps
+//	map1 := map[string]string{"a": "apple", "b": "banana"}
+//	map2 := map[string]string{"b": "blueberry", "c": "cherry"}
+//	merged := MergeMapStr(map1, map2)
+//	// merged will be map[string]string{"a": "apple", "b": "blueberry", "c": "cherry"}
+//
+//	// Merging more than two maps
+//	map3 := map[string]string{"d": "date"}
+//	mergedAll := MergeMapStr(map1, map2, map3)
+//	// mergedAll will be map[string]string{"a": "apple", "b": "blueberry", "c": "cherry", "d": "date"}
+//
+//	// If duplicate keys exist, the value from the last map wins
+//	map4 := map[string]string{"a": "apricot"}
+//	mergedWithDup := MergeMapStr(map1, map4)
+//	// mergedWithDup will be map[string]string{"a": "apricot", "b": "banana"}
+func MergeMapStr(maps ...map[string]string) map[string]string {
+	result := make(map[string]string)
+	for _, m := range maps {
+		for k, v := range m {
+			result[k] = v
+		}
+	}
+	return result
+}
+
 // FilterMap filters the key-value pairs of a map based on a condition provided by the filter function.
 //
 // This function iterates over each key-value pair in the input map `m` and applies the provided
@@ -304,4 +402,43 @@ func Values[K any, V any](m map[any]V) []V {
 		i++
 	}
 	return values
+}
+
+// JoinMapKeys concatenates the keys of a map into a single string, with each key separated by a specified separator.
+//
+// This function takes a map `m` with string keys and any type of values `V`, and a `separator` string.
+// It collects all the keys of the map into a slice, then joins them into a single string using the provided separator.
+//
+// This function is generic, allowing it to work with maps that have values of any type `V`.
+//
+// Parameters:
+//   - `m`: A map with string keys and values of any type `V`. Only the keys are used for concatenation.
+//   - `separator`: A string used to separate each key in the resulting string.
+//
+// Returns:
+//   - A string containing all the keys in the map `m`, separated by the specified `separator`. If the map has no keys,
+//     an empty string is returned.
+//
+// Example:
+//
+//	// Concatenating the keys of a map with a comma separator
+//	m := map[string]int{"apple": 1, "banana": 2, "cherry": 3}
+//	joinedKeys := JoinMapKeys(m, ", ")
+//	// joinedKeys will be "apple, banana, cherry"
+//
+//	// Using a different separator
+//	m = map[string]bool{"cat": true, "dog": true}
+//	joinedKeys = JoinMapKeys(m, " | ")
+//	// joinedKeys will be "cat | dog"
+//
+//	// With an empty map
+//	emptyMap := map[string]int{}
+//	joinedKeys = JoinMapKeys(emptyMap, ",")
+//	// joinedKeys will be ""
+func JoinMapKeys[V any](m map[string]V, separator string) string {
+	joined_keys := []string{}
+	for key := range m {
+		joined_keys = append(joined_keys, key)
+	}
+	return strings.Join(joined_keys, separator)
 }

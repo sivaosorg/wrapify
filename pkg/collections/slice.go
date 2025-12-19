@@ -3,6 +3,8 @@ package collections
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
+	"sort"
 	"time"
 
 	"github.com/sivaosorg/wrapify/pkg/encoding"
@@ -805,4 +807,530 @@ func Cartesian[T any](slices ...[]T) [][]T {
 		}
 	}
 	return product
+}
+
+// Sort sorts a slice based on a custom comparison function and returns a new sorted slice.
+//
+// This function takes an input slice `slice` and a comparison function `comparer` that defines the
+// sorting order. The comparison function takes two elements of type `T` and returns `true` if the
+// first element should come before the second one (i.e., if it should be sorted earlier). The function
+// creates a new slice `sortedSlice` by copying the elements of the original slice, then sorts it in place
+// using the provided `comparer`. The resulting `sortedSlice` will be a new slice containing the elements
+// from the original slice, arranged in the order specified by the comparison function.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice to be sorted. It can contain elements of any type `T`.
+//   - `comparer`: A comparison function that takes two elements of type `T` and returns a boolean value.
+//     It determines the order of the elements: it should return `true` if the first element should come
+//     before the second element in the sorted order.
+//
+// Returns:
+//   - A new slice of type `[]T`, containing the elements from the original slice sorted according to
+//     the provided comparison function.
+//
+// Example:
+//
+//	// Sorting a slice of integers in ascending order
+//	numbers := []int{5, 3, 8, 1, 2}
+//	sortedNumbers := Sort(numbers, func(a, b int) bool {
+//		return a < b
+//	})
+//	// sortedNumbers will be []int{1, 2, 3, 5, 8}
+//
+//	// Sorting a slice of strings in descending order
+//	words := []string{"apple", "banana", "cherry"}
+//	sortedWords := Sort(words, func(a, b string) bool {
+//		return a > b
+//	})
+//	// sortedWords will be []string{"cherry", "banana", "apple"}
+//
+//	// Sorting an empty slice returns an empty slice
+//	empty := []int{}
+//	sortedEmpty := Sort(empty, func(a, b int) bool {
+//		return a < b
+//	})
+//	// sortedEmpty will be []int{}
+func Sort[T any](slice []T, comparer func(T, T) bool) []T {
+	sortedSlice := make([]T, len(slice))
+	copy(sortedSlice, slice)
+	sort.Slice(sortedSlice, func(i, j int) bool {
+		return comparer(sortedSlice[i], sortedSlice[j])
+	})
+	return sortedSlice
+}
+
+// AllMatch checks if all elements in a slice satisfy a given condition and returns a boolean result.
+//
+// This function takes an input slice `slice` and a predicate function `predicate`. It iterates over
+// each element in the slice, applying the predicate function to each one. If any element does not
+// satisfy the predicate (i.e., the predicate returns `false`), the function immediately returns `false`.
+// If all elements satisfy the predicate, the function returns `true`.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice whose elements will be checked. It can contain elements of any type `T`.
+//   - `predicate`: A function that takes an element of type `T` and returns a boolean. This function
+//     represents the condition that each element must satisfy. If the predicate returns `true` for an
+//     element, the element meets the condition.
+//
+// Returns:
+//   - `true` if all elements in the slice satisfy the predicate; `false` if any element does not.
+//
+// Example:
+//
+//	// Checking if all integers in a slice are positive
+//	numbers := []int{2, 4, 6, 8}
+//	allPositive := AllMatch(numbers, func(n int) bool {
+//		return n > 0
+//	})
+//	// allPositive will be true
+//
+//	// Checking if all strings in a slice have a length greater than 3
+//	words := []string{"apple", "banana", "pear"}
+//	allLong := AllMatch(words, func(s string) bool {
+//		return len(s) > 3
+//	})
+//	// allLong will be true
+//
+//	// If the slice is empty, returns true since no elements violate the predicate
+//	empty := []int{}
+//	allMatchEmpty := AllMatch(empty, func(n int) bool {
+//		return n > 0
+//	})
+//	// allMatchEmpty will be true
+func AllMatch[T any](slice []T, predicate func(T) bool) bool {
+	for _, item := range slice {
+		if !predicate(item) {
+			return false
+		}
+	}
+	return true
+}
+
+// AnyMatch checks if any element in a slice satisfies a given condition and returns a boolean result.
+//
+// This function takes an input slice `slice` and a predicate function `predicate`. It iterates over
+// each element in the slice, applying the predicate function to each one. If the predicate returns
+// `true` for any element, the function immediately returns `true`. If no elements satisfy the predicate,
+// the function returns `false`.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice whose elements will be checked. It can contain elements of any type `T`.
+//   - `predicate`: A function that takes an element of type `T` and returns a boolean. This function
+//     represents the condition that an element must satisfy. If the predicate returns `true` for an
+//     element, the element meets the condition.
+//
+// Returns:
+//   - `true` if at least one element in the slice satisfies the predicate; `false` if no elements do.
+//
+// Example:
+//
+//	// Checking if any integers in a slice are even
+//	numbers := []int{1, 3, 5, 6}
+//	anyEven := AnyMatch(numbers, func(n int) bool {
+//		return n%2 == 0
+//	})
+//	// anyEven will be true because 6 is even
+//
+//	// Checking if any strings in a slice contain the letter "a"
+//	words := []string{"apple", "banana", "cherry"}
+//	containsA := AnyMatch(words, func(s string) bool {
+//		return strings.Contains(s, "a")
+//	})
+//	// containsA will be true because "apple" and "banana" contain "a"
+//
+//	// Checking an empty slice returns false since no elements satisfy the predicate
+//	empty := []int{}
+//	anyMatchEmpty := AnyMatch(empty, func(n int) bool {
+//		return n > 0
+//	})
+//	// anyMatchEmpty will be false
+func AnyMatch[T any](slice []T, predicate func(T) bool) bool {
+	for _, item := range slice {
+		if predicate(item) {
+			return true
+		}
+	}
+	return false
+}
+
+// Push appends an element to the end of a slice and returns the resulting slice.
+//
+// This function takes an input slice `slice` and an element `element`, and appends
+// the element to the end of the slice using the built-in `append` function. The
+// function returns a new slice containing the original elements followed by the new
+// element. This function is useful for adding elements dynamically to a slice.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice to which the element will be appended. It can contain elements of any type `T`.
+//   - `element`: The element to be appended to the end of the slice. It is of type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T`, containing the original elements in `slice` with `element` appended at the end.
+//
+// Example:
+//
+//	// Appending an integer to a slice of integers
+//	numbers := []int{1, 2, 3}
+//	updatedNumbers := Push(numbers, 4)
+//	// updatedNumbers will be []int{1, 2, 3, 4}
+//
+//	// Appending a string to a slice of strings
+//	words := []string{"apple", "banana"}
+//	updatedWords := Push(words, "cherry")
+//	// updatedWords will be []string{"apple", "banana", "cherry"}
+//
+//	// Appending to an empty slice
+//	var emptySlice []int
+//	newSlice := Push(emptySlice, 1)
+//	// newSlice will be []int{1}
+func Push[T any](slice []T, element T) []T {
+	return append(slice, element)
+}
+
+// Pop removes the last element from a slice and returns the resulting slice.
+//
+// This function takes an input slice `slice` and removes its last element by creating
+// a new slice that excludes the last element. The function uses slicing to return a
+// portion of the original slice that ends before the last element. If the input slice
+// is empty, calling this function will result in a runtime panic.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice from which the last element will be removed. It can contain elements of any type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T`, containing all elements from the original slice except the last one.
+//
+// Example:
+//
+//	// Removing the last element from a slice of integers
+//	numbers := []int{1, 2, 3, 4}
+//	updatedNumbers := Pop(numbers)
+//	// updatedNumbers will be []int{1, 2, 3}
+//
+//	// Removing the last element from a slice of strings
+//	words := []string{"apple", "banana", "cherry"}
+//	updatedWords := Pop(words)
+//	// updatedWords will be []string{"apple", "banana"}
+//
+//	// Attempting to pop from an empty slice will cause a runtime panic
+//	var emptySlice []int
+//	// updatedEmpty := Pop(emptySlice) // This will panic
+func Pop[T any](slice []T) []T {
+	if len(slice) == 0 {
+		return slice
+	}
+	return slice[:len(slice)-1]
+}
+
+// Unshift inserts an element at the beginning of a slice and returns the resulting slice.
+//
+// This function takes an input slice `slice` and an element `element`, then creates
+// a new slice by appending the `element` at the start, followed by the elements of
+// the original slice. The function uses the built-in `append` function to combine a
+// new slice containing just the `element` with the original slice, effectively adding
+// the element to the beginning.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice to which the element will be prepended. It can contain elements of any type `T`.
+//   - `element`: The element to be inserted at the beginning of the slice. It is of type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T`, containing `element` followed by all the elements of the original `slice`.
+//
+// Example:
+//
+//	// Adding an integer to the beginning of a slice of integers
+//	numbers := []int{2, 3, 4}
+//	updatedNumbers := Unshift(numbers, 1)
+//	// updatedNumbers will be []int{1, 2, 3, 4}
+//
+//	// Adding a string to the beginning of a slice of strings
+//	words := []string{"banana", "cherry"}
+//	updatedWords := Unshift(words, "apple")
+//	// updatedWords will be []string{"apple", "banana", "cherry"}
+//
+//	// Adding to an empty slice
+//	var emptySlice []int
+//	newSlice := Unshift(emptySlice, 1)
+//	// newSlice will be []int{1}
+func Unshift[T any](slice []T, element T) []T {
+	return append([]T{element}, slice...)
+}
+
+// Shift removes the first element from a slice and returns the resulting slice.
+//
+// This function takes an input slice `slice` and removes its first element by creating
+// a new slice that starts from the second element of the original slice. The function
+// achieves this using slicing, effectively returning a view of the original slice that
+// excludes the first element. If the input slice is empty, calling this function will
+// result in a runtime panic due to out-of-bounds access.
+//
+// The function is generic, allowing it to work with slices of any type `T`.
+//
+// Parameters:
+//   - `slice`: The input slice from which the first element will be removed. It can contain elements of any type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T`, containing all elements from the original slice except the first one.
+//
+// Example:
+//
+//	// Removing the first element from a slice of integers
+//	numbers := []int{1, 2, 3, 4}
+//	updatedNumbers := Shift(numbers)
+//	// updatedNumbers will be []int{2, 3, 4}
+//
+//	// Removing the first element from a slice of strings
+//	words := []string{"apple", "banana", "cherry"}
+//	updatedWords := Shift(words)
+//	// updatedWords will be []string{"banana", "cherry"}
+func Shift[T any](slice []T) []T {
+	if len(slice) == 0 {
+		return slice
+	}
+	return slice[1:]
+}
+
+// AppendIf appends an element to a slice if it is not already present.
+//
+// This function takes an input slice `slice` and an element `element`. It first checks
+// if the element is already in the slice by calling the helper function `ContainsN`.
+// If the element is not found in the slice, the function appends it to the end of the slice.
+// If the element is already present, the original slice is returned unchanged.
+//
+// The function is generic and requires that the type `T` be `comparable`, allowing the
+// function to use the `==` operator in `ContainsN` to check for equality.
+//
+// Parameters:
+//   - `slice`: The input slice to which the element might be appended. It can contain elements of any comparable type `T`.
+//   - `element`: The element to be appended if it is not already in `slice`. It is of type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T` containing the original elements and, if missing, the appended `element`.
+//
+// Example:
+//
+//	// Adding a missing integer to a slice
+//	numbers := []int{1, 2, 3}
+//	updatedNumbers := AppendIf(numbers, 4)
+//	// updatedNumbers will be []int{1, 2, 3, 4}
+//
+//	// Trying to add an existing integer to a slice
+//	updatedNumbers = AppendIf(numbers, 3)
+//	// updatedNumbers will be []int{1, 2, 3} (unchanged)
+//
+//	// Adding a missing string to a slice
+//	words := []string{"apple", "banana"}
+//	updatedWords := AppendIf(words, "cherry")
+//	// updatedWords will be []string{"apple", "banana", "cherry"}
+func AppendIf[T comparable](slice []T, element T) []T {
+	if !Contains(slice, element) {
+		return append(slice, element)
+	}
+	return slice
+}
+
+// Intersect returns a new slice containing elements that are present in both input slices.
+//
+// This function takes two input slices, `slice1` and `slice2`, and identifies elements
+// that are present in both slices. It uses a map to track the elements of `slice1`,
+// then iterates over `slice2` to find common elements. If an element from `slice2` is
+// found in the map (indicating it exists in `slice1`), it is added to the result slice.
+//
+// The function is generic, allowing it to work with slices of any `comparable` type `T`.
+//
+// Parameters:
+//   - `slice1`: The first input slice containing elements of any comparable type `T`.
+//   - `slice2`: The second input slice containing elements of any comparable type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T` that contains the elements found in both `slice1` and `slice2`.
+//     Each element in the result slice will appear only once, even if it is duplicated in the input slices.
+//
+// Example:
+//
+//	// Finding common integers between two slices
+//	numbers1 := []int{1, 2, 3, 4}
+//	numbers2 := []int{3, 4, 5, 6}
+//	commonNumbers := Intersect(numbers1, numbers2)
+//	// commonNumbers will be []int{3, 4}
+//
+//	// Finding common strings between two slices
+//	words1 := []string{"apple", "banana", "cherry"}
+//	words2 := []string{"banana", "cherry", "date"}
+//	commonWords := Intersect(words1, words2)
+//	// commonWords will be []string{"banana", "cherry"}
+//
+//	// Intersecting with an empty slice results in an empty slice
+//	empty := []int{}
+//	intersectEmpty := Intersect(numbers1, empty)
+//	// intersectEmpty will be []int{}
+func Intersect[T comparable](slice1, slice2 []T) []T {
+	set := make(map[T]bool)
+	result := []T{}
+	for _, item := range slice1 {
+		set[item] = true
+	}
+	for _, item := range slice2 {
+		if set[item] {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+// Difference returns a new slice containing elements that are unique to each of the two input slices.
+//
+// This function takes two input slices, `slice1` and `slice2`, and identifies elements
+// that are present in either slice but not both. It creates a map to track the elements
+// of `slice1`, then checks for unique elements in `slice2` by confirming that they are
+// not present in `slice1`. Finally, it appends any unique elements from `slice1` to ensure
+// that the result includes all elements unique to either slice.
+//
+// The function is generic, allowing it to work with slices of any `comparable` type `T`.
+//
+// Parameters:
+//   - `slice1`: The first input slice containing elements of any comparable type `T`.
+//   - `slice2`: The second input slice containing elements of any comparable type `T`.
+//
+// Returns:
+//   - A new slice of type `[]T` that contains elements unique to either `slice1` or `slice2`.
+//     If an element appears in both slices, it will not appear in the result.
+//
+// Example:
+//
+//	// Finding unique integers between two slices
+//	numbers1 := []int{1, 2, 3, 4}
+//	numbers2 := []int{3, 4, 5, 6}
+//	uniqueNumbers := Difference(numbers1, numbers2)
+//	// uniqueNumbers will be []int{1, 2, 5, 6}
+//
+//	// Finding unique strings between two slices
+//	words1 := []string{"apple", "banana", "cherry"}
+//	words2 := []string{"banana", "date"}
+//	uniqueWords := Difference(words1, words2)
+//	// uniqueWords will be []string{"apple", "cherry", "date"}
+//
+//	// Difference with an empty slice results in the original slice
+//	empty := []int{}
+//	uniqueFromEmpty := Difference(numbers1, empty)
+//	// uniqueFromEmpty will be []int{1, 2, 3, 4}
+func Difference[T comparable](slice1, slice2 []T) []T {
+	set := make(map[T]bool)
+	result := []T{}
+	for _, item := range slice1 {
+		set[item] = true
+	}
+	for _, item := range slice2 {
+		if !set[item] {
+			result = append(result, item)
+		}
+	}
+	for _, item := range slice1 {
+		if !set[item] {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+// IndexExists checks whether a given index is valid for the provided slice.
+//
+// This function takes a slice `slice` of any type `T` and an integer `index`, and returns a boolean indicating
+// whether the specified index is within the valid range for the slice. A valid index is one that is greater than
+// or equal to 0 and less than the length of the slice.
+//
+// Parameters:
+//   - `slice`: The input slice of any type `T` that is being checked.
+//   - `index`: The index to check for validity in the slice.
+//
+// Returns:
+//   - `true` if the index is within the bounds of the slice (i.e., 0 <= index < len(slice)).
+//   - `false` otherwise, such as when the index is negative or greater than or equal to the length of the slice.
+//
+// Example:
+//
+//	// Checking if an index exists in a slice
+//	numbers := []int{1, 2, 3, 4}
+//	exists := IndexExists(numbers, 2)
+//	// exists will be true, as index 2 is valid for the slice
+//
+//	// Checking an invalid index
+//	exists = IndexExists(numbers, 5)
+//	// exists will be false, as index 5 is out of bounds for the slice
+func IndexExists[T any](slice []T, index int) bool {
+	return index >= 0 && index < len(slice)
+}
+
+// Iterate iterates over a collection (slice, array, or map) and applies a callback function on each element.
+//
+// This function takes a collection of any type (using an empty `interface{}`), which can be a slice, array, or map,
+// and a callback function. The callback function is executed for each element in the collection. For slices and arrays,
+// the callback receives the index and the corresponding value. For maps, the callback receives each key and value, with
+// the key being passed first followed by the value. For slices and arrays, the index is passed, while for maps, it is
+// passed as -1 (since maps are unordered).
+//
+// The function uses reflection to handle different types of collections and ensures that the correct value is passed
+// to the callback.
+//
+// Parameters:
+//   - `collection`: The collection (slice, array, or map) to iterate over. It can be of any type.
+//   - `callback`: A function that takes two arguments: the index (for slices and arrays, -1 for maps) and the value
+//     from the collection. The callback is executed for each element in the collection.
+//
+// Example:
+//
+//	// Iterating over a slice
+//	numbers := []int{1, 2, 3, 4}
+//	Iterate(numbers, func(index int, value interface{}) {
+//		fmt.Printf("Index: %d, Value: %v\n", index, value)
+//	})
+//	// Output:
+//	// Index: 0, Value: 1
+//	// Index: 1, Value: 2
+//	// Index: 2, Value: 3
+//	// Index: 3, Value: 4
+//
+//	// Iterating over a map
+//	colors := map[string]string{"red": "FF0000", "green": "00FF00", "blue": "0000FF"}
+//	Iterate(colors, func(index int, value interface{}) {
+//		fmt.Printf("Value: %v\n", value)
+//	})
+//	// Output:
+//	// Value: red
+//	// Value: FF0000
+//	// Value: green
+//	// Value: 00FF00
+//	// Value: blue
+//	// Value: 0000FF
+//
+// Notes:
+//   - For slices and arrays, the callback will receive the index and the value from the collection.
+//   - For maps, the callback will be executed twice per key-value pair: once with the key and once with the value,
+//     since maps are unordered and the order of key-value pairs cannot be guaranteed.
+func Iterate(collection any, callback func(index int, value any)) {
+	v := reflect.ValueOf(collection)
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		for i := 0; i < v.Len(); i++ {
+			callback(i, v.Index(i).Interface())
+		}
+	} else if v.Kind() == reflect.Map {
+		keys := v.MapKeys()
+		for _, key := range keys {
+			callback(-1, key.Interface())
+			callback(-1, v.MapIndex(key).Interface())
+		}
+	}
 }
