@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/base64"
-	"fmt"
 
-	"github.com/sivaosorg/wrapify/pkg/common"
 	"github.com/sivaosorg/wrapify/pkg/encoding"
 	"github.com/sivaosorg/wrapify/pkg/randn"
 )
@@ -107,21 +105,7 @@ func cryptoID() string {
 //
 //	jsonStr := jsonpass(myStruct)
 func jsonpass(data any) string {
-	if data == nil {
-		return ""
-	}
-	// Check for scalar types and convert directly
-	// This avoids unnecessary JSON marshalling for simple types
-	ok := common.IsScalarType(data)
-	if ok {
-		return fmt.Sprintf("%v", data)
-	}
-
-	result, err := encoding.MarshalToString(data)
-	if err != nil {
-		return ""
-	}
-	return result
+	return encoding.JsonSafe(data)
 }
 
 // jsonpretty converts a Go value to its pretty-printed JSON string representation or returns the value directly if it is already a string.
@@ -140,19 +124,5 @@ func jsonpass(data any) string {
 //
 //	jsonPrettyStr := jsonpretty(myStruct)
 func jsonpretty(data any) string {
-	if data == nil {
-		return ""
-	}
-	// Check for scalar types and convert directly
-	// This avoids unnecessary JSON marshalling for simple types
-	ok := common.IsScalarType(data)
-	if ok {
-		return fmt.Sprintf("%v", data)
-	}
-
-	result, err := encoding.MarshalIndent(data, "", "    ")
-	if err != nil {
-		return ""
-	}
-	return string(result)
+	return encoding.JsonSafePretty(data)
 }
