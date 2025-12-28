@@ -79,9 +79,9 @@ func Ptr[T any](v T) *T {
 //	}
 //
 //	// With Deref - clean and safe
-//	host := wrapify.Deref(config.Host)    // "localhost"
-//	port := wrapify.Deref(config.Port)    // 0 (zero value for int)
-//	timeout := wrapify.Deref(config.Timeout) // 0
+//	host := ref.Deref(config.Host)    // "localhost"
+//	port := ref.Deref(config.Port)    // 0 (zero value for int)
+//	timeout := ref.Deref(config.Timeout) // 0
 //
 // Example - Processing API response with optional fields:
 //
@@ -94,7 +94,7 @@ func Ptr[T any](v T) *T {
 //	var resp APIResponse
 //	json.Unmarshal(data, &resp)
 //
-//	message := wrapify.Deref(resp.Message) // "" if nil
+//	message := ref.Deref(resp.Message) // "" if nil
 //	if message != "" {
 //	    fmt.Println("Message:", message)
 //	}
@@ -113,8 +113,8 @@ func Ptr[T any](v T) *T {
 //	    &user.ID, &user.Name, &user.Email, &user.Age,
 //	)
 //
-//	email := wrapify.Deref(user.Email) // "" if NULL
-//	age := wrapify.Deref(user.Age)     // 0 if NULL
+//	email := ref.Deref(user.Email) // "" if NULL
+//	age := ref.Deref(user.Age)     // 0 if NULL
 //
 // Note: If you need a custom default value instead of the zero value,
 // use DerefOr instead.
@@ -145,10 +145,10 @@ func Deref[T any](ptr *T) T {
 //	}
 //
 //	// Apply defaults for nil values
-//	host := wrapify.DerefOr(config.Host, "0.0.0.0")
-//	port := wrapify.DerefOr(config.Port, 8080)
-//	timeout := wrapify.DerefOr(config.Timeout, 30*time.Second)
-//	maxConns := wrapify.DerefOr(config.MaxConns, 100)
+//	host := ref.DerefOr(config.Host, "0.0.0.0")
+//	port := ref.DerefOr(config.Port, 8080)
+//	timeout := ref.DerefOr(config.Timeout, 30*time.Second)
+//	maxConns := ref.DerefOr(config.MaxConns, 100)
 //
 //	fmt.Printf("Server: %s:%d (timeout: %v, max conns: %d)\n",
 //	    host, port, timeout, maxConns)
@@ -164,9 +164,9 @@ func Deref[T any](ptr *T) T {
 //
 //	func NewHTTPClient(opts HTTPOptions) *http.Client {
 //	    return &http.Client{
-//	        Timeout: wrapify.DerefOr(opts.Timeout, 30*time.Second),
+//	        Timeout: ref.DerefOr(opts.Timeout, 30*time.Second),
 //	        Transport: &http.Transport{
-//	            MaxIdleConns: wrapify.DerefOr(opts.MaxRetries, 3),
+//	            MaxIdleConns: ref.DerefOr(opts.MaxRetries, 3),
 //	        },
 //	    }
 //	}
@@ -186,9 +186,9 @@ func Deref[T any](ptr *T) T {
 //	}
 //
 //	func QueryUsers(opts QueryOptions) []User {
-//	    limit := wrapify.DerefOr(opts.Limit, 10)      // Default: 10
-//	    offset := wrapify.DerefOr(opts.Offset, 0)     // Default: 0
-//	    sort := wrapify.DerefOr(opts.Sort, "id ASC")  // Default: "id ASC"
+//	    limit := ref.DerefOr(opts.Limit, 10)      // Default: 10
+//	    offset := ref.DerefOr(opts.Offset, 0)     // Default: 0
+//	    sort := ref.DerefOr(opts.Sort, "id ASC")  // Default: "id ASC"
 //
 //	    query := fmt.Sprintf("SELECT * FROM users ORDER BY %s LIMIT %d OFFSET %d",
 //	        sort, limit, offset)
@@ -214,9 +214,9 @@ func Deref[T any](ptr *T) T {
 //	    // EnableMetrics and EnableTracing are nil
 //	}
 //
-//	cache := wrapify.DerefOr(flags.EnableCache, false)     // true
-//	metrics := wrapify.DerefOr(flags.EnableMetrics, true)  // true (default)
-//	tracing := wrapify.DerefOr(flags.EnableTracing, false) // false (default)
+//	cache := ref.DerefOr(flags.EnableCache, false)     // true
+//	metrics := ref.DerefOr(flags.EnableMetrics, true)  // true (default)
+//	tracing := ref.DerefOr(flags.EnableTracing, false) // false (default)
 //
 // Example - API rate limiting with defaults:
 //
@@ -228,9 +228,9 @@ func Deref[T any](ptr *T) T {
 //
 //	func NewRateLimiter(cfg RateLimitConfig) *RateLimiter {
 //	    return &RateLimiter{
-//	        rps:     wrapify.DerefOr(cfg.RequestsPerSecond, 100),
-//	        burst:   wrapify.DerefOr(cfg.BurstSize, 10),
-//	        timeout: wrapify.DerefOr(cfg.Timeout, 5*time.Second),
+//	        rps:     ref.DerefOr(cfg.RequestsPerSecond, 100),
+//	        burst:   ref.DerefOr(cfg.BurstSize, 10),
+//	        timeout: ref.DerefOr(cfg.Timeout, 5*time.Second),
 //	    }
 //	}
 //
