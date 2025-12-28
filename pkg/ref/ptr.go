@@ -22,9 +22,9 @@ package ref
 //
 //	// With Ptr - clean and concise
 //	req := UpdateUserRequest{
-//	    Name:  wrapify.Ptr("John Doe"),
-//	    Email: wrapify.Ptr("john@example.com"),
-//	    Age:   wrapify.Ptr(30),
+//	    Name:  ref.Ptr("John Doe"),
+//	    Email: ref.Ptr("john@example.com"),
+//	    Age:   ref.Ptr(30),
 //	}
 //
 // Example - Database insert with optional fields:
@@ -37,16 +37,16 @@ package ref
 //
 //	user := User{
 //	    Name:  "Jane Smith",
-//	    Email: wrapify.Ptr("jane@example.com"),
-//	    Bio:   wrapify.Ptr("Software Engineer"),
+//	    Email: ref.Ptr("jane@example.com"),
+//	    Bio:   ref.Ptr("Software Engineer"),
 //	}
 //
 // Example - Partial updates:
 //
 //	// Only update name and email, leave other fields unchanged
 //	update := UpdateUserRequest{
-//	    Name:  wrapify.Ptr("New Name"),
-//	    Email: wrapify.Ptr("new@example.com"),
+//	    Name:  ref.Ptr("New Name"),
+//	    Email: ref.Ptr("new@example.com"),
 //	    // Age is nil, won't be updated
 //	}
 func Ptr[T any](v T) *T {
@@ -66,7 +66,7 @@ func Ptr[T any](v T) *T {
 //	}
 //
 //	config := Config{
-//	    Host: wrapify.Ptr("localhost"),
+//	    Host: ref.Ptr("localhost"),
 //	    // Port and Timeout are nil
 //	}
 //
@@ -140,7 +140,7 @@ func Deref[T any](ptr *T) T {
 //	}
 //
 //	config := ServerConfig{
-//	    Host: wrapify.Ptr("localhost"),
+//	    Host: ref.Ptr("localhost"),
 //	    // Port, Timeout, MaxConns are nil
 //	}
 //
@@ -173,7 +173,7 @@ func Deref[T any](ptr *T) T {
 //
 //	// Use with partial options
 //	client := NewHTTPClient(HTTPOptions{
-//	    Timeout: wrapify.Ptr(10 * time.Second),
+//	    Timeout: ref.Ptr(10 * time.Second),
 //	    // MaxRetries will use default: 3
 //	})
 //
@@ -197,7 +197,7 @@ func Deref[T any](ptr *T) T {
 //
 //	// Query with custom limit only
 //	users := QueryUsers(QueryOptions{
-//	    Limit: wrapify.Ptr(20),
+//	    Limit: ref.Ptr(20),
 //	    // Offset and Sort use defaults
 //	})
 //
@@ -210,7 +210,7 @@ func Deref[T any](ptr *T) T {
 //	}
 //
 //	flags := FeatureFlags{
-//	    EnableCache: wrapify.Ptr(true),
+//	    EnableCache: ref.Ptr(true),
 //	    // EnableMetrics and EnableTracing are nil
 //	}
 //
@@ -358,13 +358,13 @@ func IsNotNil[T any](ptr *T) bool {
 // Example - Comparing optional configuration:
 //
 //	oldConfig := Config{
-//	    Timeout: wrapify.Ptr(30 * time.Second),
-//	    MaxRetries: wrapify.Ptr(3),
+//	    Timeout: ref.Ptr(30 * time.Second),
+//	    MaxRetries: ref.Ptr(3),
 //	}
 //
 //	newConfig := Config{
-//	    Timeout: wrapify.Ptr(30 * time.Second),
-//	    MaxRetries: wrapify.Ptr(5),
+//	    Timeout: ref.Ptr(30 * time.Second),
+//	    MaxRetries: ref.Ptr(5),
 //	}
 //
 //	if wrapify.Equal(oldConfig.Timeout, newConfig.Timeout) {
@@ -383,7 +383,7 @@ func IsNotNil[T any](ptr *T) bool {
 //	}
 //
 //	func HasChanges(current User, update UpdateUserRequest) bool {
-//	    if !wrapify.Equal(wrapify.Ptr(current.Name), update.Name) {
+//	    if !wrapify.Equal(ref.Ptr(current.Name), update.Name) {
 //	        return true
 //	    }
 //	    if !wrapify.Equal(current.Email, update.Email) {
@@ -400,7 +400,7 @@ func IsNotNil[T any](ptr *T) bool {
 //	oldResp := &APIResponse{Status: "success"}
 //	newResp := &APIResponse{Status: "success"}
 //
-//	if wrapify.Equal(wrapify.Ptr(oldResp.Status), wrapify.Ptr(newResp.Status)) {
+//	if wrapify.Equal(ref.Ptr(oldResp.Status), ref.Ptr(newResp.Status)) {
 //	    fmt.Println("Status is the same")
 //	}
 //
@@ -423,8 +423,8 @@ func Equal[T comparable](a, b *T) bool {
 // Example - Deep copying configuration:
 //
 //	originalConfig := Config{
-//	    Host: wrapify.Ptr("localhost"),
-//	    Port: wrapify.Ptr(8080),
+//	    Host: ref.Ptr("localhost"),
+//	    Port: ref.Ptr(8080),
 //	}
 //
 //	// Create independent copy
@@ -454,8 +454,8 @@ func Equal[T comparable](a, b *T) bool {
 //	}
 //
 //	original := User{
-//	    Name:  wrapify.Ptr("John"),
-//	    Email: wrapify.Ptr("john@example.com"),
+//	    Name:  ref.Ptr("John"),
+//	    Email: ref.Ptr("john@example.com"),
 //	}
 //
 //	clone := CloneUser(original)
@@ -464,14 +464,14 @@ func Equal[T comparable](a, b *T) bool {
 // Example - Creating independent request copies:
 //
 //	originalReq := UpdateUserRequest{
-//	    Name: wrapify.Ptr("Original Name"),
-//	    Age:  wrapify.Ptr(25),
+//	    Name: ref.Ptr("Original Name"),
+//	    Age:  ref.Ptr(25),
 //	}
 //
 //	// Create copy for retry with modifications
 //	retryReq := UpdateUserRequest{
 //	    Name: wrapify.Copy(originalReq.Name),
-//	    Age:  wrapify.Ptr(26), // Different value
+//	    Age:  ref.Ptr(26), // Different value
 //	}
 func Copy[T any](ptr *T) *T {
 	if ptr == nil {
@@ -492,11 +492,11 @@ func Copy[T any](ptr *T) *T {
 //	    Port *int
 //	}
 //
-//	userConfig := Config{Port: wrapify.Ptr(3000)}
-//	envConfig := Config{Host: wrapify.Ptr("env-host")}
+//	userConfig := Config{Port: ref.Ptr(3000)}
+//	envConfig := Config{Host: ref.Ptr("env-host")}
 //	defaultConfig := Config{
-//	    Host: wrapify.Ptr("localhost"),
-//	    Port: wrapify.Ptr(8080),
+//	    Host: ref.Ptr("localhost"),
+//	    Port: ref.Ptr(8080),
 //	}
 //
 //	// Use first non-nil value: user > env > default
@@ -534,11 +534,11 @@ func Copy[T any](ptr *T) *T {
 //	    Language *string
 //	}
 //
-//	userPref := UserSettings{Language: wrapify.Ptr("en")}
-//	orgPref := UserSettings{Theme: wrapify.Ptr("dark")}
+//	userPref := UserSettings{Language: ref.Ptr("en")}
+//	orgPref := UserSettings{Theme: ref.Ptr("dark")}
 //	systemPref := UserSettings{
-//	    Theme:    wrapify.Ptr("light"),
-//	    Language: wrapify.Ptr("en-US"),
+//	    Theme:    ref.Ptr("light"),
+//	    Language: ref.Ptr("en-US"),
 //	}
 //
 //	theme := wrapify.CoalescePtr(
@@ -567,9 +567,9 @@ func CoalescePtr[T any](ptrs ...*T) *T {
 //
 // Example - Configuration with multiple fallbacks:
 //
-//	userTimeout := wrapify.Ptr(5 * time.Second)
+//	userTimeout := ref.Ptr(5 * time.Second)
 //	var envTimeout *time.Duration // nil
-//	defaultTimeout := wrapify.Ptr(30 * time.Second)
+//	defaultTimeout := ref.Ptr(30 * time.Second)
 //
 //	timeout := wrapify.Coalesce(
 //	    userTimeout,
@@ -581,7 +581,7 @@ func CoalescePtr[T any](ptrs ...*T) *T {
 //
 //	var userTitle *string // nil
 //	var orgTitle *string  // nil
-//	defaultTitle := wrapify.Ptr("Untitled")
+//	defaultTitle := ref.Ptr("Untitled")
 //
 //	title := wrapify.Coalesce(
 //	    userTitle,
@@ -598,14 +598,14 @@ func CoalescePtr[T any](ptrs ...*T) *T {
 //	}
 //
 //	user := User{
-//	    DisplayName: wrapify.Ptr("John Doe"),
+//	    DisplayName: ref.Ptr("John Doe"),
 //	    Username:    "john123",
 //	}
 //
 //	name := wrapify.Coalesce(
 //	    user.PreferredName,
 //	    user.DisplayName,
-//	    wrapify.Ptr(user.Username),
+//	    ref.Ptr(user.Username),
 //	) // Returns "John Doe"
 //
 // Example - Numeric with zero value fallback:
@@ -709,7 +709,7 @@ func ToPtr[T comparable](v T) *T {
 //
 // Example - String transformations:
 //
-//	name := wrapify.Ptr("john doe")
+//	name := ref.Ptr("john doe")
 //
 //	// Convert to uppercase
 //	upperName := wrapify.Map(name, strings.ToUpper)
@@ -722,7 +722,7 @@ func ToPtr[T comparable](v T) *T {
 //
 // Example - Numeric transformations:
 //
-//	price := wrapify.Ptr(100.0)
+//	price := ref.Ptr(100.0)
 //
 //	// Apply tax
 //	priceWithTax := wrapify.Map(price, func(p float64) float64 {
@@ -732,7 +732,7 @@ func ToPtr[T comparable](v T) *T {
 //
 // Example - Type conversions:
 //
-//	intValue := wrapify.Ptr(42)
+//	intValue := ref.Ptr(42)
 //
 //	// Convert int to string
 //	stringValue := wrapify.Map(intValue, func(i int) string {
@@ -747,7 +747,7 @@ func ToPtr[T comparable](v T) *T {
 //	}
 //
 //	input := UserInput{
-//	    Email: wrapify.Ptr("  USER@EXAMPLE.COM  "),
+//	    Email: ref.Ptr("  USER@EXAMPLE.COM  "),
 //	}
 //
 //	// Normalize email
@@ -758,7 +758,7 @@ func ToPtr[T comparable](v T) *T {
 //
 // Example - Chain transformations:
 //
-//	age := wrapify.Ptr(25)
+//	age := ref.Ptr(25)
 //	ageGroup := wrapify.Map(age, func(a int) string {
 //	    if a < 18 {
 //	        return "minor"
@@ -782,7 +782,7 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //
 // Example - Validating optional fields:
 //
-//	age := wrapify.Ptr(15)
+//	age := ref.Ptr(15)
 //
 //	// Only keep age if >= 18
 //	validAge := wrapify.Filter(age, func(a int) bool {
@@ -790,7 +790,7 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //	})
 //	fmt.Println(validAge) // nil (15 < 18)
 //
-//	adult := wrapify.Ptr(25)
+//	adult := ref.Ptr(25)
 //	validAdult := wrapify.Filter(adult, func(a int) bool {
 //	    return a >= 18
 //	})
@@ -798,14 +798,14 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //
 // Example - Email validation:
 //
-//	email := wrapify.Ptr("invalid-email")
+//	email := ref.Ptr("invalid-email")
 //
 //	validEmail := wrapify.Filter(email, func(e string) bool {
 //	    return strings.Contains(e, "@")
 //	})
 //	fmt.Println(validEmail) // nil
 //
-//	goodEmail := wrapify.Ptr("user@example.com")
+//	goodEmail := ref.Ptr("user@example.com")
 //	validGoodEmail := wrapify.Filter(goodEmail, func(e string) bool {
 //	    return strings.Contains(e, "@")
 //	})
@@ -819,9 +819,9 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //	}
 //
 //	products := []Product{
-//	    {Name: "Cheap", Price: wrapify.Ptr(10.0)},
-//	    {Name: "Expensive", Price: wrapify.Ptr(1000.0)},
-//	    {Name: "Affordable", Price: wrapify.Ptr(50.0)},
+//	    {Name: "Cheap", Price: ref.Ptr(10.0)},
+//	    {Name: "Expensive", Price: ref.Ptr(1000.0)},
+//	    {Name: "Affordable", Price: ref.Ptr(50.0)},
 //	}
 //
 //	for _, p := range products {
@@ -839,7 +839,7 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //
 // Example - Filtering with multiple conditions:
 //
-//	username := wrapify.Ptr("ab")
+//	username := ref.Ptr("ab")
 //
 //	validUsername := wrapify.Filter(username, func(u string) bool {
 //	    return len(u) >= 3 && len(u) <= 20
@@ -866,7 +866,7 @@ func Filter[T any](ptr *T, predicate func(T) bool) *T {
 //
 //	userConfig := Config{} // Timeout is nil
 //	defaultConfig := Config{
-//	    Timeout: wrapify.Ptr(30 * time.Second),
+//	    Timeout: ref.Ptr(30 * time.Second),
 //	}
 //
 //	timeout := wrapify.OrElse(userConfig.Timeout, defaultConfig.Timeout)
@@ -880,12 +880,12 @@ func Filter[T any](ptr *T, predicate func(T) bool) *T {
 //	}
 //
 //	opts := HTTPOptions{
-//	    UserAgent: wrapify.Ptr("custom-agent"),
+//	    UserAgent: ref.Ptr("custom-agent"),
 //	}
 //
 //	defaultOpts := HTTPOptions{
-//	    UserAgent: wrapify.Ptr("default-agent"),
-//	    Timeout:   wrapify.Ptr(10 * time.Second),
+//	    UserAgent: ref.Ptr("default-agent"),
+//	    Timeout:   ref.Ptr(10 * time.Second),
 //	}
 //
 //	ua := wrapify.OrElse(opts.UserAgent, defaultOpts.UserAgent)
@@ -938,7 +938,7 @@ func OrElse[T any](ptr, alternative *T) *T {
 //
 //	sessionID := wrapify.OrElseGet(existingSession, func() *string {
 //	    // Only generate new UUID if no existing session
-//	    return wrapify.Ptr(uuid.New().String())
+//	    return ref.Ptr(uuid.New().String())
 //	})
 //
 // Example - Conditional API call:
@@ -970,7 +970,7 @@ func OrElseGet[T any](ptr *T, supplier func() *T) *T {
 //
 //	user := User{
 //	    Name:  "John",
-//	    Email: wrapify.Ptr("john@example.com"),
+//	    Email: ref.Ptr("john@example.com"),
 //	}
 //
 //	wrapify.If(user.Email, func(email string) {
@@ -990,8 +990,8 @@ func OrElseGet[T any](ptr *T, supplier func() *T) *T {
 //	}
 //
 //	notif := Notification{
-//	    Email: wrapify.Ptr("user@example.com"),
-//	    SMS:   wrapify.Ptr("+1234567890"),
+//	    Email: ref.Ptr("user@example.com"),
+//	    SMS:   ref.Ptr("+1234567890"),
 //	}
 //
 //	wrapify.If(notif.Email, func(email string) {
@@ -1015,7 +1015,7 @@ func OrElseGet[T any](ptr *T, supplier func() *T) *T {
 //
 //	event := Event{
 //	    Name:     "user.login",
-//	    Metadata: wrapify.Ptr(map[string]string{"ip": "127.0.0.1"}),
+//	    Metadata: ref.Ptr(map[string]string{"ip": "127.0.0.1"}),
 //	}
 //
 //	wrapify.If(event.Metadata, func(meta map[string]string) {
@@ -1038,7 +1038,7 @@ func If[T any](ptr *T, consumer func(T)) bool {
 //
 //	user := User{
 //	    Name:          "John",
-//	    PreferredName: wrapify.Ptr("Johnny"),
+//	    PreferredName: ref.Ptr("Johnny"),
 //	}
 //
 //	wrapify.IfElse(user.PreferredName,
@@ -1053,7 +1053,7 @@ func If[T any](ptr *T, consumer func(T)) bool {
 // Example - Configuration with default behavior:
 //
 //	config := Config{
-//	    CustomHandler: wrapify.Ptr(myHandler),
+//	    CustomHandler: ref.Ptr(myHandler),
 //	}
 //
 //	wrapify.IfElse(config.CustomHandler,
@@ -1193,7 +1193,7 @@ func MustPtr[T any](ptr *T, message string) T {
 //
 //	user := User{
 //	    Name:    "John",
-//	    Address: wrapify.Ptr(Address{City: "NYC"}),
+//	    Address: ref.Ptr(Address{City: "NYC"}),
 //	}
 //
 //	zipCode := wrapify.FlatMap(user.Address, func(addr Address) *string {
@@ -1203,7 +1203,7 @@ func MustPtr[T any](ptr *T, message string) T {
 //
 // Example - Database lookup chain:
 //
-//	userID := wrapify.Ptr(123)
+//	userID := ref.Ptr(123)
 //
 //	user := wrapify.FlatMap(userID, func(id int) *User {
 //	    return findUserByID(id) // May return nil
@@ -1243,7 +1243,7 @@ func MustPtr[T any](ptr *T, message string) T {
 //
 //	connString := wrapify.FlatMap(config.Database, func(db DatabaseConfig) *string {
 //	    return wrapify.FlatMap(db.Connection, func(conn ConnectionConfig) *string {
-//	        return wrapify.Ptr(conn.String())
+//	        return ref.Ptr(conn.String())
 //	    })
 //	})
 func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
@@ -1266,11 +1266,11 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	    return nil
 //	}
 //
-//	email := wrapify.Ptr("user@example.com")
+//	email := ref.Ptr("user@example.com")
 //	validEmail := wrapify.Validate(email, isValidEmail)
 //	// Returns email pointer
 //
-//	badEmail := wrapify.Ptr("invalid-email")
+//	badEmail := ref.Ptr("invalid-email")
 //	invalidEmail := wrapify.Validate(badEmail, isValidEmail)
 //	// Returns nil
 //
@@ -1283,10 +1283,10 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	    return nil
 //	}
 //
-//	age := wrapify.Ptr(25)
+//	age := ref.Ptr(25)
 //	validAge := wrapify.Validate(age, isAdult) // Returns age pointer
 //
-//	minorAge := wrapify.Ptr(15)
+//	minorAge := ref.Ptr(15)
 //	invalidAge := wrapify.Validate(minorAge, isAdult) // Returns nil
 //
 // Example - Password strength validation:
@@ -1298,7 +1298,7 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	    return nil
 //	}
 //
-//	password := wrapify.Ptr("StrongP@ss123")
+//	password := ref.Ptr("StrongP@ss123")
 //	validPassword := wrapify.Validate(password, isStrongPassword)
 //
 //	if wrapify.IsNotNil(validPassword) {
@@ -1313,7 +1313,7 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	    return err
 //	}
 //
-//	inputURL := wrapify.Ptr("https://example.com")
+//	inputURL := ref.Ptr("https://example.com")
 //	validURL := wrapify.Validate(inputURL, isValidURL)
 func Validate[T any](ptr *T, validator func(T) error) *T {
 	if ptr == nil {
@@ -1330,7 +1330,7 @@ func Validate[T any](ptr *T, validator func(T) error) *T {
 //
 // Example - String formatting with default:
 //
-//	name := wrapify.Ptr("john")
+//	name := ref.Ptr("john")
 //
 //	formatted := wrapify.MapOr(name,
 //	    func(n string) string {
@@ -1351,7 +1351,7 @@ func Validate[T any](ptr *T, validator func(T) error) *T {
 //
 // Example - Price calculation with default:
 //
-//	discount := wrapify.Ptr(0.1) // 10% discount
+//	discount := ref.Ptr(0.1) // 10% discount
 //
 //	finalPrice := wrapify.MapOr(discount,
 //	    func(d float64) float64 {
@@ -1363,7 +1363,7 @@ func Validate[T any](ptr *T, validator func(T) error) *T {
 //
 // Example - Date formatting:
 //
-//	createdAt := wrapify.Ptr(time.Now())
+//	createdAt := ref.Ptr(time.Now())
 //
 //	formatted := wrapify.MapOr(createdAt,
 //	    func(t time.Time) string {
@@ -1391,9 +1391,9 @@ func MapOr[T any, R any](ptr *T, fn func(T) R, defaultValue R) R {
 //	}
 //
 //	req := CreateUserRequest{
-//	    Name:     wrapify.Ptr("John"),
-//	    Email:    wrapify.Ptr("john@example.com"),
-//	    Password: wrapify.Ptr("secret"),
+//	    Name:     ref.Ptr("John"),
+//	    Email:    ref.Ptr("john@example.com"),
+//	    Password: ref.Ptr("secret"),
 //	}
 //
 //	if wrapify.All(req.Name, req.Email, req.Password) {
@@ -1428,8 +1428,8 @@ func MapOr[T any, R any](ptr *T, fn func(T) R, defaultValue R) R {
 //	}
 //
 //	payment := Payment{
-//	    Amount:   wrapify.Ptr(100.0),
-//	    Currency: wrapify.Ptr("USD"),
+//	    Amount:   ref.Ptr(100.0),
+//	    Currency: ref.Ptr("USD"),
 //	    // CardToken is nil
 //	}
 //
@@ -1458,7 +1458,7 @@ func All[T any](ptrs ...*T) bool {
 //	}
 //
 //	contact := ContactInfo{
-//	    Phone: wrapify.Ptr("+1234567890"),
+//	    Phone: ref.Ptr("+1234567890"),
 //	}
 //
 //	if wrapify.Any(contact.Email, contact.Phone, contact.SMS) {
