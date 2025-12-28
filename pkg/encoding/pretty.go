@@ -45,6 +45,21 @@ type Style struct {
 // TerminalStyle is for terminals
 var TerminalStyle *Style
 
+// VSCodeDarkStyle is for VS Code dark theme
+var VSCodeDarkStyle *Style
+
+// DraculaStyle is for Dracula theme
+var DraculaStyle *Style
+
+// MonokaiStyle is for Monokai theme
+var MonokaiStyle *Style
+
+// SolarizedDarkStyle is for Solarized Dark theme
+var SolarizedDarkStyle *Style
+
+// MinimalGrayStyle is a minimal gray style
+var MinimalGrayStyle *Style
+
 // DefaultOptionsConfig is a pre-configured default set of options for pretty-printing JSON.
 // This configuration uses a width of 80, an empty prefix, two-space indentation, and does not sort keys.
 // It is used when no custom options are provided in the PrettyOptions function.
@@ -106,14 +121,67 @@ func init() {
 		Null:     [2]string{"\x1B[2m", "\x1B[0m"},
 		Escape:   [2]string{"\x1B[35m", "\x1B[0m"},
 		Brackets: [2]string{"\x1B[1m", "\x1B[0m"},
-		Append: func(dst []byte, c byte) []byte {
-			if c < ' ' && (c != '\r' && c != '\n' && c != '\t' && c != '\v') {
-				dst = append(dst, "\\u00"...)
-				dst = append(dst, hexDigit((c>>4)&0xF))
-				return append(dst, hexDigit((c)&0xF))
-			}
-			return append(dst, c)
-		},
+		Append:   defaultStyleAppend,
+	}
+
+	VSCodeDarkStyle = &Style{
+		Key:      [2]string{"\x1B[38;5;81m", "\x1B[0m"},  // blue
+		String:   [2]string{"\x1B[38;5;114m", "\x1B[0m"}, // green
+		Number:   [2]string{"\x1B[38;5;209m", "\x1B[0m"}, // orange
+		True:     [2]string{"\x1B[38;5;80m", "\x1B[0m"},  // cyan
+		False:    [2]string{"\x1B[38;5;80m", "\x1B[0m"},
+		Null:     [2]string{"\x1B[38;5;244m", "\x1B[0m"}, // gray
+		Escape:   [2]string{"\x1B[38;5;176m", "\x1B[0m"}, // purple
+		Brackets: [2]string{"\x1B[38;5;250m", "\x1B[0m"},
+		Append:   defaultStyleAppend,
+	}
+
+	DraculaStyle = &Style{
+		Key:      [2]string{"\x1B[38;5;81m", "\x1B[0m"},  // cyan
+		String:   [2]string{"\x1B[38;5;114m", "\x1B[0m"}, // green
+		Number:   [2]string{"\x1B[38;5;212m", "\x1B[0m"}, // pink
+		True:     [2]string{"\x1B[38;5;203m", "\x1B[0m"}, // red
+		False:    [2]string{"\x1B[38;5;203m", "\x1B[0m"},
+		Null:     [2]string{"\x1B[38;5;244m", "\x1B[0m"},
+		Escape:   [2]string{"\x1B[38;5;176m", "\x1B[0m"}, // purple
+		Brackets: [2]string{"\x1B[38;5;231m", "\x1B[0m"}, // white
+		Append:   defaultStyleAppend,
+	}
+
+	MonokaiStyle = &Style{
+		Key:      [2]string{"\x1B[38;5;81m", "\x1B[0m"},  // blue
+		String:   [2]string{"\x1B[38;5;186m", "\x1B[0m"}, // yellow
+		Number:   [2]string{"\x1B[38;5;208m", "\x1B[0m"}, // orange
+		True:     [2]string{"\x1B[38;5;197m", "\x1B[0m"}, // pink
+		False:    [2]string{"\x1B[38;5;197m", "\x1B[0m"},
+		Null:     [2]string{"\x1B[38;5;244m", "\x1B[0m"},
+		Escape:   [2]string{"\x1B[38;5;141m", "\x1B[0m"}, // purple
+		Brackets: [2]string{"\x1B[38;5;252m", "\x1B[0m"},
+		Append:   defaultStyleAppend,
+	}
+
+	SolarizedDarkStyle = &Style{
+		Key:      [2]string{"\x1B[38;5;33m", "\x1B[0m"},  // blue
+		String:   [2]string{"\x1B[38;5;64m", "\x1B[0m"},  // green
+		Number:   [2]string{"\x1B[38;5;166m", "\x1B[0m"}, // orange
+		True:     [2]string{"\x1B[38;5;37m", "\x1B[0m"},  // cyan
+		False:    [2]string{"\x1B[38;5;37m", "\x1B[0m"},
+		Null:     [2]string{"\x1B[38;5;244m", "\x1B[0m"},
+		Escape:   [2]string{"\x1B[38;5;125m", "\x1B[0m"}, // violet
+		Brackets: [2]string{"\x1B[38;5;250m", "\x1B[0m"},
+		Append:   defaultStyleAppend,
+	}
+
+	MinimalGrayStyle = &Style{
+		Key:      [2]string{"\x1B[37m", "\x1B[0m"},
+		String:   [2]string{"\x1B[90m", "\x1B[0m"},
+		Number:   [2]string{"\x1B[37m", "\x1B[0m"},
+		True:     [2]string{"\x1B[37m", "\x1B[0m"},
+		False:    [2]string{"\x1B[37m", "\x1B[0m"},
+		Null:     [2]string{"\x1B[2m", "\x1B[0m"},
+		Escape:   [2]string{"\x1B[90m", "\x1B[0m"},
+		Brackets: [2]string{"\x1B[37m", "\x1B[0m"},
+		Append:   defaultStyleAppend,
 	}
 }
 
@@ -1240,4 +1308,19 @@ func spec(source, destination []byte) []byte {
 		}
 	}
 	return destination
+}
+
+// defaultStyleAppend appends a byte `c` to the destination byte slice `dst`,
+// handling special control characters by escaping them in Unicode format.
+// If `c` is a control character (ASCII value less than 32) and not one of the
+// common whitespace characters (`\r`, `\n`, `\t`, `\v`), it appends
+// the Unicode escape sequence `\u00XX` to `dst`, where `XX` is the hexadecimal
+// representation of `c`. Otherwise, it appends `c` directly to `dst`.
+func defaultStyleAppend(dst []byte, c byte) []byte {
+	if c < ' ' && (c != '\r' && c != '\n' && c != '\t' && c != '\v') {
+		dst = append(dst, "\\u00"...)
+		dst = append(dst, hexDigit((c>>4)&0xF))
+		return append(dst, hexDigit(c&0xF))
+	}
+	return append(dst, c)
 }
