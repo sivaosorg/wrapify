@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sivaosorg/wrapify/pkg/collections"
+	"github.com/sivaosorg/wrapify/pkg/coll"
 	"github.com/sivaosorg/wrapify/pkg/randn"
 	"github.com/sivaosorg/wrapify/pkg/strs"
 )
@@ -328,7 +328,7 @@ func (w *wrapper) IsDebuggingPresent() bool {
 // IsDebuggingKeyPresent checks whether a specific key exists in the `debug` information.
 //
 // This function first checks if debugging information is present using `IsDebuggingPresent()`.
-// Then it uses `collections.MapContainsKey` to verify if the given key is present within the `debug` map.
+// Then it uses `coll.MapContainsKey` to verify if the given key is present within the `debug` map.
 //
 // Parameters:
 //   - `key`: The key to search for within the `debug` field.
@@ -338,7 +338,7 @@ func (w *wrapper) IsDebuggingPresent() bool {
 //   - `true` if the `debug` field is present and contains the specified key.
 //   - `false` if `debug` is nil or does not contain the key.
 func (w *wrapper) IsDebuggingKeyPresent(key string) bool {
-	return w.IsDebuggingPresent() && collections.MapContainsKey(w.debug, key)
+	return w.IsDebuggingPresent() && coll.MapContainsKey(w.debug, key)
 }
 
 // IsBodyPresent checks whether the body data is present in the `wrapper` instance.
@@ -794,7 +794,7 @@ func (m *meta) IsCustomFieldPresent() bool {
 //   - `true` if the `customFields` map is available and contains the specified key.
 //   - `false` if `customFields` is nil, empty, or does not contain the specified key.
 func (m *meta) IsCustomFieldKeyPresent(key string) bool {
-	return m.IsCustomFieldPresent() && collections.MapContainsKey(m.customFields, key)
+	return m.IsCustomFieldPresent() && coll.MapContainsKey(m.customFields, key)
 }
 
 // OnKeyCustomField retrieves the value associated with a specific key in the custom fields of the `meta` instance.

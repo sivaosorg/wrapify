@@ -75,7 +75,7 @@ func Transform(collection any, predicate func(value any) any) any {
 // This function takes a collection of any type (using an empty `interface{}`), which can be a slice or array,
 // and a filtering predicate function (`predicate`). The function applies the `predicate` function to each element in
 // the collection, and if the predicate returns true, the element is included in the new collection. The function only
-// supports slices and arrays as input collections.
+// supports slices and arrays as input coll.
 //
 // The function uses reflection to handle slices and arrays and constructs a new collection containing only the
 // elements that pass the filter condition.
@@ -617,9 +617,9 @@ func Difference(collection1 any, collection2 any) any {
 	return result.Interface()
 }
 
-// Intersection returns a new collection (slice or array) containing elements that are present in both collections.
+// Intersection returns a new collection (slice or array) containing elements that are present in both coll.
 //
-// This function takes two collections (slices or arrays) and compares the elements of both collections.
+// This function takes two collections (slices or arrays) and compares the elements of both coll.
 // It returns a new collection with elements that appear in both the first and the second collection.
 // The function uses `Contains_N` to check if an element from the first collection is also present in the second collection.
 //
@@ -734,7 +734,7 @@ func SliceWithIndices(collection any, indices []int) any {
 //
 // This function iterates through the elements of the input collection, applying the provided `condition` function to each element.
 // It creates two separate collections: one containing elements for which the condition returns `true`, and the other containing elements
-// for which the condition returns `false`. The function returns both collections.
+// for which the condition returns `false`. The function returns both coll.
 //
 // Parameters:
 //   - `collection`: A slice or array of any type to partition.
