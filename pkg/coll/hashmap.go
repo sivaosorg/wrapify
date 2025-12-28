@@ -1,4 +1,4 @@
-package collections
+package coll
 
 // HashMap is a generic hash map data structure that maps keys of type `K` to values of type `V`.
 // `K` and `V` must be comparable types, meaning that they support comparison operators (like == and !=).
