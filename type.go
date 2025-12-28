@@ -425,9 +425,6 @@ type underlyingMessage struct {
 	msg   string // The message describing the additional context for the error
 }
 
-// TerminalStyle is for terminals
-var TerminalStyle *Style
-
 type tools struct{}
 
 var Toolbox tools = tools{}
