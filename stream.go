@@ -13,7 +13,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/sivaosorg/wrapify/pkg/strs"
+	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
 
 // Start initiates streaming operation and returns *wrapper for consistency with wrapify API.
@@ -772,7 +772,7 @@ func (sw *StreamingWrapper) WithStreamingStrategy(strategy StreamingStrategy) *w
 		return respondStreamBadRequestDefault()
 	}
 
-	if strs.IsEmpty(string(strategy)) {
+	if strutil.IsEmpty(string(strategy)) {
 		return sw.wrapper.
 			WithStatusCode(http.StatusBadRequest).
 			WithMessage("Invalid streaming strategy: cannot be empty").
@@ -920,7 +920,7 @@ func (sw *StreamingWrapper) WithCompressionType(comp CompressionType) *wrapper {
 		return respondStreamBadRequestDefault()
 	}
 
-	if strs.IsEmpty(string(comp)) {
+	if strutil.IsEmpty(string(comp)) {
 		return sw.wrapper.
 			WithStatusCode(http.StatusBadRequest).
 			WithMessage("Invalid compression type: cannot be empty").

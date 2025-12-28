@@ -1,4 +1,4 @@
-package strs
+package strutil
 
 import (
 	"crypto/sha256"
@@ -822,10 +822,10 @@ func RemoveAccents(s string) string {
 //
 // Example:
 //
-//	strs.Slugify("'We löve Motörhead'") //Output: we-love-motorhead
+//	strutil.Slugify("'We löve Motörhead'") //Output: we-love-motorhead
 //
-// Normalzation is done with strs.ReplaceAccents function using a rune replacement map
-// You can use the following code for better normalization before strs.Slugify()
+// Normalzation is done with strutil.ReplaceAccents function using a rune replacement map
+// You can use the following code for better normalization before strutil.Slugify()
 //
 //	str := "'We löve Motörhead'"
 //	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
@@ -839,7 +839,7 @@ func RemoveAccents(s string) string {
 //	import "github.com/rainycape/unidecode"
 //
 //	str := unidecode.Unidecode("你好, world!")
-//	strs.Slugify(str) //Output: ni-hao-world
+//	strutil.Slugify(str) //Output: ni-hao-world
 func Slugify(s string) string {
 	return SlugifySpecial(s, "-")
 }
@@ -850,7 +850,7 @@ func Slugify(s string) string {
 //
 // Example:
 //
-//	strs.SlugifySpecial("'We löve Motörhead'", "-") //Output: we-love-motorhead
+//	strutil.SlugifySpecial("'We löve Motörhead'", "-") //Output: we-love-motorhead
 //
 // SlugifySpecial doesn't support transliteration. You should use a transliteration
 // library before SlugifySpecial like github.com/rainycape/unidecode
@@ -860,7 +860,7 @@ func Slugify(s string) string {
 //	import "github.com/rainycape/unidecode"
 //
 //	str := unidecode.Unidecode("你好, world!")
-//	strs.SlugifySpecial(str, "-") //Output: ni-hao-world
+//	strutil.SlugifySpecial(str, "-") //Output: ni-hao-world
 func SlugifySpecial(str string, delimiter string) string {
 	str = RemoveAccents(str)
 	delBytes := []byte(delimiter)

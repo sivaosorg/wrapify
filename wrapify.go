@@ -9,7 +9,7 @@ import (
 
 	"github.com/sivaosorg/wrapify/pkg/coll"
 	"github.com/sivaosorg/wrapify/pkg/randn"
-	"github.com/sivaosorg/wrapify/pkg/strs"
+	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
 
 // Available checks whether the `wrapper` instance is non-nil.
@@ -353,8 +353,8 @@ func (w *wrapper) IsBodyPresent() bool {
 	s, ok := w.data.(string)
 	if ok {
 		return w.Available() &&
-			strs.IsNotEmpty(s) &&
-			strs.IsNotBlank(s)
+			strutil.IsNotEmpty(s) &&
+			strutil.IsNotBlank(s)
 	}
 	return w.Available() && w.data != nil
 }
@@ -731,7 +731,7 @@ func (m *meta) Available() bool {
 //   - `true` if `apiVersion` is non-empty.
 //   - `false` if `meta` is unavailable or `apiVersion` is empty.
 func (m *meta) IsApiVersionPresent() bool {
-	return m.Available() && strs.IsNotEmpty(m.apiVersion)
+	return m.Available() && strutil.IsNotEmpty(m.apiVersion)
 }
 
 // IsRequestIDPresent checks whether the request ID is present in the `meta` instance.
@@ -743,7 +743,7 @@ func (m *meta) IsApiVersionPresent() bool {
 //   - `true` if `requestID` is non-empty.
 //   - `false` if `meta` is unavailable or `requestID` is empty.
 func (m *meta) IsRequestIDPresent() bool {
-	return m.Available() && strs.IsNotEmpty(m.requestID)
+	return m.Available() && strutil.IsNotEmpty(m.requestID)
 }
 
 // IsLocalePresent checks whether the locale information is present in the `meta` instance.
@@ -755,7 +755,7 @@ func (m *meta) IsRequestIDPresent() bool {
 //   - `true` if `locale` is non-empty.
 //   - `false` if `meta` is unavailable or `locale` is empty.
 func (m *meta) IsLocalePresent() bool {
-	return m.Available() && strs.IsNotEmpty(m.locale)
+	return m.Available() && strutil.IsNotEmpty(m.locale)
 }
 
 // IsRequestedTimePresent checks whether the requested time is present in the `meta` instance.
@@ -843,7 +843,7 @@ func (m *meta) RequestID() string {
 	if !m.Available() {
 		return ""
 	}
-	if strs.IsEmpty(m.requestID) || strs.IsBlank(m.requestID) {
+	if strutil.IsEmpty(m.requestID) || strutil.IsBlank(m.requestID) {
 		m.WithRequestID(randn.CryptoID())
 	}
 	return m.requestID
@@ -922,37 +922,37 @@ func (h *header) IsCodePresent() bool {
 // IsTextPresent checks if the `text` field in the `header` instance is present and not empty.
 //
 // This function verifies if the `header` is available and if the `text` field is not empty, using
-// the `strs.IsNotEmpty` utility to ensure the presence of the `text` field.
+// the `strutil.IsNotEmpty` utility to ensure the presence of the `text` field.
 //
 // Returns:
 //   - `true` if the `text` field is non-empty.
 //   - `false` if the `text` field is either not present (nil) or empty.
 func (h *header) IsTextPresent() bool {
-	return h.Available() && strs.IsNotEmpty(h.text)
+	return h.Available() && strutil.IsNotEmpty(h.text)
 }
 
 // IsTypePresent checks if the `Type` field in the `header` instance is present and not empty.
 //
 // This function checks if the `header` instance is available and if the `Type` field is not empty,
-// utilizing the `strs.IsNotEmpty` utility to determine whether the `Type` field contains a value.
+// utilizing the `strutil.IsNotEmpty` utility to determine whether the `Type` field contains a value.
 //
 // Returns:
 //   - `true` if the `Type` field is non-empty.
 //   - `false` if the `Type` field is either not present (nil) or empty.
 func (h *header) IsTypePresent() bool {
-	return h.Available() && strs.IsNotEmpty(h.typez)
+	return h.Available() && strutil.IsNotEmpty(h.typez)
 }
 
 // IsDescriptionPresent checks if the `description` field in the `header` instance is present and not empty.
 //
 // This function ensures that the `header` is available and that the `description` field is not empty,
-// using `strs.IsNotEmpty` to check for non-emptiness.
+// using `strutil.IsNotEmpty` to check for non-emptiness.
 //
 // Returns:
 //   - `true` if the `description` field is non-empty.
 //   - `false` if the `description` field is either not present (nil) or empty.
 func (h *header) IsDescriptionPresent() bool {
-	return h.Available() && strs.IsNotEmpty(h.description)
+	return h.Available() && strutil.IsNotEmpty(h.description)
 }
 
 // Code retrieves the code value from the `header` instance.
@@ -1323,7 +1323,7 @@ func (w *wrapper) WithErrMessagef(err error, format string, args ...any) *wrappe
 // Returns:
 //   - A pointer to the modified `wrapper` instance (enabling method chaining).
 func (w *wrapper) BindCause() *wrapper {
-	if strs.IsNotEmpty(w.message) {
+	if strutil.IsNotEmpty(w.message) {
 		w.errors = WithError(w.message)
 	}
 	return w
@@ -1658,7 +1658,7 @@ func (w *wrapper) WithIsLast(v bool) *wrapper {
 // Hash generates a hash string for the `wrapper` instance.
 //
 // This method concatenates the values of the `statusCode`, `message`, `data`, and `meta` fields
-// into a single string and then computes a hash of that string using the `strs.Hash` function.
+// into a single string and then computes a hash of that string using the `strutil.Hash` function.
 // The resulting hash string can be used for various purposes, such as caching or integrity checks.
 func (w *wrapper) Hash() string {
 	if !w.Available() {
@@ -1666,7 +1666,7 @@ func (w *wrapper) Hash() string {
 	}
 	data := fmt.Sprintf("%v%v%v%v",
 		w.statusCode, w.message, w.data, w.meta)
-	return strs.Hash(data)
+	return strutil.Hash(data)
 }
 
 // WithStreaming enables streaming mode for the wrapper and returns a streaming wrapper for enhanced data transfer capabilities.
@@ -1935,10 +1935,10 @@ func (w *wrapper) build() map[string]any {
 	if w.IsStatusCodePresent() {
 		m["status_code"] = w.statusCode
 	}
-	if strs.IsNotEmpty(w.message) {
+	if strutil.IsNotEmpty(w.message) {
 		m["message"] = w.message
 	}
-	if strs.IsNotEmpty(w.path) {
+	if strutil.IsNotEmpty(w.path) {
 		m["path"] = w.path
 	}
 	return m

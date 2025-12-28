@@ -3,7 +3,7 @@ package coll
 import (
 	"fmt"
 
-	"github.com/sivaosorg/wrapify/pkg/strs"
+	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
 
 // itemExists is an empty struct used as a placeholder for values in the `HashSet` map.
@@ -228,7 +228,7 @@ func (hash *HashSet[T]) Slice() []T {
 func (hash *HashSet[T]) String() string {
 	s := ""
 	for val := range hash.items {
-		if strs.IsEmpty(s) {
+		if strutil.IsEmpty(s) {
 			s = fmt.Sprintf("%v", val)
 		} else {
 			s = fmt.Sprintf("%s,%v", s, val)

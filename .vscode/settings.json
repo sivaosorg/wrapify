@@ -33,6 +33,7 @@
     "softprops",
     "spreadsheetml",
     "strs",
+    "strutil",
     "typez",
     "uintptrs",
     "Unflushed",

@@ -3,7 +3,7 @@ package match
 import (
 	"unicode/utf8"
 
-	"github.com/sivaosorg/wrapify/pkg/strs"
+	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
 
 // result represents the outcome of a match operation.
@@ -121,7 +121,7 @@ func MatchLimit(str, pattern string, maxComplexity int) (matched, stopped bool) 
 //
 //	min, max := WildcardPatternLimits("a?c*") // min could be "a\x00c", and max could be "azzz…"
 func WildcardPatternLimits(pattern string) (min, max string) {
-	if strs.IsEmpty(pattern) || pattern[0] == '*' {
+	if strutil.IsEmpty(pattern) || pattern[0] == '*' {
 		return "", ""
 	}
 	minVal := make([]byte, 0, len(pattern))
