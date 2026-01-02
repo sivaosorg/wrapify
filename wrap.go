@@ -1675,7 +1675,9 @@ func (w *wrapper) Hash256() (string, *wrapper) {
 			WithErrSck(err).
 			WithMessage("Failed to generate hash")
 	}
-	return h, w
+	return h, New().
+		WithHeader(OK).
+		WithMessage("Successfully generated hash")
 }
 
 // Hash256Safe generates a hash string for the `wrapper` instance.
@@ -1713,7 +1715,9 @@ func (w *wrapper) Hash() (uint64, *wrapper) {
 			WithErrSck(err).
 			WithMessage("Failed to generate hash")
 	}
-	return h, w
+	return h, New().
+		WithHeader(OK).
+		WithMessage("Successfully generated hash")
 }
 
 // HashSafe generates a hash value for the `wrapper` instance.
