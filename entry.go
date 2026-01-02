@@ -202,6 +202,7 @@ func WrapOk(message string, data any) *wrapper {
 func WrapCreated(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusCreated).
+		WithHeader(Created).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -221,6 +222,7 @@ func WrapCreated(message string, data any) *wrapper {
 func WrapBadRequest(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusBadRequest).
+		WithHeader(BadRequest).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -240,6 +242,7 @@ func WrapBadRequest(message string, data any) *wrapper {
 func WrapNotFound(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusNotFound).
+		WithHeader(NotFound).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -259,6 +262,7 @@ func WrapNotFound(message string, data any) *wrapper {
 func WrapNotImplemented(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusNotImplemented).
+		WithHeader(NotImplemented).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -278,6 +282,7 @@ func WrapNotImplemented(message string, data any) *wrapper {
 func WrapTooManyRequest(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusTooManyRequests).
+		WithHeader(TooManyRequests).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -297,6 +302,7 @@ func WrapTooManyRequest(message string, data any) *wrapper {
 func WrapLocked(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusLocked).
+		WithHeader(Locked).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -316,6 +322,7 @@ func WrapLocked(message string, data any) *wrapper {
 func WrapNoContent(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusNoContent).
+		WithHeader(NoContent).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -335,6 +342,7 @@ func WrapNoContent(message string, data any) *wrapper {
 func WrapProcessing(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusProcessing).
+		WithHeader(Processing).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -354,6 +362,7 @@ func WrapProcessing(message string, data any) *wrapper {
 func WrapUpgradeRequired(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusUpgradeRequired).
+		WithHeader(UpgradeRequired).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -374,6 +383,7 @@ func WrapUpgradeRequired(message string, data any) *wrapper {
 func WrapServiceUnavailable(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusServiceUnavailable).
+		WithHeader(ServiceUnavailable).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -394,6 +404,7 @@ func WrapServiceUnavailable(message string, data any) *wrapper {
 func WrapInternalServerError(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusInternalServerError).
+		WithHeader(InternalServerError).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -413,6 +424,7 @@ func WrapInternalServerError(message string, data any) *wrapper {
 func WrapGatewayTimeout(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusGatewayTimeout).
+		WithHeader(GatewayTimeout).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -432,6 +444,7 @@ func WrapGatewayTimeout(message string, data any) *wrapper {
 func WrapMethodNotAllowed(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusMethodNotAllowed).
+		WithHeader(MethodNotAllowed).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -452,6 +465,7 @@ func WrapMethodNotAllowed(message string, data any) *wrapper {
 func WrapUnauthorized(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusUnauthorized).
+		WithHeader(Unauthorized).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -471,6 +485,7 @@ func WrapUnauthorized(message string, data any) *wrapper {
 func WrapForbidden(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusForbidden).
+		WithHeader(Forbidden).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -490,6 +505,7 @@ func WrapForbidden(message string, data any) *wrapper {
 func WrapAccepted(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusAccepted).
+		WithHeader(Accepted).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -509,6 +525,7 @@ func WrapAccepted(message string, data any) *wrapper {
 func WrapRequestTimeout(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusRequestTimeout).
+		WithHeader(RequestTimeout).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -528,6 +545,7 @@ func WrapRequestTimeout(message string, data any) *wrapper {
 func WrapRequestEntityTooLarge(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusRequestEntityTooLarge).
+		WithHeader(RequestEntityTooLarge).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -547,6 +565,7 @@ func WrapRequestEntityTooLarge(message string, data any) *wrapper {
 func WrapUnsupportedMediaType(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusUnsupportedMediaType).
+		WithHeader(UnsupportedMediaType).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -566,6 +585,7 @@ func WrapUnsupportedMediaType(message string, data any) *wrapper {
 func WrapHTTPVersionNotSupported(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusHTTPVersionNotSupported).
+		WithHeader(HTTPVersionNotSupported).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -585,6 +605,7 @@ func WrapHTTPVersionNotSupported(message string, data any) *wrapper {
 func WrapPaymentRequired(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusPaymentRequired).
+		WithHeader(PaymentRequired).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -604,6 +625,7 @@ func WrapPaymentRequired(message string, data any) *wrapper {
 func WrapConflict(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusConflict).
+		WithHeader(Conflict).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -623,6 +645,7 @@ func WrapConflict(message string, data any) *wrapper {
 func WrapGone(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusGone).
+		WithHeader(Gone).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -643,6 +666,7 @@ func WrapGone(message string, data any) *wrapper {
 func WrapUnprocessableEntity(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusUnprocessableEntity).
+		WithHeader(UnprocessableEntity).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -662,6 +686,7 @@ func WrapUnprocessableEntity(message string, data any) *wrapper {
 func WrapPreconditionFailed(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusPreconditionFailed).
+		WithHeader(PreconditionFailed).
 		WithMessage(message).
 		WithBody(data)
 	return w
@@ -682,6 +707,7 @@ func WrapPreconditionFailed(message string, data any) *wrapper {
 func WrapBadGateway(message string, data any) *wrapper {
 	w := New().
 		WithStatusCode(http.StatusBadGateway).
+		WithHeader(BadGateway).
 		WithMessage(message).
 		WithBody(data)
 	return w
