@@ -71,7 +71,7 @@ type IncludableMap interface {
 // It returns a string representing the hash of the struct.
 // If the function returns an error, the hash will not be included in the hash.
 type Hashable interface {
-	Hash() (string, error)
+	Hash() (uint64, error)
 }
 
 // ErrNotStringer is returned when there's an error with hash:"string"
