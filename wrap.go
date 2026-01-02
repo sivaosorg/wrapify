@@ -1658,18 +1658,18 @@ func (w *wrapper) WithIsLast(v bool) *wrapper {
 	return w
 }
 
-// Hash generates a hash string for the `wrapper` instance.
+// Hash256 generates a hash string for the `wrapper` instance.
 //
 // This method concatenates the values of the `statusCode`, `message`, `data`, and `meta` fields
-// into a single string and then computes a hash of that string using the `strutil.Hash` function.
+// into a single string and then computes a hash of that string using the `strutil.Hash256` function.
 // The resulting hash string can be used for various purposes, such as caching or integrity checks.
-func (w *wrapper) Hash() string {
+func (w *wrapper) Hash256() string {
 	if !w.Available() {
 		return ""
 	}
 	data := fmt.Sprintf("%v%v%v%v",
 		w.StatusCode(), w.message, jsonpass(w.data), w.meta.Respond())
-	return strutil.Hash(data)
+	return strutil.Hash256(data)
 }
 
 // WithStreaming enables streaming mode for the wrapper and returns a streaming wrapper for enhanced data transfer capabilities.
@@ -1827,7 +1827,7 @@ func (w *wrapper) Respond() map[string]any {
 		return nil
 	}
 	w.cacheMutex.RLock()
-	hash := w.Hash()
+	hash := w.Hash256()
 	if w.cacheHash == hash && w.cachedWrap != nil {
 		defer w.cacheMutex.RUnlock()
 		return w.cachedWrap

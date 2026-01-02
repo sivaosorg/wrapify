@@ -665,7 +665,7 @@ func Reverse(s string) string {
 	return string(buffer)
 }
 
-// Hash computes the SHA256 hash of the input string s and returns it as a hexadecimal string.
+// Hash256 computes the SHA256 hash of the input string s and returns it as a hexadecimal string.
 //
 // This function performs the following steps:
 //  1. It checks if the input string is empty or consists only of whitespace characters using the IsEmpty function.
@@ -686,13 +686,13 @@ func Reverse(s string) string {
 // Example:
 //
 //	input := "hello"
-//	hashValue := Hash(input) // hashValue will contain the SHA256 hash of "hello" in hexadecimal format.
+//	hashValue := Hash256(input) // hashValue will contain the SHA256 hash of "hello" in hexadecimal format.
 //
 // Notes:
 //   - This function is suitable for generating hash values for strings that can be used for comparisons,
 //     checksums, or other cryptographic purposes. However, if the input string is empty, it returns the empty
 //     string as a direct response.
-func Hash(s string) string {
+func Hash256(s string) string {
 	// Check if the input string is empty or consists solely of whitespace characters
 	if IsEmpty(s) {
 		return s
