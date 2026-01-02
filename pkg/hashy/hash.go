@@ -217,3 +217,53 @@ func HashEncoded(data ...any) (string, error) {
 	}
 	return base64.StdEncoding.EncodeToString([]byte(fmt.Appendf(nil, "%v", hash))), nil
 }
+
+// HashHex generates a hexadecimal hash string for the given data.
+// It accepts variadic arguments - if only one argument is provided, it hashes
+// that value. If multiple arguments are provided, it hashes them as a tuple.
+// The last argument can optionally be *Options.
+//
+// Returns:
+//   - string: The computed hash string (never empty for valid inputs)
+//   - error: Non-nil if hashing fails
+//
+// Example:
+//
+//	hash, err := HashHex(myStruct)                    // Single value
+//	hash, err := HashHex(val1, val2, val3)            // Multiple values
+//	hash, err := HashHex(myStruct, opts)              // With options
+//	hash, err := HashHex(val1, val2, val3, opts)      // Multiple values with options
+//
+// The hash is deterministic: identical values always produce identical hashes.
+func HashHex(data ...any) (string, error) {
+	hash, err := Hash(data...)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%016x", hash), nil
+}
+
+// HashHexShort generates a hexadecimal hash string for the given data.
+// It accepts variadic arguments - if only one argument is provided, it hashes
+// that value. If multiple arguments are provided, it hashes them as a tuple.
+// The last argument can optionally be *Options.
+//
+// Returns:
+//   - string: The computed hash string (never empty for valid inputs)
+//   - error: Non-nil if hashing fails
+//
+// Example:
+//
+//	hash, err := HashHexShort(myStruct)                    // Single value
+//	hash, err := HashHexShort(val1, val2, val3)            // Multiple values
+//	hash, err := HashHexShort(myStruct, opts)              // With options
+//	hash, err := HashHexShort(val1, val2, val3, opts)      // Multiple values with options
+//
+// The hash is deterministic: identical values always produce identical hashes.
+func HashHexShort(data ...any) (string, error) {
+	hash, err := Hash(data...)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%x", hash), nil
+}
