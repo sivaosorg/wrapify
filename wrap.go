@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/sivaosorg/wrapify/pkg/coll"
+	"github.com/sivaosorg/wrapify/pkg/hashy"
 	"github.com/sivaosorg/wrapify/pkg/randn"
 	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
@@ -1667,9 +1668,11 @@ func (w *wrapper) Hash256() string {
 	if !w.Available() {
 		return ""
 	}
-	data := fmt.Sprintf("%v%v%v%v",
-		w.StatusCode(), w.message, jsonpass(w.data), w.meta.Respond())
-	return strutil.Hash256(data)
+	h, err := hashy.Hash256(w.StatusCode(), w.message, w.data, w.meta.Respond())
+	if err != nil {
+		return ""
+	}
+	return h
 }
 
 // WithStreaming enables streaming mode for the wrapper and returns a streaming wrapper for enhanced data transfer capabilities.
