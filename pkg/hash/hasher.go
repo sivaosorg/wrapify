@@ -361,6 +361,259 @@ func (h *hasher) hashFinishUnordered(a uint64) uint64 {
 	return h.hash.Sum64()
 }
 
+// hashArray hashes an array value.
+//
+// Parameters:
+//   - value: The value to hash.
+//   - options: The options to use for the hash.
+//
+// Returns:
+//   - The hash of the value.
+//
+// Example:
+//
+//	value := reflect.ValueOf([]int{1, 2, 3})
+//	hash, err := h.hashArray(value, nil)
+//	fmt.Println(hash, err) // 1 2 3 nil
+func (h *hasher) hashArray(value reflect.Value, options *visitOptions) (uint64, error) {
+	var accumulated uint64
+	length := value.Len()
+
+	for i := 0; i < length; i++ {
+		current, err := h.hashValue(value.Index(i), nil)
+		if err != nil {
+			return 0, err
+		}
+		accumulated = h.hashUpdateOrdered(accumulated, current)
+	}
+
+	return accumulated, nil
+}
+
+// hashSlice hashes a slice value.
+//
+// Parameters:
+//   - value: The value to hash.
+//   - options: The options to use for the hash.
+//
+// Returns:
+//   - The hash of the value.
+//
+// Example:
+//
+//	value := reflect.ValueOf([]int{1, 2, 3})
+//	hash, err := h.hashSlice(value, nil)
+//	fmt.Println(hash, err) // 1 2 3 nil
+func (h *hasher) hashSlice(value reflect.Value, options *visitOptions) (uint64, error) {
+	// Determine if this should be treated as a set (order-independent)
+	isSet := h.slicesAsSets
+	if options != nil && (options.flags&visitFlagSet) != 0 {
+		isSet = true
+	}
+
+	var accumulated uint64
+	length := value.Len()
+
+	for i := 0; i < length; i++ {
+		current, err := h.hashValue(value.Index(i), nil)
+		if err != nil {
+			return 0, err
+		}
+
+		if isSet {
+			accumulated = hashUpdateUnordered(accumulated, current)
+		} else {
+			accumulated = h.hashUpdateOrdered(accumulated, current)
+		}
+	}
+
+	if isSet {
+		accumulated = h.hashFinishUnordered(accumulated)
+	}
+
+	return accumulated, nil
+}
+
+func (h *hasher) hashMap(value reflect.Value, options *visitOptions) (uint64, error) {
+	var selector MapSelector
+	if options != nil && options.structValue != nil {
+		if impl, ok := options.structValue.(MapSelector); ok {
+			selector = impl
+		}
+	}
+
+	var accumulated uint64
+	for _, key := range value.MapKeys() {
+		mapValue := value.MapIndex(key)
+
+		// Check if this map entry should be included
+		if selector != nil {
+			include, err := selector.SelectMapEntry()(options.fieldName, key.Interface(), mapValue.Interface())
+			if err != nil {
+				return 0, err
+			}
+			if !include {
+				continue
+			}
+		}
+
+		keyHash, err := h.hashValue(key, nil)
+		if err != nil {
+			return 0, err
+		}
+
+		valueHash, err := h.hashValue(mapValue, nil)
+		if err != nil {
+			return 0, err
+		}
+
+		fieldHash := h.hashUpdateOrdered(keyHash, valueHash)
+		accumulated = hashUpdateUnordered(accumulated, fieldHash)
+	}
+
+	accumulated = h.hashFinishUnordered(accumulated)
+	return accumulated, nil
+}
+
+func (h *hasher) hashStruct(value reflect.Value, options *visitOptions) (uint64, error) {
+	structType := value.Type()
+	parent := value.Interface()
+
+	// Check for FieldSelector interface
+	var selector FieldSelector
+	if impl, ok := parent.(FieldSelector); ok {
+		selector = impl
+	}
+
+	// Check pointer for FieldIncluder interface
+	if value.CanAddr() {
+		ptr := value.Addr()
+		if impl, ok := ptr.Interface().(FieldSelector); ok {
+			selector = impl
+		}
+	}
+
+	// Start with struct type name
+	accumulated, err := h.hashValue(reflect.ValueOf(structType.Name()), nil)
+	if err != nil {
+		return 0, err
+	}
+
+	numFields := value.NumField()
+	for i := 0; i < numFields; i++ {
+		fieldValue := value.Field(i)
+		fieldType := structType.Field(i)
+
+		// Skip unexported fields (except for "_")
+		if fieldType.PkgPath != "" && fieldType.Name != "_" {
+			continue
+		}
+
+		// Check tag for special directives
+		tag := fieldType.Tag.Get(h.tagName)
+		if tag == "ignore" || tag == "-" {
+			continue
+		}
+
+		// Skip zero values if configured
+		if h.ignoreZeroValue && fieldValue.IsZero() {
+			continue
+		}
+
+		// Handle string tag
+		if tag == "string" || h.useStringer {
+			if stringer, ok := fieldValue.Interface().(fmt.Stringer); ok {
+				fieldValue = reflect.ValueOf(stringer.String())
+			} else if tag == "string" {
+				return 0, &ErrNotStringer{Field: fieldType.Name}
+			}
+		}
+
+		// Check FieldSelector interface
+		if selector != nil {
+			include, err := selector.SelectField()(fieldType.Name, fieldValue.Interface())
+			if err != nil {
+				return 0, err
+			}
+			if !include {
+				continue
+			}
+		}
+
+		// Determine visit flags
+		var flags visitFlag
+		if tag == "set" {
+			flags |= visitFlagSet
+		}
+
+		// Hash field name
+		nameHash, err := h.hashValue(reflect.ValueOf(fieldType.Name), nil)
+		if err != nil {
+			return 0, err
+		}
+
+		// Hash field value
+		valueHash, err := h.hashValue(fieldValue, &visitOptions{
+			flags:       flags,
+			structValue: parent,
+			fieldName:   fieldType.Name,
+		})
+		if err != nil {
+			return 0, err
+		}
+
+		fieldHash := h.hashUpdateOrdered(nameHash, valueHash)
+		accumulated = hashUpdateUnordered(accumulated, fieldHash)
+	}
+
+	accumulated = h.hashFinishUnordered(accumulated)
+	return accumulated, nil
+}
+
+func (h *hasher) hashValue(value reflect.Value, options *visitOptions) (uint64, error) {
+	// Unwrap interfaces and pointers
+	value = h.unwrapValue(value)
+
+	if !value.IsValid() {
+		return h.hashZeroValue()
+	}
+
+	// Check for custom Hashable implementation
+	if hashVal, ok, err := h.tryHashable(value); ok || err != nil {
+		return hashVal, err
+	}
+
+	// Normalize numeric types for binary writing
+	value = h.normalizeValue(value)
+
+	// Fast path for numeric types
+	kind := value.Kind()
+	if kind >= reflect.Int && kind <= reflect.Complex128 {
+		return h.hashNumeric(value)
+	}
+
+	// Special handling for time.Time
+	if value.Type() == timeType {
+		return h.hashTime(value)
+	}
+
+	// Dispatch by kind
+	switch kind {
+	case reflect.Array:
+		return h.hashArray(value, options)
+	case reflect.Map:
+		return h.hashMap(value, options)
+	case reflect.Struct:
+		return h.hashStruct(value, options)
+	case reflect.Slice:
+		return h.hashSlice(value, options)
+	case reflect.String:
+		return h.hashString(value)
+	default:
+		return 0, fmt.Errorf("unsupported kind: %s", kind)
+	}
+}
+
 // hashUpdateUnordered hashes two values in unordered.
 //
 // Parameters:

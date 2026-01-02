@@ -42,28 +42,28 @@ type OptionsBuilder struct {
 	opts Options
 }
 
-// HashInclude is a function that can be used to check if a field should be included in the hash.
+// SelectField is a function that can be used to check if a field should be included in the hash.
 // It returns a boolean indicating whether the field should be included in the hash.
 // If the function returns an error, the field will not be included in the hash.
-type HashInclude func(field string, value any) (bool, error)
+type SelectField func(field string, value any) (bool, error)
 
-// HashIncludeMap is a function that can be used to check if a map field should be included in the hash.
+// SelectMapEntry is a function that can be used to check if a map field should be included in the hash.
 // It returns a boolean indicating whether the map field should be included in the hash.
 // If the function returns an error, the map field will not be included in the hash.
-type HashIncludeMap func(field string, k, v any) (bool, error)
+type SelectMapEntry func(field string, k, v any) (bool, error)
 
-// Includable is an interface that can optionally be implemented by
+// FieldSelector is an interface that can optionally be implemented by
 // a struct. It will be called for each field in the struct to check whether
 // it should be included in the hash.
-type Includable interface {
-	HashInclude() HashInclude
+type FieldSelector interface {
+	SelectField() SelectField
 }
 
-// IncludableMap is an interface that can optionally be implemented by
+// MapSelector is an interface that can optionally be implemented by
 // a struct. It will be called for each map field in the struct to check whether
 // it should be included in the hash.
-type IncludableMap interface {
-	HashIncludeMap() HashIncludeMap
+type MapSelector interface {
+	SelectMapEntry() SelectMapEntry
 }
 
 // Hashable is an interface that can optionally be implemented by
