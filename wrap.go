@@ -1664,15 +1664,34 @@ func (w *wrapper) WithIsLast(v bool) *wrapper {
 // This method concatenates the values of the `statusCode`, `message`, `data`, and `meta` fields
 // into a single string and then computes a hash of that string using the `strutil.Hash256` function.
 // The resulting hash string can be used for various purposes, such as caching or integrity checks.
-func (w *wrapper) Hash256() string {
+func (w *wrapper) Hash256() (str string, result *wrapper) {
 	if !w.Available() {
-		return ""
+		return "", w
 	}
 	h, err := hashy.Hash256(w.StatusCode(), w.message, w.data, w.meta.Respond())
 	if err != nil {
+		return "", New().
+			WithHeader(InternalServerError).
+			WithErrSck(err).
+			WithMessage("Failed to generate hash")
+	}
+	return h, w
+}
+
+// Hash256Safe generates a hash string for the `wrapper` instance.
+//
+// This method generates a hash string for the `wrapper` instance using the `Hash256` method.
+// If the `wrapper` instance is not available or the hash generation fails, it returns an empty string.
+//
+// Returns:
+//   - A string representing the hash value.
+//   - An empty string if the `wrapper` instance is not available or the hash generation fails.
+func (w *wrapper) Hash256Safe() string {
+	hash, _w := w.Hash256()
+	if _w.IsError() {
 		return ""
 	}
-	return h
+	return hash
 }
 
 // WithStreaming enables streaming mode for the wrapper and returns a streaming wrapper for enhanced data transfer capabilities.
@@ -1830,7 +1849,8 @@ func (w *wrapper) Respond() map[string]any {
 		return nil
 	}
 	w.cacheMutex.RLock()
-	hash := w.Hash256()
+	hash := w.Hash256Safe()
+
 	if w.cacheHash == hash && w.cachedWrap != nil {
 		defer w.cacheMutex.RUnlock()
 		return w.cachedWrap
