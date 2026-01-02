@@ -1,6 +1,10 @@
 package hash
 
-import "hash"
+import (
+	"hash"
+	"reflect"
+	"time"
+)
 
 // Options contains configuration for hash generation.
 type Options struct {
@@ -80,3 +84,45 @@ type Hashable interface {
 type ErrNotStringer struct {
 	Field string
 }
+
+// hasher traverses Go values and computes their hash.
+//
+// Parameters:
+//   - hash: The hash function to use.
+//   - tagName: The struct tag to look at when hashing the structure.
+//   - treatNilAsZero: Determines if nil pointer should be treated equal to a zero value of pointed type.
+//   - ignoreZeroValue: Determines if zero value fields should be ignored for hash calculation.
+//   - slicesAsSets: Determines if slices should be treated as sets.
+//   - useStringer: Determines if fmt.Stringer should be used always.
+//
+// Returns:
+//   - A pointer to the `hasher` struct.
+type hasher struct {
+	hash            hash.Hash64
+	tagName         string
+	treatNilAsZero  bool
+	ignoreZeroValue bool
+	slicesAsSets    bool
+	useStringer     bool
+}
+
+// visitFlag is a flag that determines the behavior of the visitor.
+type visitFlag uint
+
+// visitOptions contains context for visiting a value.
+//
+// Parameters:
+//   - flags: The flags to use for the visit.
+//   - structValue: The value of the struct being visited.
+//   - fieldName: The name of the field being visited.
+//
+// Returns:
+//   - A pointer to the `visitOptions` struct.
+type visitOptions struct {
+	flags       visitFlag
+	structValue any
+	fieldName   string
+}
+
+// timeType is the type of time.Time.
+var timeType = reflect.TypeOf(time.Time{})
