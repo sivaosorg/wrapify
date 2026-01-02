@@ -256,10 +256,10 @@ func DerefOr[T any](ptr *T, defaultValue T) T {
 //	}
 //
 //	func ValidateCreateUser(req CreateUserRequest) error {
-//	    if wrapify.IsNil(req.Name) {
+//	    if ref.IsNil(req.Name) {
 //	        return errors.New("name is required")
 //	    }
-//	    if wrapify.IsNil(req.Email) {
+//	    if ref.IsNil(req.Email) {
 //	        return errors.New("email is required")
 //	    }
 //	    // Age is optional, no need to check
@@ -275,13 +275,13 @@ func DerefOr[T any](ptr *T, defaultValue T) T {
 //	}
 //
 //	func InitializeServices(cfg Config) {
-//	    if !wrapify.IsNil(cfg.Database) {
+//	    if !ref.IsNil(cfg.Database) {
 //	        initDatabase(cfg.Database)
 //	    }
-//	    if !wrapify.IsNil(cfg.Cache) {
+//	    if !ref.IsNil(cfg.Cache) {
 //	        initCache(cfg.Cache)
 //	    }
-//	    if !wrapify.IsNil(cfg.Queue) {
+//	    if !ref.IsNil(cfg.Queue) {
 //	        initQueue(cfg.Queue)
 //	    }
 //	}
@@ -294,7 +294,7 @@ func DerefOr[T any](ptr *T, defaultValue T) T {
 //	}
 //
 //	resp := callAPI()
-//	if wrapify.IsNil(resp.Error) {
+//	if ref.IsNil(resp.Error) {
 //	    // Success case
 //	    processData(resp.Data)
 //	} else {
@@ -321,13 +321,13 @@ func IsNil[T any](ptr *T) bool {
 //	func DisplayUserInfo(user User) {
 //	    fmt.Printf("User: %s\n", user.Name)
 //
-//	    if wrapify.IsNotNil(user.Email) {
+//	    if ref.IsNotNil(user.Email) {
 //	        fmt.Printf("Email: %s\n", *user.Email)
 //	    }
-//	    if wrapify.IsNotNil(user.Phone) {
+//	    if ref.IsNotNil(user.Phone) {
 //	        fmt.Printf("Phone: %s\n", *user.Phone)
 //	    }
-//	    if wrapify.IsNotNil(user.Address) {
+//	    if ref.IsNotNil(user.Address) {
 //	        fmt.Printf("Address: %v\n", *user.Address)
 //	    }
 //	}
@@ -336,13 +336,13 @@ func IsNil[T any](ptr *T) bool {
 //
 //	func CountProvidedFields(req UpdateUserRequest) int {
 //	    count := 0
-//	    if wrapify.IsNotNil(req.Name) {
+//	    if ref.IsNotNil(req.Name) {
 //	        count++
 //	    }
-//	    if wrapify.IsNotNil(req.Email) {
+//	    if ref.IsNotNil(req.Email) {
 //	        count++
 //	    }
-//	    if wrapify.IsNotNil(req.Age) {
+//	    if ref.IsNotNil(req.Age) {
 //	        count++
 //	    }
 //	    return count
@@ -367,10 +367,10 @@ func IsNotNil[T any](ptr *T) bool {
 //	    MaxRetries: ref.Ptr(5),
 //	}
 //
-//	if wrapify.Equal(oldConfig.Timeout, newConfig.Timeout) {
+//	if ref.Equal(oldConfig.Timeout, newConfig.Timeout) {
 //	    fmt.Println("Timeout unchanged")
 //	}
-//	if !wrapify.Equal(oldConfig.MaxRetries, newConfig.MaxRetries) {
+//	if !ref.Equal(oldConfig.MaxRetries, newConfig.MaxRetries) {
 //	    fmt.Println("MaxRetries changed")
 //	}
 //
@@ -383,13 +383,13 @@ func IsNotNil[T any](ptr *T) bool {
 //	}
 //
 //	func HasChanges(current User, update UpdateUserRequest) bool {
-//	    if !wrapify.Equal(ref.Ptr(current.Name), update.Name) {
+//	    if !ref.Equal(ref.Ptr(current.Name), update.Name) {
 //	        return true
 //	    }
-//	    if !wrapify.Equal(current.Email, update.Email) {
+//	    if !ref.Equal(current.Email, update.Email) {
 //	        return true
 //	    }
-//	    if !wrapify.Equal(current.Age, update.Age) {
+//	    if !ref.Equal(current.Age, update.Age) {
 //	        return true
 //	    }
 //	    return false
@@ -400,7 +400,7 @@ func IsNotNil[T any](ptr *T) bool {
 //	oldResp := &APIResponse{Status: "success"}
 //	newResp := &APIResponse{Status: "success"}
 //
-//	if wrapify.Equal(ref.Ptr(oldResp.Status), ref.Ptr(newResp.Status)) {
+//	if ref.Equal(ref.Ptr(oldResp.Status), ref.Ptr(newResp.Status)) {
 //	    fmt.Println("Status is the same")
 //	}
 //
@@ -429,8 +429,8 @@ func Equal[T comparable](a, b *T) bool {
 //
 //	// Create independent copy
 //	configCopy := Config{
-//	    Host: wrapify.Copy(originalConfig.Host),
-//	    Port: wrapify.Copy(originalConfig.Port),
+//	    Host: ref.Copy(originalConfig.Host),
+//	    Port: ref.Copy(originalConfig.Port),
 //	}
 //
 //	// Modifying copy doesn't affect original
@@ -447,9 +447,9 @@ func Equal[T comparable](a, b *T) bool {
 //
 //	func CloneUser(user User) User {
 //	    return User{
-//	        Name:  wrapify.Copy(user.Name),
-//	        Email: wrapify.Copy(user.Email),
-//	        Age:   wrapify.Copy(user.Age),
+//	        Name:  ref.Copy(user.Name),
+//	        Email: ref.Copy(user.Email),
+//	        Age:   ref.Copy(user.Age),
 //	    }
 //	}
 //
@@ -470,7 +470,7 @@ func Equal[T comparable](a, b *T) bool {
 //
 //	// Create copy for retry with modifications
 //	retryReq := UpdateUserRequest{
-//	    Name: wrapify.Copy(originalReq.Name),
+//	    Name: ref.Copy(originalReq.Name),
 //	    Age:  ref.Ptr(26), // Different value
 //	}
 func Copy[T any](ptr *T) *T {
@@ -500,13 +500,13 @@ func Copy[T any](ptr *T) *T {
 //	}
 //
 //	// Use first non-nil value: user > env > default
-//	finalHost := wrapify.CoalescePtr(
+//	finalHost := ref.CoalescePtr(
 //	    userConfig.Host,
 //	    envConfig.Host,
 //	    defaultConfig.Host,
 //	) // Returns envConfig.Host
 //
-//	finalPort := wrapify.CoalescePtr(
+//	finalPort := ref.CoalescePtr(
 //	    userConfig.Port,
 //	    envConfig.Port,
 //	    defaultConfig.Port,
@@ -521,7 +521,7 @@ func Copy[T any](ptr *T) *T {
 //	}
 //
 //	resp := getResponse()
-//	data := wrapify.CoalescePtr(
+//	data := ref.CoalescePtr(
 //	    resp.PrimaryData,
 //	    resp.SecondaryData,
 //	    resp.CachedData,
@@ -541,13 +541,13 @@ func Copy[T any](ptr *T) *T {
 //	    Language: ref.Ptr("en-US"),
 //	}
 //
-//	theme := wrapify.CoalescePtr(
+//	theme := ref.CoalescePtr(
 //	    userPref.Theme,
 //	    orgPref.Theme,
 //	    systemPref.Theme,
 //	) // "dark"
 //
-//	language := wrapify.CoalescePtr(
+//	language := ref.CoalescePtr(
 //	    userPref.Language,
 //	    orgPref.Language,
 //	    systemPref.Language,
@@ -571,7 +571,7 @@ func CoalescePtr[T any](ptrs ...*T) *T {
 //	var envTimeout *time.Duration // nil
 //	defaultTimeout := ref.Ptr(30 * time.Second)
 //
-//	timeout := wrapify.Coalesce(
+//	timeout := ref.Coalesce(
 //	    userTimeout,
 //	    envTimeout,
 //	    defaultTimeout,
@@ -583,7 +583,7 @@ func CoalescePtr[T any](ptrs ...*T) *T {
 //	var orgTitle *string  // nil
 //	defaultTitle := ref.Ptr("Untitled")
 //
-//	title := wrapify.Coalesce(
+//	title := ref.Coalesce(
 //	    userTitle,
 //	    orgTitle,
 //	    defaultTitle,
@@ -602,7 +602,7 @@ func CoalescePtr[T any](ptrs ...*T) *T {
 //	    Username:    "john123",
 //	}
 //
-//	name := wrapify.Coalesce(
+//	name := ref.Coalesce(
 //	    user.PreferredName,
 //	    user.DisplayName,
 //	    ref.Ptr(user.Username),
@@ -614,7 +614,7 @@ func CoalescePtr[T any](ptrs ...*T) *T {
 //	var userLimit *int       // nil
 //	var defaultLimit *int    // nil
 //
-//	limit := wrapify.Coalesce(
+//	limit := ref.Coalesce(
 //	    customLimit,
 //	    userLimit,
 //	    defaultLimit,
@@ -646,9 +646,9 @@ func Coalesce[T any](ptrs ...*T) T {
 //	score := 100
 //
 //	req := UpdateUserRequest{
-//	    Name:  wrapify.ToPtr(name),   // &"John"
-//	    Age:   wrapify.ToPtr(age),    // nil (zero value)
-//	    Score: wrapify.ToPtr(score),  // &100
+//	    Name:  ref.ToPtr(name),   // &"John"
+//	    Age:   ref.ToPtr(age),    // nil (zero value)
+//	    Score: ref.ToPtr(score),  // &100
 //	}
 //
 //	// JSON output: {"name":"John","score":100}
@@ -659,13 +659,13 @@ func Coalesce[T any](ptrs ...*T) T {
 //	func UpdateUser(id int, name string, age int, email string) {
 //	    update := map[string]interface{}{}
 //
-//	    if name := wrapify.ToPtr(name); name != nil {
+//	    if name := ref.ToPtr(name); name != nil {
 //	        update["name"] = *name
 //	    }
-//	    if age := wrapify.ToPtr(age); age != nil {
+//	    if age := ref.ToPtr(age); age != nil {
 //	        update["age"] = *age
 //	    }
-//	    if email := wrapify.ToPtr(email); email != nil {
+//	    if email := ref.ToPtr(email); email != nil {
 //	        update["email"] = *email
 //	    }
 //
@@ -688,10 +688,10 @@ func Coalesce[T any](ptrs ...*T) T {
 //	inStock := false   // Zero value for bool, will be nil
 //
 //	filter := SearchFilter{
-//	    Query:    wrapify.ToPtr(query),    // &"laptop"
-//	    MinPrice: wrapify.ToPtr(minPrice), // nil
-//	    MaxPrice: wrapify.ToPtr(maxPrice), // &1000.0
-//	    InStock:  wrapify.ToPtr(inStock),  // nil
+//	    Query:    ref.ToPtr(query),    // &"laptop"
+//	    MinPrice: ref.ToPtr(minPrice), // nil
+//	    MaxPrice: ref.ToPtr(maxPrice), // &1000.0
+//	    InStock:  ref.ToPtr(inStock),  // nil
 //	}
 //
 // Note: This function requires type T to be comparable to detect zero values.
@@ -712,12 +712,12 @@ func ToPtr[T comparable](v T) *T {
 //	name := ref.Ptr("john doe")
 //
 //	// Convert to uppercase
-//	upperName := wrapify.Map(name, strings.ToUpper)
+//	upperName := ref.Map(name, strings.ToUpper)
 //	fmt.Println(*upperName) // "JOHN DOE"
 //
 //	// Nil input returns nil
 //	var nilName *string
-//	result := wrapify.Map(nilName, strings.ToUpper)
+//	result := ref.Map(nilName, strings.ToUpper)
 //	fmt.Println(result) // nil
 //
 // Example - Numeric transformations:
@@ -725,7 +725,7 @@ func ToPtr[T comparable](v T) *T {
 //	price := ref.Ptr(100.0)
 //
 //	// Apply tax
-//	priceWithTax := wrapify.Map(price, func(p float64) float64 {
+//	priceWithTax := ref.Map(price, func(p float64) float64 {
 //	    return p * 1.1 // 10% tax
 //	})
 //	fmt.Println(*priceWithTax) // 110.0
@@ -735,7 +735,7 @@ func ToPtr[T comparable](v T) *T {
 //	intValue := ref.Ptr(42)
 //
 //	// Convert int to string
-//	stringValue := wrapify.Map(intValue, func(i int) string {
+//	stringValue := ref.Map(intValue, func(i int) string {
 //	    return fmt.Sprintf("value: %d", i)
 //	})
 //	fmt.Println(*stringValue) // "value: 42"
@@ -751,7 +751,7 @@ func ToPtr[T comparable](v T) *T {
 //	}
 //
 //	// Normalize email
-//	normalizedEmail := wrapify.Map(input.Email, func(email string) string {
+//	normalizedEmail := ref.Map(input.Email, func(email string) string {
 //	    return strings.ToLower(strings.TrimSpace(email))
 //	})
 //	fmt.Println(*normalizedEmail) // "user@example.com"
@@ -759,7 +759,7 @@ func ToPtr[T comparable](v T) *T {
 // Example - Chain transformations:
 //
 //	age := ref.Ptr(25)
-//	ageGroup := wrapify.Map(age, func(a int) string {
+//	ageGroup := ref.Map(age, func(a int) string {
 //	    if a < 18 {
 //	        return "minor"
 //	    } else if a < 65 {
@@ -785,13 +785,13 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //	age := ref.Ptr(15)
 //
 //	// Only keep age if >= 18
-//	validAge := wrapify.Filter(age, func(a int) bool {
+//	validAge := ref.Filter(age, func(a int) bool {
 //	    return a >= 18
 //	})
 //	fmt.Println(validAge) // nil (15 < 18)
 //
 //	adult := ref.Ptr(25)
-//	validAdult := wrapify.Filter(adult, func(a int) bool {
+//	validAdult := ref.Filter(adult, func(a int) bool {
 //	    return a >= 18
 //	})
 //	fmt.Println(*validAdult) // 25
@@ -800,13 +800,13 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //
 //	email := ref.Ptr("invalid-email")
 //
-//	validEmail := wrapify.Filter(email, func(e string) bool {
+//	validEmail := ref.Filter(email, func(e string) bool {
 //	    return strings.Contains(e, "@")
 //	})
 //	fmt.Println(validEmail) // nil
 //
 //	goodEmail := ref.Ptr("user@example.com")
-//	validGoodEmail := wrapify.Filter(goodEmail, func(e string) bool {
+//	validGoodEmail := ref.Filter(goodEmail, func(e string) bool {
 //	    return strings.Contains(e, "@")
 //	})
 //	fmt.Println(*validGoodEmail) // "user@example.com"
@@ -826,10 +826,10 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //
 //	for _, p := range products {
 //	    // Only products under $100
-//	    affordablePrice := wrapify.Filter(p.Price, func(price float64) bool {
+//	    affordablePrice := ref.Filter(p.Price, func(price float64) bool {
 //	        return price < 100
 //	    })
-//	    if wrapify.IsNotNil(affordablePrice) {
+//	    if ref.IsNotNil(affordablePrice) {
 //	        fmt.Printf("%s: $%.2f\n", p.Name, *affordablePrice)
 //	    }
 //	}
@@ -841,7 +841,7 @@ func Map[T any, R any](ptr *T, fn func(T) R) *R {
 //
 //	username := ref.Ptr("ab")
 //
-//	validUsername := wrapify.Filter(username, func(u string) bool {
+//	validUsername := ref.Filter(username, func(u string) bool {
 //	    return len(u) >= 3 && len(u) <= 20
 //	})
 //	fmt.Println(validUsername) // nil (too short)
@@ -869,7 +869,7 @@ func Filter[T any](ptr *T, predicate func(T) bool) *T {
 //	    Timeout: ref.Ptr(30 * time.Second),
 //	}
 //
-//	timeout := wrapify.OrElse(userConfig.Timeout, defaultConfig.Timeout)
+//	timeout := ref.OrElse(userConfig.Timeout, defaultConfig.Timeout)
 //	fmt.Println(*timeout) // 30s
 //
 // Example - HTTP client options:
@@ -888,15 +888,15 @@ func Filter[T any](ptr *T, predicate func(T) bool) *T {
 //	    Timeout:   ref.Ptr(10 * time.Second),
 //	}
 //
-//	ua := wrapify.OrElse(opts.UserAgent, defaultOpts.UserAgent)
-//	to := wrapify.OrElse(opts.Timeout, defaultOpts.Timeout)
+//	ua := ref.OrElse(opts.UserAgent, defaultOpts.UserAgent)
+//	to := ref.OrElse(opts.Timeout, defaultOpts.Timeout)
 //
 // Example - Response data with cache:
 //
 //	liveData := fetchFromAPI()  // May return nil
 //	cachedData := getFromCache() // Fallback
 //
-//	data := wrapify.OrElse(liveData, cachedData)
+//	data := ref.OrElse(liveData, cachedData)
 func OrElse[T any](ptr, alternative *T) *T {
 	if ptr != nil {
 		return ptr
@@ -915,7 +915,7 @@ func OrElse[T any](ptr, alternative *T) *T {
 //	    cached := getFromCache(userID)
 //
 //	    // Only query database if cache miss
-//	    return wrapify.OrElseGet(cached, func() *string {
+//	    return ref.OrElseGet(cached, func() *string {
 //	        return queryDatabase(userID) // Expensive operation
 //	    })
 //	}
@@ -928,7 +928,7 @@ func OrElse[T any](ptr, alternative *T) *T {
 //
 //	envConfig := loadFromEnv() // Fast
 //
-//	config := wrapify.OrElseGet(envConfig.APIKey, func() *string {
+//	config := ref.OrElseGet(envConfig.APIKey, func() *string {
 //	    // Only load from file if env var not set
 //	    cfg := loadFromFile() // Slow
 //	    return cfg.APIKey
@@ -936,7 +936,7 @@ func OrElse[T any](ptr, alternative *T) *T {
 //
 // Example - Lazy default value generation:
 //
-//	sessionID := wrapify.OrElseGet(existingSession, func() *string {
+//	sessionID := ref.OrElseGet(existingSession, func() *string {
 //	    // Only generate new UUID if no existing session
 //	    return ref.Ptr(uuid.New().String())
 //	})
@@ -945,7 +945,7 @@ func OrElse[T any](ptr, alternative *T) *T {
 //
 //	cachedPrice := getCachedPrice(productID)
 //
-//	price := wrapify.OrElseGet(cachedPrice, func() *float64 {
+//	price := ref.OrElseGet(cachedPrice, func() *float64 {
 //	    // Only call pricing API if cache miss
 //	    return fetchPriceFromAPI(productID)
 //	})
@@ -973,11 +973,11 @@ func OrElseGet[T any](ptr *T, supplier func() *T) *T {
 //	    Email: ref.Ptr("john@example.com"),
 //	}
 //
-//	wrapify.If(user.Email, func(email string) {
+//	ref.If(user.Email, func(email string) {
 //	    log.Printf("Email: %s", email)
 //	})
 //
-//	wrapify.If(user.Phone, func(phone string) {
+//	ref.If(user.Phone, func(phone string) {
 //	    log.Printf("Phone: %s", phone) // Not executed
 //	})
 //
@@ -994,15 +994,15 @@ func OrElseGet[T any](ptr *T, supplier func() *T) *T {
 //	    SMS:   ref.Ptr("+1234567890"),
 //	}
 //
-//	wrapify.If(notif.Email, func(email string) {
+//	ref.If(notif.Email, func(email string) {
 //	    sendEmail(email, "Hello!")
 //	})
 //
-//	wrapify.If(notif.SMS, func(phone string) {
+//	ref.If(notif.SMS, func(phone string) {
 //	    sendSMS(phone, "Hello!")
 //	})
 //
-//	wrapify.If(notif.Push, func(token string) {
+//	ref.If(notif.Push, func(token string) {
 //	    sendPush(token, "Hello!") // Not executed
 //	})
 //
@@ -1018,7 +1018,7 @@ func OrElseGet[T any](ptr *T, supplier func() *T) *T {
 //	    Metadata: ref.Ptr(map[string]string{"ip": "127.0.0.1"}),
 //	}
 //
-//	wrapify.If(event.Metadata, func(meta map[string]string) {
+//	ref.If(event.Metadata, func(meta map[string]string) {
 //	    for k, v := range meta {
 //	        log.Printf("  %s: %s", k, v)
 //	    }
@@ -1041,7 +1041,7 @@ func If[T any](ptr *T, consumer func(T)) bool {
 //	    PreferredName: ref.Ptr("Johnny"),
 //	}
 //
-//	wrapify.IfElse(user.PreferredName,
+//	ref.IfElse(user.PreferredName,
 //	    func(name string) {
 //	        fmt.Printf("Hello, %s!", name)
 //	    },
@@ -1056,7 +1056,7 @@ func If[T any](ptr *T, consumer func(T)) bool {
 //	    CustomHandler: ref.Ptr(myHandler),
 //	}
 //
-//	wrapify.IfElse(config.CustomHandler,
+//	ref.IfElse(config.CustomHandler,
 //	    func(handler Handler) {
 //	        handler.Handle(request)
 //	    },
@@ -1069,7 +1069,7 @@ func If[T any](ptr *T, consumer func(T)) bool {
 //
 //	cached := getFromCache(key)
 //
-//	wrapify.IfElse(cached,
+//	ref.IfElse(cached,
 //	    func(data Data) {
 //	        log.Println("Cache hit")
 //	        processData(data)
@@ -1096,16 +1096,16 @@ func IfElse[T any](ptr *T, onPresent func(T), onAbsent func()) {
 // Example - After validation:
 //
 //	func ProcessUser(req CreateUserRequest) error {
-//	    if wrapify.IsNil(req.Name) {
+//	    if ref.IsNil(req.Name) {
 //	        return errors.New("name is required")
 //	    }
-//	    if wrapify.IsNil(req.Email) {
+//	    if ref.IsNil(req.Email) {
 //	        return errors.New("email is required")
 //	    }
 //
 //	    // Safe to use Must after validation
-//	    name := wrapify.Must(req.Name)
-//	    email := wrapify.Must(req.Email)
+//	    name := ref.Must(req.Name)
+//	    email := ref.Must(req.Email)
 //
 //	    createUser(name, email)
 //	    return nil
@@ -1117,8 +1117,8 @@ func IfElse[T any](ptr *T, onPresent func(T), onAbsent func()) {
 //	    user := createTestUser()
 //
 //	    // In tests, we expect these to be non-nil
-//	    name := wrapify.Must(user.Name)
-//	    email := wrapify.Must(user.Email)
+//	    name := ref.Must(user.Name)
+//	    email := ref.Must(user.Email)
 //
 //	    assert.Equal(t, "Test User", name)
 //	    assert.Equal(t, "test@example.com", email)
@@ -1129,9 +1129,9 @@ func IfElse[T any](ptr *T, onPresent func(T), onAbsent func()) {
 //	config := loadConfig()
 //
 //	// These are required, panic if missing
-//	dbHost := wrapify.Must(config.Database.Host)
-//	dbPort := wrapify.Must(config.Database.Port)
-//	apiKey := wrapify.Must(config.API.Key)
+//	dbHost := ref.Must(config.Database.Host)
+//	dbPort := ref.Must(config.Database.Port)
+//	apiKey := ref.Must(config.API.Key)
 //
 //	connectDB(dbHost, dbPort, apiKey)
 //
@@ -1153,18 +1153,18 @@ func Must[T any](ptr *T) T {
 //	    cfg := loadConfigFromFile()
 //
 //	    return Config{
-//	        DBHost: wrapify.MustPtr(cfg.DBHost, "database host is required"),
-//	        DBPort: wrapify.MustPtr(cfg.DBPort, "database port is required"),
-//	        APIKey: wrapify.MustPtr(cfg.APIKey, "API key is required"),
+//	        DBHost: ref.MustPtr(cfg.DBHost, "database host is required"),
+//	        DBPort: ref.MustPtr(cfg.DBPort, "database port is required"),
+//	        APIKey: ref.MustPtr(cfg.APIKey, "API key is required"),
 //	    }
 //	}
 //
 // Example - Critical validation:
 //
 //	func ProcessPayment(req PaymentRequest) error {
-//	    amount := wrapify.MustPtr(req.Amount, "payment amount is required")
-//	    currency := wrapify.MustPtr(req.Currency, "currency is required")
-//	    cardToken := wrapify.MustPtr(req.CardToken, "card token is required")
+//	    amount := ref.MustPtr(req.Amount, "payment amount is required")
+//	    currency := ref.MustPtr(req.Currency, "currency is required")
+//	    cardToken := ref.MustPtr(req.CardToken, "card token is required")
 //
 //	    return processPayment(amount, currency, cardToken)
 //	}
@@ -1196,7 +1196,7 @@ func MustPtr[T any](ptr *T, message string) T {
 //	    Address: ref.Ptr(Address{City: "NYC"}),
 //	}
 //
-//	zipCode := wrapify.FlatMap(user.Address, func(addr Address) *string {
+//	zipCode := ref.FlatMap(user.Address, func(addr Address) *string {
 //	    return addr.ZipCode
 //	})
 //	// Returns nil if Address is nil OR ZipCode is nil
@@ -1205,11 +1205,11 @@ func MustPtr[T any](ptr *T, message string) T {
 //
 //	userID := ref.Ptr(123)
 //
-//	user := wrapify.FlatMap(userID, func(id int) *User {
+//	user := ref.FlatMap(userID, func(id int) *User {
 //	    return findUserByID(id) // May return nil
 //	})
 //
-//	address := wrapify.FlatMap(user, func(u User) *Address {
+//	address := ref.FlatMap(user, func(u User) *Address {
 //	    return u.Address // May be nil
 //	})
 //
@@ -1225,7 +1225,7 @@ func MustPtr[T any](ptr *T, message string) T {
 //
 //	resp := callAPI()
 //
-//	user := wrapify.FlatMap(resp.Data, func(data ResponseData) *User {
+//	user := ref.FlatMap(resp.Data, func(data ResponseData) *User {
 //	    return data.User
 //	})
 //
@@ -1241,8 +1241,8 @@ func MustPtr[T any](ptr *T, message string) T {
 //
 //	config := loadConfig()
 //
-//	connString := wrapify.FlatMap(config.Database, func(db DatabaseConfig) *string {
-//	    return wrapify.FlatMap(db.Connection, func(conn ConnectionConfig) *string {
+//	connString := ref.FlatMap(config.Database, func(db DatabaseConfig) *string {
+//	    return ref.FlatMap(db.Connection, func(conn ConnectionConfig) *string {
 //	        return ref.Ptr(conn.String())
 //	    })
 //	})
@@ -1267,11 +1267,11 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	}
 //
 //	email := ref.Ptr("user@example.com")
-//	validEmail := wrapify.Validate(email, isValidEmail)
+//	validEmail := ref.Validate(email, isValidEmail)
 //	// Returns email pointer
 //
 //	badEmail := ref.Ptr("invalid-email")
-//	invalidEmail := wrapify.Validate(badEmail, isValidEmail)
+//	invalidEmail := ref.Validate(badEmail, isValidEmail)
 //	// Returns nil
 //
 // Example - Age validation:
@@ -1284,10 +1284,10 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	}
 //
 //	age := ref.Ptr(25)
-//	validAge := wrapify.Validate(age, isAdult) // Returns age pointer
+//	validAge := ref.Validate(age, isAdult) // Returns age pointer
 //
 //	minorAge := ref.Ptr(15)
-//	invalidAge := wrapify.Validate(minorAge, isAdult) // Returns nil
+//	invalidAge := ref.Validate(minorAge, isAdult) // Returns nil
 //
 // Example - Password strength validation:
 //
@@ -1299,9 +1299,9 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	}
 //
 //	password := ref.Ptr("StrongP@ss123")
-//	validPassword := wrapify.Validate(password, isStrongPassword)
+//	validPassword := ref.Validate(password, isStrongPassword)
 //
-//	if wrapify.IsNotNil(validPassword) {
+//	if ref.IsNotNil(validPassword) {
 //	    // Password is valid, proceed
 //	    hashAndStore(*validPassword)
 //	}
@@ -1314,7 +1314,7 @@ func FlatMap[T any, R any](ptr *T, fn func(T) *R) *R {
 //	}
 //
 //	inputURL := ref.Ptr("https://example.com")
-//	validURL := wrapify.Validate(inputURL, isValidURL)
+//	validURL := ref.Validate(inputURL, isValidURL)
 func Validate[T any](ptr *T, validator func(T) error) *T {
 	if ptr == nil {
 		return nil
@@ -1332,7 +1332,7 @@ func Validate[T any](ptr *T, validator func(T) error) *T {
 //
 //	name := ref.Ptr("john")
 //
-//	formatted := wrapify.MapOr(name,
+//	formatted := ref.MapOr(name,
 //	    func(n string) string {
 //	        return strings.ToUpper(n)
 //	    },
@@ -1341,7 +1341,7 @@ func Validate[T any](ptr *T, validator func(T) error) *T {
 //	// Returns "JOHN"
 //
 //	var nilName *string
-//	formatted2 := wrapify.MapOr(nilName,
+//	formatted2 := ref.MapOr(nilName,
 //	    func(n string) string {
 //	        return strings.ToUpper(n)
 //	    },
@@ -1353,7 +1353,7 @@ func Validate[T any](ptr *T, validator func(T) error) *T {
 //
 //	discount := ref.Ptr(0.1) // 10% discount
 //
-//	finalPrice := wrapify.MapOr(discount,
+//	finalPrice := ref.MapOr(discount,
 //	    func(d float64) float64 {
 //	        return 100.0 * (1 - d)
 //	    },
@@ -1365,7 +1365,7 @@ func Validate[T any](ptr *T, validator func(T) error) *T {
 //
 //	createdAt := ref.Ptr(time.Now())
 //
-//	formatted := wrapify.MapOr(createdAt,
+//	formatted := ref.MapOr(createdAt,
 //	    func(t time.Time) string {
 //	        return t.Format("2006-01-02")
 //	    },
@@ -1396,7 +1396,7 @@ func MapOr[T any, R any](ptr *T, fn func(T) R, defaultValue R) R {
 //	    Password: ref.Ptr("secret"),
 //	}
 //
-//	if wrapify.All(req.Name, req.Email, req.Password) {
+//	if ref.All(req.Name, req.Email, req.Password) {
 //	    createUser(*req.Name, *req.Email, *req.Password)
 //	} else {
 //	    return errors.New("all fields are required")
@@ -1413,7 +1413,7 @@ func MapOr[T any, R any](ptr *T, fn func(T) R, defaultValue R) R {
 //	}
 //
 //	func ValidateConfig(cfg DatabaseConfig) error {
-//	    if !wrapify.All(cfg.Host, cfg.Port, cfg.Database, cfg.User, cfg.Password) {
+//	    if !ref.All(cfg.Host, cfg.Port, cfg.Database, cfg.User, cfg.Password) {
 //	        return errors.New("all database config fields are required")
 //	    }
 //	    return nil
@@ -1433,7 +1433,7 @@ func MapOr[T any, R any](ptr *T, fn func(T) R, defaultValue R) R {
 //	    // CardToken is nil
 //	}
 //
-//	if !wrapify.All(payment.Amount, payment.Currency, payment.CardToken) {
+//	if !ref.All(payment.Amount, payment.Currency, payment.CardToken) {
 //	    return errors.New("incomplete payment information")
 //	}
 func All[T any](ptrs ...*T) bool {
@@ -1461,7 +1461,7 @@ func All[T any](ptrs ...*T) bool {
 //	    Phone: ref.Ptr("+1234567890"),
 //	}
 //
-//	if wrapify.Any(contact.Email, contact.Phone, contact.SMS) {
+//	if ref.Any(contact.Email, contact.Phone, contact.SMS) {
 //	    fmt.Println("At least one contact method provided")
 //	} else {
 //	    return errors.New("at least one contact method is required")
@@ -1478,7 +1478,7 @@ func All[T any](ptrs ...*T) bool {
 //
 //	filter := SearchFilter{} // All nil
 //
-//	if !wrapify.Any(filter.Query, filter.Category, filter.MinPrice, filter.MaxPrice) {
+//	if !ref.Any(filter.Query, filter.Category, filter.MinPrice, filter.MaxPrice) {
 //	    return errors.New("at least one search criteria is required")
 //	}
 //
@@ -1492,7 +1492,7 @@ func All[T any](ptrs ...*T) bool {
 //
 //	req := UpdateUserRequest{} // All nil
 //
-//	if !wrapify.Any(req.Name, req.Email, req.Bio) {
+//	if !ref.Any(req.Name, req.Email, req.Bio) {
 //	    return errors.New("at least one field must be updated")
 //	}
 func Any[T any](ptrs ...*T) bool {
