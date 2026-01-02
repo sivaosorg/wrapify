@@ -81,8 +81,8 @@ func TestCallers(t *testing.T) {
 
 // 	for _, frame := range trace {
 // 		file := frame.File()
-// 		if file == wrapify.UnknownXC {
-// 			t.Errorf("Frame file returned UnknownXC")
+// 		if file == wrapify.ErrUnknown {
+// 			t.Errorf("Frame file returned ErrUnknown")
 // 		}
 // 		if len(file) == 0 {
 // 			t.Errorf("Frame file is empty")
