@@ -3,6 +3,8 @@ package hashy
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
 
 // HashValue generates a 64-bit hash value for a single value with options.
@@ -87,4 +89,29 @@ func Hash(data ...any) (uint64, error) {
 	}
 
 	return HashValue(values, opts)
+}
+
+// Hash256 generates a 256-bit hash string for the given data.
+// It accepts variadic arguments - if only one argument is provided, it hashes
+// that value. If multiple arguments are provided, it hashes them as a tuple.
+// The last argument can optionally be *Options.
+//
+// Returns:
+//   - string: The computed hash string (never empty for valid inputs)
+//   - error: Non-nil if hashing fails
+//
+// Example:
+//
+//	hash, err := Hash256(myStruct)                    // Single value
+//	hash, err := Hash256(val1, val2, val3)            // Multiple values
+//	hash, err := Hash256(myStruct, opts)              // With options
+//	hash, err := Hash256(val1, val2, val3, opts)      // Multiple values with options
+//
+// The hash is deterministic: identical values always produce identical hashes.
+func Hash256(data ...any) (string, error) {
+	hash, err := Hash(data...)
+	if err != nil {
+		return "", err
+	}
+	return strutil.Hash256(fmt.Sprintf("%v", hash)), nil
 }
