@@ -69,3 +69,14 @@ type IncludableMap interface {
 type Hashable interface {
 	Hash() (string, error)
 }
+
+// ErrNotStringer is returned when there's an error with hash:"string"
+//
+// Parameters:
+//   - Field: The name of the field that caused the error.
+//
+// Returns:
+//   - A pointer to the `ErrNotStringer` struct.
+type ErrNotStringer struct {
+	Field string
+}
