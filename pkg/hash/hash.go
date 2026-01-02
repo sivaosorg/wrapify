@@ -21,7 +21,7 @@ import (
 //	value := 1
 //	hash, err := HashValue(value, nil)
 //	fmt.Println(hash, err) // 1 nil
-func HashValue(value any, options *Options) (uint64, error) {
+func HashValue(value any, options *hashOptions) (uint64, error) {
 	if options == nil {
 		options = DefaultOptions()
 	}
@@ -65,11 +65,11 @@ func Hash(data ...any) (uint64, error) {
 		return 0, fmt.Errorf("pkg.hash: no data provided")
 	}
 
-	var opts *Options
+	var opts *hashOptions
 	var values []any
 
 	if len(data) > 0 {
-		if o, ok := data[len(data)-1].(*Options); ok {
+		if o, ok := data[len(data)-1].(*hashOptions); ok {
 			opts = o
 			values = data[:len(data)-1]
 		} else {

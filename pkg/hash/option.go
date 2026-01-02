@@ -118,7 +118,7 @@ func (b *OptionsBuilder) WithUseStringer(useStringer bool) *OptionsBuilder {
 //
 //	builder := NewOptions().Build()
 //	opts := builder.Build()
-func (b *OptionsBuilder) Build() *Options {
+func (b *OptionsBuilder) Build() *hashOptions {
 	return &b.opts
 }
 
@@ -129,7 +129,7 @@ func (b *OptionsBuilder) Build() *Options {
 //
 // Returns:
 //   - An error if the options are invalid, otherwise nil.
-func (o *Options) validate() error {
+func (o *hashOptions) validate() error {
 	if o.Hasher == nil {
 		return fmt.Errorf("pkg.hash.options: hasher cannot be nil")
 	}
