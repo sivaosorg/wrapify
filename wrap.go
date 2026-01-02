@@ -91,7 +91,7 @@ func (w *wrapper) StatusCode() int {
 		return 0
 	}
 	if w.IsHeaderPresent() {
-		return w.header.Code()
+		w.statusCode = w.header.Code()
 	}
 	return w.statusCode
 }
