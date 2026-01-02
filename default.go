@@ -17,7 +17,8 @@ import (
 //   - A pointer to a newly created `wrapper` instance with initialized fields.
 func New() *wrapper {
 	w := &wrapper{
-		meta: defaultMetaValues(),
+		meta:   defaultMetaValues(),
+		header: Processing,
 	}
 	return w
 }

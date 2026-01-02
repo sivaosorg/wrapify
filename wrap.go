@@ -89,6 +89,9 @@ func (w *wrapper) StatusCode() int {
 	if !w.Available() {
 		return 0
 	}
+	if w.IsHeaderPresent() {
+		return w.header.Code()
+	}
 	return w.statusCode
 }
 
@@ -1665,7 +1668,7 @@ func (w *wrapper) Hash() string {
 		return ""
 	}
 	data := fmt.Sprintf("%v%v%v%v",
-		w.statusCode, w.message, w.data, w.meta)
+		w.StatusCode(), w.message, jsonpass(w.data), w.meta.Respond())
 	return strutil.Hash(data)
 }
 
