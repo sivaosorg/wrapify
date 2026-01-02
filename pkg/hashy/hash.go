@@ -1,6 +1,7 @@
 package hashy
 
 import (
+	"encoding/base64"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -165,4 +166,54 @@ func HashBase16(data ...any) (string, error) {
 		return "", err
 	}
 	return strconv.FormatUint(hash, 16), nil
+}
+
+// HashBase32 generates a base32 encoded hash string for the given data.
+// It accepts variadic arguments - if only one argument is provided, it hashes
+// that value. If multiple arguments are provided, it hashes them as a tuple.
+// The last argument can optionally be *Options.
+//
+// Returns:
+//   - string: The computed hash string (never empty for valid inputs)
+//   - error: Non-nil if hashing fails
+//
+// Example:
+//
+//	hash, err := HashBase32(myStruct)                    // Single value
+//	hash, err := HashBase32(val1, val2, val3)            // Multiple values
+//	hash, err := HashBase32(myStruct, opts)              // With options
+//	hash, err := HashBase32(val1, val2, val3, opts)      // Multiple values with options
+//
+// The hash is deterministic: identical values always produce identical hashes.§
+func HashBase32(data ...any) (string, error) {
+	hash, err := Hash(data...)
+	if err != nil {
+		return "", err
+	}
+	return strconv.FormatUint(hash, 32), nil
+}
+
+// HashEncoded generates a base64 encoded hash string for the given data.
+// It accepts variadic arguments - if only one argument is provided, it hashes
+// that value. If multiple arguments are provided, it hashes them as a tuple.
+// The last argument can optionally be *Options.
+//
+// Returns:
+//   - string: The computed hash string (never empty for valid inputs)
+//   - error: Non-nil if hashing fails
+//
+// Example:
+//
+//	hash, err := HashEncoded(myStruct)                    // Single value
+//	hash, err := HashEncoded(val1, val2, val3)            // Multiple values
+//	hash, err := HashEncoded(myStruct, opts)              // With options
+//	hash, err := HashEncoded(val1, val2, val3, opts)      // Multiple values with options
+//
+// The hash is deterministic: identical values always produce identical hashes.
+func HashEncoded(data ...any) (string, error) {
+	hash, err := Hash(data...)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString([]byte(fmt.Appendf(nil, "%v", hash))), nil
 }
