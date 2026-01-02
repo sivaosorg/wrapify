@@ -1664,7 +1664,7 @@ func (w *wrapper) WithIsLast(v bool) *wrapper {
 // This method concatenates the values of the `statusCode`, `message`, `data`, and `meta` fields
 // into a single string and then computes a hash of that string using the `strutil.Hash256` function.
 // The resulting hash string can be used for various purposes, such as caching or integrity checks.
-func (w *wrapper) Hash256() (str string, result *wrapper) {
+func (w *wrapper) Hash256() (string, *wrapper) {
 	if !w.Available() {
 		return "", w
 	}
@@ -1690,6 +1690,44 @@ func (w *wrapper) Hash256Safe() string {
 	hash, _w := w.Hash256()
 	if _w.IsError() {
 		return ""
+	}
+	return hash
+}
+
+// Hash generates a hash value for the `wrapper` instance.
+//
+// This method generates a hash value for the `wrapper` instance using the `Hash` method.
+// If the `wrapper` instance is not available or the hash generation fails, it returns an error.
+//
+// Returns:
+//   - A uint64 representing the hash value.
+//   - An error if the `wrapper` instance is not available or the hash generation fails.
+func (w *wrapper) Hash() (uint64, *wrapper) {
+	if !w.Available() {
+		return 0, w
+	}
+	h, err := hashy.Hash(w.StatusCode(), w.message, w.data, w.meta.Respond())
+	if err != nil {
+		return 0, New().
+			WithHeader(InternalServerError).
+			WithErrSck(err).
+			WithMessage("Failed to generate hash")
+	}
+	return h, w
+}
+
+// HashSafe generates a hash value for the `wrapper` instance.
+
+// This method generates a hash value for the `wrapper` instance using the `Hash` method.
+// If the `wrapper` instance is not available or the hash generation fails, it returns an empty string.
+//
+// Returns:
+//   - A string representing the hash value.
+//   - An empty string if the `wrapper` instance is not available or the hash generation fails.
+func (w *wrapper) HashSafe() uint64 {
+	hash, _w := w.Hash()
+	if _w.IsError() {
+		return 0
 	}
 	return hash
 }
