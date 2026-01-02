@@ -3,6 +3,7 @@ package hashy
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 
 	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
@@ -114,4 +115,29 @@ func Hash256(data ...any) (string, error) {
 		return "", err
 	}
 	return strutil.Hash256(fmt.Sprintf("%v", hash)), nil
+}
+
+// HashBase10 generates a decimal hash string for the given data.
+// It accepts variadic arguments - if only one argument is provided, it hashes
+// that value. If multiple arguments are provided, it hashes them as a tuple.
+// The last argument can optionally be *Options.
+//
+// Returns:
+//   - string: The computed hash string (never empty for valid inputs)
+//   - error: Non-nil if hashing fails
+//
+// Example:
+//
+//	hash, err := HashBase10(myStruct)                    // Single value
+//	hash, err := HashBase10(val1, val2, val3)            // Multiple values
+//	hash, err := HashBase10(myStruct, opts)              // With options
+//	hash, err := HashBase10(val1, val2, val3, opts)      // Multiple values with options
+//
+// The hash is deterministic: identical values always produce identical hashes.
+func HashBase10(data ...any) (string, error) {
+	hash, err := Hash(data...)
+	if err != nil {
+		return "", err
+	}
+	return strconv.FormatUint(hash, 10), nil
 }
