@@ -6,6 +6,8 @@ import (
 	"hash"
 	"reflect"
 	"time"
+
+	"github.com/sivaosorg/wrapify/pkg/strutil"
 )
 
 // WithHasher sets the hash function to use.
@@ -433,6 +435,20 @@ func (h *hasher) hashSlice(value reflect.Value, options *visitOptions) (uint64, 
 	return accumulated, nil
 }
 
+// hashMap hashes a map value.
+//
+// Parameters:
+//   - value: The value to hash.
+//   - options: The options to use for the hash.
+//
+// Returns:
+//   - The hash of the value.
+//
+// Example:
+//
+//	value := reflect.ValueOf(map[string]int{"a": 1, "b": 2})
+//	hash, err := h.hashMap(value, nil)
+//	fmt.Println(hash, err) // 1 2 nil
 func (h *hasher) hashMap(value reflect.Value, options *visitOptions) (uint64, error) {
 	var selector MapSelector
 	if options != nil && options.structValue != nil {
@@ -474,6 +490,20 @@ func (h *hasher) hashMap(value reflect.Value, options *visitOptions) (uint64, er
 	return accumulated, nil
 }
 
+// hashStruct hashes a struct value.
+//
+// Parameters:
+//   - value: The value to hash.
+//   - options: The options to use for the hash.
+//
+// Returns:
+//   - The hash of the value.
+//
+// Example:
+//
+//	value := reflect.ValueOf(struct{ A int; B string }{"a", 1})
+//	hash, err := h.hashStruct(value, nil)
+//	fmt.Println(hash, err) // 1 2 nil
 func (h *hasher) hashStruct(value reflect.Value, options *visitOptions) (uint64, error) {
 	structType := value.Type()
 	parent := value.Interface()
@@ -504,7 +534,7 @@ func (h *hasher) hashStruct(value reflect.Value, options *visitOptions) (uint64,
 		fieldType := structType.Field(i)
 
 		// Skip unexported fields (except for "_")
-		if fieldType.PkgPath != "" && fieldType.Name != "_" {
+		if strutil.IsNotEmpty(fieldType.PkgPath) && fieldType.Name != "_" {
 			continue
 		}
 
@@ -539,7 +569,8 @@ func (h *hasher) hashStruct(value reflect.Value, options *visitOptions) (uint64,
 			}
 		}
 
-		// Determine visit flags
+		// Determine visit flags, if the tag is "set", set the visitFlagSet flag
+		// This is used to indicate that the slice should be treated as a set (order-independent)
 		var flags visitFlag
 		if tag == "set" {
 			flags |= visitFlagSet
@@ -569,6 +600,20 @@ func (h *hasher) hashStruct(value reflect.Value, options *visitOptions) (uint64,
 	return accumulated, nil
 }
 
+// hashValue hashes a value.
+//
+// Parameters:
+//   - value: The value to hash.
+//   - options: The options to use for the hash.
+//
+// Returns:
+//   - The hash of the value.
+//
+// Example:
+//
+//	value := reflect.ValueOf(1)
+//	hash, err := h.hashValue(value, nil)
+//	fmt.Println(hash, err) // 1 nil
 func (h *hasher) hashValue(value reflect.Value, options *visitOptions) (uint64, error) {
 	// Unwrap interfaces and pointers
 	value = h.unwrapValue(value)
@@ -609,7 +654,7 @@ func (h *hasher) hashValue(value reflect.Value, options *visitOptions) (uint64, 
 	case reflect.String:
 		return h.hashString(value)
 	default:
-		return 0, fmt.Errorf("unsupported kind: %s", kind)
+		return 0, fmt.Errorf("pkg.hash: unsupported kind: %s", kind)
 	}
 }
 
