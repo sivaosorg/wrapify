@@ -2,7 +2,6 @@ package hash
 
 import (
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"hash"
 	"reflect"
@@ -223,7 +222,7 @@ func (h *hasher) tryHashable(value reflect.Value) (uint64, bool, error) {
 		}
 	}
 
-	return 0, false, errors.New("pkg.hash: value is not hashable")
+	return 0, false, nil // errors.New("pkg.hash: value is not hashable")
 }
 
 // hashZeroValue hashes a zero value.
